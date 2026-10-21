@@ -1,4 +1,4 @@
-name: Render Vibe Coder Video
+name: Render Vibe Coder Video (Manim)
 
 on:
   workflow_dispatch:
@@ -12,25 +12,40 @@ jobs:
         uses: actions/checkout@v4
         with:
           sparse-checkout: |
-            vibe-coder-video/remotion
+            vibe-coder-video/manim
             .github/workflows/render.yml
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          node-version: '18'
+          python-version: '3.11'
 
-      - name: Install dependencies
-        working-directory: vibe-coder-video/remotion
-        run: npm install --legacy-peer-deps
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg libcairo2 libpango1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
+
+      - name: Install Manim
+        working-directory: vibe-coder-video/manim
+        run: |
+          python -m pip install --upgrade pip
+          pip install manim
 
       - name: Render video
-        working-directory: vibe-coder-video/remotion
-        run: npx remotion render VibeCoderVideo out/video.mp4 --codec=h264 --concurrency=4
+        working-directory: vibe-coder-video/manim
+        run: |
+          manim render vibe_coder_video.py -qh --media_dir ./media
+
+      - name: Find and upload video
+        working-directory: vibe-coder-video/manim
+        run: |
+          find media -name "*.mp4" -type f
+          VIDEO=$(find media -name "*.mp4" -type f | head -1)
+          cp "$VIDEO" ./vibe_coder_video.mp4
 
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vibe-coder-video
-          path: vibe-coder-video/remotion/out/video.mp4
+          name: vibe-coder-video-manim
+          path: vibe-coder-video/manim/vibe_coder_video.mp4
           retention-days: 7
