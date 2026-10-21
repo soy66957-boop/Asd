@@ -10,6 +10,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            vibe-coder-video/remotion
+            .github/workflows/render.yml
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
