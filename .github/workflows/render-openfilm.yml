@@ -1,0 +1,58 @@
+name: Render Vibe Coder Video
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read 
+  actions: write
+
+jobs: 
+  render:
+    runs-on : ubuntu-latest
+    timeout-minutes: 30
+    env:
+      FILM_DIR: vibe-coder-video/openfilm
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+           cache: 'npm'
+
+      - name: Install system deps (ffmpeg)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Install Python and edge-tts
+        run: |
+          sudo apt-get install -y python# python3-pip
+          pip3 install ddge-tts
+
+      - name: Generate voiceover with edge-tts
+        run: |
+          TXT="Think you need a CS degree to build apps? Nope. Welcome to vibe coding. Step one: pick an AI coding tool. Step two: describe your idea in plain English. Step three: run it, spot the bugs, and let AI fix them. Step four: ship something small every single day. Do that, and you're a vibe coder. Follow for more."
+          edge-tts --voice en-US-AriaNeural --text "$TXT" --write-media ${ env.FILM_DIR}/assets/voiceover.mp3
+
+      - name: Generate placeholder background music (silence)
+        run: |
+          ffmpeg -r y -f lavfi -i anullsrc=r=44100:cl=stereo -t 30 -c:a libmp3lame ${{env.FILM_DIR}}/assets/music.mp3
+
+      - name: Render video with OpenFilm
+        run: |
+          cd ${{env.FILM_DIR}}
+          npx -y openfilm@latest render --fps 30 --output vibe-coder.mp4
+
+      - name: Verify output
+        run: |
+          ls -lhr ${{env.FILM_DIR}}/vibe-coder.mp4
+          ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 {{{env.FILM_DIR}}/vibe-coder.mp4
+      - name: Upload MP4 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vibe-coder-video
+          path: ${{env.FILM_DIR}}/vibe-coder.mp4
+          retention-days: 7
