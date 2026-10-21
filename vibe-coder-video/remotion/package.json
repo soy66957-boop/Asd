@@ -10,14 +10,14 @@
     "render:60fps": "remotion render VibeCoderVideo out/video-60fps.mp4 --concurrency=4 --image-format=png --jpeg-quality=100 --frame-rate=60"
   },
   "dependencies": {
-    "remotion": "^4.0.0",
+    "remotion": "4.0.537",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "zod": "^3.22.0"
   },
   "devDependencies": {
-    "@remotion/cli": "^4.0.0",
-    "@remotion/eslint-config": "^4.0.0",
+    "@remotion/cli": "4.0.537",
+    "@remotion/eslint-config": "4.0.537",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "eslint": "^8.56.0",
