@@ -22,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: vibe-coder-video/remotion
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: Render video
         working-directory: vibe-coder-video/remotion
