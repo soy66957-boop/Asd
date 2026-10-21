@@ -1,0 +1,18 @@
+<svg viewBox="0 0 80 30" xmlns="http://www.w3.org/2000/svg">
+  <!-- Typing indicator - 3 bouncing dots -->
+  <defs>
+    <style>
+      .dot { fill: #007AFF; }
+    </style>
+  </defs>
+  
+  <circle cx="15" cy="15" r="6" class="dot">
+    <animate attributeName="cy" values="15;5;15" dur="0.6s" repeatCount="indefinite" begin="0s"/>
+  </circle>
+  <circle cx="40" cy="15" r="6" class="dot">
+    <animate attributeName="cy" values="15;5;15" dur="0.6s" repeatCount="indefinite" begin="0.15s"/>
+  </circle>
+  <circle cx="65" cy="15" r="6" class="dot">
+    <animate attributeName="cy" values="15;5;15" dur="0.6s" repeatCount="indefinite" begin="0.3s"/>
+  </circle>
+</svg>

@@ -1,0 +1,5 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- Send button / paper plane -->
+  <circle cx="24" cy="24" r="22" fill="#007AFF"/>
+  <path d="M14 24 L34 16 L34 32 Z" fill="#FFFFFF"/>
+</svg>

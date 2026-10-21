@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Coder Video - HTML Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --electric-blue: #007AFF;
+            --hot-pink: #FF2D92;
+            --sunny-yellow: #FFD600;
+            --mint-green: #00E676;
+            --dark-text: #1A1A2E;
+            --soft-white: #FAFAFA;
+            --lavender: #E8E0FF;
+            --code-bg: #1E1E2E;
+            --code-comment: #6272A4;
+            --error-red: #FF4444;
+            --success-green: #00E676;
+            
+            --width: 1080px;
+            --height: 1920px;
+            --fps: 30;
+            --duration: 30s;
+            
+            --safe-top: 250px;
+            --safe-bottom: 400px;
+            --content-top: 250px;
+            --content-bottom: 1520px;
+            --content-height: 1270px;
+            --center-x: 540px;
+            --center-y: 960px;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        #video-container {
+            position: relative;
+            width: var(--width);
+            height: var(--height);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        #canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Controls */
+        #controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            padding: 16px 24px;
+            background: rgba(26, 26, 46, 0.9);
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--hot-pink);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #ff4db3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 45, 146, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--electric-blue);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #0056cc;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 122, 255, 0.4);
+        }
+        
+        .btn-ghost {
+            background: transparent;
+            color: var(--soft-white);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .btn-ghost:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        #time-display {
+            color: var(--soft-white);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        #progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--hot-pink), var(--electric-blue), var(--mint-green));
+            transform-origin: left;
+            transform: scaleX(0);
+            z-index: 100;
+        }
+        
+        #scene-indicator {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(26, 26, 46, 0.9);
+            padding: 12px 20px;
+            border-radius: 12px;
+            color: var(--soft-white);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-left: 4px solid var(--hot-pink);
+        }
+        
+        #safe-zone-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(26, 26, 46, 0.9);
+            padding: 10px 16px;
+            border-radius: 8px;
+            color: var(--soft-white);
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            user-select: none;
+            transition: all 0.2s;
+        }
+        
+        #safe-zone-toggle:hover {
+            background: rgba(26, 26, 46, 1);
+        }
+        
+        .safe-zone-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            display: none;
+        }
+        
+        .safe-zone-overlay.visible {
+            display: block;
+        }
+        
+        .safe-zone-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--safe-top);
+            background: rgba(255, 68, 68, 0.15);
+            border-bottom: 2px dashed var(--error-red);
+        }
+        
+        .safe-zone-overlay::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: var(--safe-bottom);
+            background: rgba(255, 68, 68, 0.15);
+            border-top: 2px dashed var(--error-red);
+        }
+        
+        .safe-zone-label {
+            position: absolute;
+            left: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--error-red);
+            text-shadow: 0 0 8px rgba(0,0,0,0.5);
+        }
+        
+        .safe-zone-label.top {
+            top: 10px;
+        }
+        
+        .safe-zone-label.bottom {
+            bottom: 10px;
+        }
+        
+        /* Scene info panel */
+        #scene-info {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 300px;
+            background: rgba(26, 26, 46, 0.95);
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--soft-white);
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        #scene-info h3 {
+            color: var(--hot-pink);
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        
+        #scene-info .detail {
+            margin: 8px 0;
+            padding: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+        }
+        
+        #scene-info .label {
+            color: var(--electric-blue);
+            font-weight: 600;
+        }
+        
+        @media (max-width: 1200px) {
+            #video-container {
+                transform: scale(0.7);
+            }
+        }
+        
+        @media (max-width: 800px) {
+            #video-container {
+                transform: scale(0.5);
+            }
+            #controls {
+                padding: 12px 16px;
+            }
+            .btn {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="video-container">
+        <canvas id="canvas" width="1080" height="1920"></canvas>
+        <div id="safe-zones" class="safe-zone-overlay">
+            <div class="safe-zone-label top">⚠ TOP SAFE ZONE (250px)</div>
+            <div class="safe-zone-label bottom">⚠ BOTTOM SAFE ZONE (400px)</div>
+        </div>
+    </div>
+    
+    <div id="scene-indicator">Scene: Hook (0-3s)</div>
+    
+    <div id="scene-info">
+        <h3>📋 Scene Details</h3>
+        <div class="detail"><span class="label">Scene:</span> Hook</div>
+        <div class="detail"><span class="label">Time:</span> 0.0s - 3.0s</div>
+        <div class="detail"><span class="label">Frame:</span> 0 / 90</div>
+        <div class="detail"><span class="label">Progress:</span> 0%</div>
+    </div>
+    
+    <div id="safe-zone-toggle" onclick="toggleSafeZones()">🔲 Toggle Safe Zones</div>
+    
+    <div id="progress-bar"></div>
+    
+    <div id="controls">
+        <button class="btn btn-ghost" onclick="stepFrame(-1)">⏪ Frame -1</button>
+        <button class="btn btn-secondary" onclick="togglePlay()">⏸ Pause</button>
+        <button class="btn btn-ghost" onclick="stepFrame(1)">⏩ Frame +1</button>
+        <button class="btn btn-primary" onclick="restart()">↺ Restart</button>
+        <button class="btn btn-ghost" onclick="jumpToScene(0)">Hook</button>
+        <button class="btn btn-ghost" onclick="jumpToScene(1)">Step 1</button>
+        <button class="btn btn-ghost" onclick="jumpToScene(2)">Step 2</button>
+        <button class="btn btn-ghost" onclick="jumpToScene(3)">Step 3</button>
+        <button class="btn btn-ghost" onclick="jumpToScene(4)">Step 4</button>
+        <button class="btn btn-ghost" onclick="jumpToScene(5)">CTA</button>
+        <div id="time-display">00:00.00 / 30:00</div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<svg viewBox="0 0 320 640" xmlns="http://www.w3.org/2000/svg">
+  <!-- iPhone 15 Pro style phone mockup -->
+  <!-- Shadow -->
+  <ellipse cx="160" cy="635" rx="100" ry="8" fill="#00000015"/>
+  
+  <!-- Phone body -->
+  <rect x="8" y="8" width="304" height="624" rx="32" fill="#1A1A2E"/>
+  <rect x="8" y="8" width="304" height="624" rx="32" stroke="#3A3A4A" stroke-width="2" fill="none"/>
+  
+  <!-- Dynamic Island -->
+  <rect x="90" y="20" width="140" height="28" rx="14" fill="#0A0A0A"/>
+  
+  <!-- Screen area -->
+  <rect x="16" y="60" width="288" height="560" rx="24" fill="#FFFFFF"/>
+  
+  <!-- Status bar -->
+  <text x="24" y="90" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#1A1A2E">9:41</text>
+  <g transform="translate(260, 82)">
+    <path d="M0 0 L12 -4 L12 4 Z" fill="#1A1A2E"/>
+    <rect x="16" y="-4" width="20" height="8" rx="1" fill="#1A1A2E"/>
+    <path d="M40 0 L46 -4 L52 0 L46 4 Z" fill="#1A1A2E" transform="scale(0.7)"/>
+  </g>
+  
+  <!-- Habit Tracker App UI -->
+  <!-- Header -->
+  <rect x="16" y="60" width="288" height="70" fill="#FAFAFA"/>
+  <text x="40" y="105" font-family="Poppins, sans-serif" font-size="24" font-weight="800" fill="#1A1A2E">Streak</text>
+  <text x="40" y="125" font-family="Poppins, sans-serif" font-size="13" fill="#6A737D">7 day streak! 🔥</text>
+  
+  <!-- Habit cards -->
+  <!-- Card 1: Coding -->
+  <rect x="24" y="150" width="272" height="100" rx="16" fill="#FFFFFF" stroke="#E8E0FF" stroke-width="2"/>
+  <circle cx="52" cy="180" r="24" fill="#E8E0FF"/>
+  <text x="52" y="186" font-family="Poppins, sans-serif" font-size="20" fill="#007AFF">💻</text>
+  <text x="90" y="175" font-family="Poppins, sans-serif" font-size="18" font-weight="600" fill="#1A1A2E">Coding</text>
+  <text x="90" y="195" font-family="Poppins, sans-serif" font-size="13" fill="#6A737D">7 day streak • 2h today</text>
+  <!-- Checkbox -->
+  <rect x="240" y="165" width="30" height="30" rx="8" fill="#00E676"/>
+  <path d="M246 178 L252 184 L260 170" stroke="#FFFFFF" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Card 2: Workout -->
+  <rect x="24" y="270" width="272" height="100" rx="16" fill="#FFFFFF" stroke="#E8E0FF" stroke-width="2"/>
+  <circle cx="52" cy="300" r="24" fill="#FFE0E0"/>
+  <text x="52" y="306" font-family="Poppins, sans-serif" font-size="20" fill="#FF2D92">💪</text>
+  <text x="90" y="295" font-family="Poppins, sans-serif" font-size="18" font-weight="600" fill="#1A1A2E">Workout</text>
+  <text x="90" y="315" font-family="Poppins, sans-serif" font-size="13" fill="#6A737D">3 day streak • 45 min</text>
+  <rect x="240" y="285" width="30" height="30" rx="8" stroke="#E0E0E0" stroke-width="2" fill="none"/>
+  
+  <!-- Card 3: Reading -->
+  <rect x="24" y="390" width="272" height="100" rx="16" fill="#FFFFFF" stroke="#E8E0FF" stroke-width="2"/>
+  <circle cx="52" cy="420" r="24" fill="#E0FFE0"/>
+  <text x="52" y="426" font-family="Poppins, sans-serif" font-size="20" fill="#00E676">📚</text>
+  <text x="90" y="415" font-family="Poppins, sans-serif" font-size="18" font-weight="600" fill="#1A1A2E">Reading</text>
+  <text x="90" y="435" font-family="Poppins, sans-serif" font-size="13" fill="#6A737D">1 day streak • 20 min</text>
+  <rect x="240" y="405" width="30" height="30" rx="8" stroke="#E0E0E0" stroke-width="2" fill="none"/>
+  
+  <!-- Bottom nav -->
+  <rect x="16" y="550" width="288" height="70" rx="24" fill="#FAFAFA" stroke="#E8E0FF" stroke-width="1"/>
+  <g transform="translate(70, 560)">
+    <circle cx="0" cy="0" r="20" fill="#007AFF"/>
+    <text x="0" y="6" font-family="Poppins, sans-serif" font-size="16" fill="#FFFFFF" text-anchor="middle">+</text>
+  </g>
+  <text x="160" y="602" font-family="Poppins, sans-serif" font-size="12" fill="#6A737D" text-anchor="middle">Add Habit</text>
+  <g transform="translate(250, 560)">
+    <circle cx="0" cy="0" r="20" fill="#E8E0FF"/>
+    <text x="0" y="6" font-family="Poppins, sans-serif" font-size="16" fill="#007AFF" text-anchor="middle">⚙</text>
+  </g>
+  
+  <!-- Home indicator -->
+  <rect x="135" y="610" width="50" height="5" rx="2.5" fill="#D0D0D0"/>
+</svg>

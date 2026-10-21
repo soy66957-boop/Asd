@@ -1,0 +1,6 @@
+<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Chat bubble - user style (right aligned, blue) -->
+  <path d="M20 10 L260 10 Q270 10 270 20 L270 80 Q270 90 260 90 L20 90 Q10 90 10 80 L10 20 Q10 10 20 10 Z" fill="#007AFF"/>
+  <!-- Tail -->
+  <path d="M270 50 L285 60 L270 70" fill="#007AFF"/>
+</svg>

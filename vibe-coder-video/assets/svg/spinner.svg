@@ -1,0 +1,18 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- 3-ring spinner loader -->
+  <defs>
+    <style>
+      .ring { fill: none; stroke: #007AFF; stroke-linecap: round; }
+    </style>
+  </defs>
+  
+  <circle class="ring" cx="24" cy="24" r="20" stroke-width="3" stroke-dasharray="90 30">
+    <animateTransform attributeName="transform" type="rotate" from="0 24 24" to="360 24 24" dur="1s" repeatCount="indefinite"/>
+  </circle>
+  <circle class="ring" cx="24" cy="24" r="14" stroke-width="2.5" stroke-dasharray="60 20" opacity="0.6">
+    <animateTransform attributeName="transform" type="rotate" from="360 24 24" to="0 24 24" dur="0.8s" repeatCount="indefinite"/>
+  </circle>
+  <circle class="ring" cx="24" cy="24" r="8" stroke-width="2" stroke-dasharray="30 10" opacity="0.4">
+    <animateTransform attributeName="transform" type="rotate" from="0 24 24" to="360 24 24" dur="0.6s" repeatCount="indefinite"/>
+  </circle>
+</svg>

@@ -1,0 +1,7 @@
+<svg viewBox="0 0 400 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Success banner -->
+  <rect x="0" y="0" width="400" height="60" rx="8" fill="#00E676"/>
+  <circle cx="30" cy="30" r="12" fill="#00B35E"/>
+  <path d="M20 30 L27 37 L40 23" stroke="#FFFFFF" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="55" y="37" font-family="Poppins, sans-serif" font-size="16" font-weight="600" fill="#FFFFFF">Fixed! Added null check ✓</text>
+</svg>

@@ -1,0 +1,16 @@
+<svg viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bouncing arrow - upward chevron -->
+  <defs>
+    <filter id="arrowShadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#FF2D92" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <g filter="url(#arrowShadow)">
+    <path d="M30 70 L10 30 L30 10" stroke="#FF2D92" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M30 60 L10 20" stroke="#FF2D92" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+  </g>
+  
+  <!-- Bounce animation indicator (for reference) -->
+  <!-- Actual bounce handled by Remotion/Manim -->
+</svg>

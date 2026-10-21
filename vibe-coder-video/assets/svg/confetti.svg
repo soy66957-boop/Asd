@@ -1,0 +1,23 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Confetti shapes - 5 variants in palette colors -->
+  <defs>
+    <g id="confetti-square">
+      <rect x="0" y="0" width="16" height="16" rx="2" fill="#007AFF"/>
+    </g>
+    <g id="confetti-circle">
+      <circle cx="8" cy="8" r="8" fill="#FF2D92"/>
+    </g>
+    <g id="confetti-triangle">
+      <polygon points="8,0 16,16 0,16" fill="#FFD600"/>
+    </g>
+    <g id="confetti-strip">
+      <rect x="0" y="0" width="20" height="6" rx="1" fill="#00E676"/>
+    </g>
+    <g id="confetti-star">
+      <polygon points="10,0 12,7 19,7 13,11 15,18 10,14 5,18 7,11 1,7 8,7" fill="#FF2D92"/>
+    </g>
+  </defs>
+  
+  <!-- Default: square -->
+  <use href="#confetti-square"/>
+</svg>

@@ -1,0 +1,12 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Windsurf logo - wave/stylized W -->
+  <circle cx="60" cy="60" r="55" fill="url(#wsGradient)"/>
+  <defs>
+    <linearGradient id="wsGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#007AFF"/>
+      <stop offset="100%" stop-color="#00E676"/>
+    </linearGradient>
+  </defs>
+  <path d="M30 75 Q45 35 60 75 Q75 35 90 75" stroke="#FFFFFF" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M35 80 Q50 45 65 80 Q80 45 95 80" stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.6"/>
+</svg>

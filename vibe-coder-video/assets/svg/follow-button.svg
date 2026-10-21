@@ -1,0 +1,5 @@
+<svg viewBox="0 0 240 72" xmlns="http://www.w3.org/2000/svg">
+  <!-- Follow button - pill shape -->
+  <rect x="0" y="0" width="240" height="72" rx="36" fill="#FF2D92"/>
+  <text x="120" y="48" font-family="Poppins, sans-serif" font-size="28" font-weight="800" fill="#FFFFFF" text-anchor="middle">Follow</text>
+</svg>
