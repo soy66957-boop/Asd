@@ -1,14 +1,10 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:pipes/ui/core/theme/app_colors.dart';
 import 'package:pipes/ui/core/widgets/pipe_widget.dart';
-import 'package:pipes/ui/core/widgets/tangible_button.dart';
 import 'package:pipes/ui/features/game/view_models/game_view_model.dart';
 import 'package:pipes/ui/providers.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class GameView extends ConsumerStatefulWidget {
   const GameView({
