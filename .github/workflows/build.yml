@@ -67,6 +67,14 @@ jobs:
       - name: Get Dependencies
         run: flutter pub get
 
+      - name: Setup Debug Keystore
+        run: |
+          mkdir -p android/app
+          echo "storePassword=android" > android/key.properties
+          echo "keyPassword=android" >> android/key.properties
+          echo "keyAlias=androiddebugkey" >> android/key.properties
+          echo "storeFile=../.android/debug.keystore" >> android/key.properties
+
       - name: Build Debug APK
         run: flutter build apk --debug
 
