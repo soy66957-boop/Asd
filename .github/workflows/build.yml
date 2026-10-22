@@ -109,7 +109,7 @@ jobs:
           fi
 
       - name: Build Web
-        run: flutter build web --release --base-href "/Pipes/"
+        run: flutter build web --release --base-href "/Asd/"
 
       - name: Configure Pages
         id: pages
