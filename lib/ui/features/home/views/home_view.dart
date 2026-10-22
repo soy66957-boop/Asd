@@ -183,16 +183,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   }
 
   Future<void> _openKoFiUrl() async {
-    final Uri uri = Uri.parse('https://ko-fi.com/sidhant947');
-    try {
-      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-        await launchUrl(uri, mode: LaunchMode.platformDefault);
-      }
-    } catch (_) {
-      try {
-        await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
-      } catch (_) {}
-    }
+    await openUrl('https://ko-fi.com/sidhant947');
   }
 
   void _showDifficultyDialog(BuildContext context) {
