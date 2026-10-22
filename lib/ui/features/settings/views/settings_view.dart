@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/domain/models/app_settings.dart';
 import 'package:pipes/ui/core/theme/app_colors.dart';
 import 'package:pipes/ui/core/widgets/tangible_button.dart';
+import 'package:pipes/ui/core/url_launcher.dart';
 import 'package:pipes/ui/providers.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SettingsView extends ConsumerWidget {
   const SettingsView({super.key});
@@ -155,7 +155,7 @@ class SettingsView extends ConsumerWidget {
                     backgroundColor: AppColors.primary,
                     textColor: AppColors.headingDark,
                     borderColor: AppColors.border,
-                    onPressed: () => _openUrl('https://liberapay.com/sidhant947/donate'),
+                    onPressed: () => openUrl('https://liberapay.com/sidhant947/donate'),
                   ),
                   const SizedBox(height: 12),
                   TangibleButton(
@@ -324,18 +324,5 @@ class SettingsView extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  Future<void> _openUrl(String url) async {
-    final Uri uri = Uri.parse(url);
-    try {
-      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-        await launchUrl(uri, mode: LaunchMode.platformDefault);
-      }
-    } catch (_) {
-      try {
-        await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
-      } catch (_) {}
-    }
   }
 }

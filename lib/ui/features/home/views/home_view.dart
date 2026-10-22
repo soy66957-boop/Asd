@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 import 'package:pipes/ui/core/theme/app_colors.dart';
 import 'package:pipes/ui/core/widgets/tangible_button.dart';
+import 'package:pipes/ui/core/url_launcher.dart';
 import 'package:pipes/ui/features/game/views/game_view.dart';
 import 'package:pipes/ui/features/how_to_play/views/how_to_play_view.dart';
 import 'package:pipes/ui/features/level_select/views/level_select_view.dart';
@@ -22,13 +22,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
   void initState() {
     super.initState();
     Future.microtask(() => ref.read(homeViewModelProvider.notifier).loadProgress());
-  }
-
-  Future<void> _launchUrl(String urlString) async {
-    final Uri url = Uri.parse(urlString);
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      throw Exception('Could not launch $url');
-    }
   }
 
   Widget _circleButton({
@@ -87,7 +80,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   _circleButton(
                     icon: Icons.star_rounded,
                     iconColor: const Color(0xFFFF9800),
-                    onTap: () => _launchUrl('https://github.com/sidhant947/Pipes'),
+                    onTap: () => openUrl('https://github.com/sidhant947/Pipes'),
                   ),
                   if (state.progress != null)
                     Container(

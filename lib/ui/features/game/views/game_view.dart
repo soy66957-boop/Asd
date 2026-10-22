@@ -6,9 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:pipes/ui/core/theme/app_colors.dart';
 import 'package:pipes/ui/core/widgets/pipe_widget.dart';
 import 'package:pipes/ui/core/widgets/tangible_button.dart';
+import 'package:pipes/ui/core/url_launcher.dart';
 import 'package:pipes/ui/features/game/view_models/game_view_model.dart';
 import 'package:pipes/ui/providers.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class GameView extends ConsumerStatefulWidget {
   const GameView({
@@ -464,16 +464,7 @@ class _GameViewState extends ConsumerState<GameView>
   }
 
   Future<void> _openKoFiUrl() async {
-    final Uri uri = Uri.parse('https://ko-fi.com/sidhant947');
-    try {
-      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-        await launchUrl(uri, mode: LaunchMode.platformDefault);
-      }
-    } catch (_) {
-      try {
-        await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
-      } catch (_) {}
-    }
+    await openUrl('https://ko-fi.com/sidhant947');
   }
 }
 
