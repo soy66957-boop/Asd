@@ -299,10 +299,11 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
       // Interpolate in HSL space for better color preservation
       final lowHsl = HSLColor.fromColor(low);
       final highHsl = HSLColor.fromColor(high);
-      final midHsl = HSLColor(
-        lightness: (lowHsl.lightness + highHsl.lightness) / 2,
-        saturation: (lowHsl.saturation + highHsl.saturation) / 2,
-        hue: (lowHsl.hue + highHsl.hue) / 2,
+      final midHsl = HSLColor.fromAHSL(
+        1.0,
+        (lowHsl.hue + highHsl.hue) / 2,
+        (lowHsl.saturation + highHsl.saturation) / 2,
+        (lowHsl.lightness + highHsl.lightness) / 2,
       );
       Color mid = midHsl.toColor();
       newRatio = _contrastRatio(mid, background);
