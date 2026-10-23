@@ -14,7 +14,7 @@ void main() {
       for (final palette in tokens.palettes.values) {
         if (!palette.isDark) continue;
 
-        final contrast = contrastRatio(palette.textPrimary, palette.background);
+        final contrast = PipesTokens.contrastRatio(palette.textPrimary, palette.background);
         expect(
           contrast >= 4.5,
           isTrue,
@@ -28,7 +28,7 @@ void main() {
       for (final palette in tokens.palettes.values) {
         if (!palette.isDark) continue;
 
-        final contrast = contrastRatio(palette.textPrimary, palette.surface);
+        final contrast = PipesTokens.contrastRatio(palette.textPrimary, palette.surface);
         expect(
           contrast >= 4.5,
           isTrue,
@@ -42,7 +42,7 @@ void main() {
       for (final palette in tokens.palettes.values) {
         if (palette.isDark) continue;
 
-        final contrast = contrastRatio(palette.textPrimary, palette.background);
+        final contrast = PipesTokens.contrastRatio(palette.textPrimary, palette.background);
         expect(
           contrast >= 4.5,
           isTrue,
@@ -56,7 +56,7 @@ void main() {
       for (final palette in tokens.palettes.values) {
         if (palette.isDark) continue;
 
-        final contrast = contrastRatio(palette.textPrimary, palette.surface);
+        final contrast = PipesTokens.contrastRatio(palette.textPrimary, palette.surface);
         expect(
           contrast >= 4.5,
           isTrue,
@@ -68,7 +68,7 @@ void main() {
 
     test('All palettes: pipeIdle on boardSurface >= 3:1', () {
       for (final palette in tokens.palettes.values) {
-        final contrast = contrastRatio(palette.pipeIdle, palette.boardSurface);
+        final contrast = PipesTokens.contrastRatio(palette.pipeIdle, palette.boardSurface);
         expect(
           contrast >= 3.0,
           isTrue,
@@ -82,7 +82,7 @@ void main() {
       for (final palette in tokens.palettes.values) {
         if (!palette.isDark) continue;
 
-        final contrast = contrastRatio(palette.textSecondary, palette.background);
+        final contrast = PipesTokens.contrastRatio(palette.textSecondary, palette.background);
         expect(
           contrast >= 4.5,
           isTrue,
@@ -96,7 +96,7 @@ void main() {
       for (final palette in tokens.palettes.values) {
         if (palette.isDark) continue;
 
-        final contrast = contrastRatio(palette.textSecondary, palette.background);
+        final contrast = PipesTokens.contrastRatio(palette.textSecondary, palette.background);
         expect(
           contrast >= 4.5,
           isTrue,
@@ -108,7 +108,7 @@ void main() {
 
     test('All palettes: accent on background >= 3:1 (UI elements)', () {
       for (final palette in tokens.palettes.values) {
-        final contrast = contrastRatio(palette.accent, palette.background);
+        final contrast = PipesTokens.contrastRatio(palette.accent, palette.background);
         expect(
           contrast >= 3.0,
           isTrue,

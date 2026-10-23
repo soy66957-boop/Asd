@@ -5,49 +5,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-/// Adjusts foreground color in small steps until contrast ratio against background meets minimum.
-/// Returns the adjusted foreground color.
-Color ensureContrast(Color foreground, Color background, double minRatio) {
-  double ratio = _contrastRatio(foreground, background);
-  if (ratio >= minRatio) return foreground;
-
-  final bgLum = _relativeLuminance(background);
-  final fgLum = _relativeLuminance(foreground);
-  final needLighter = fgLum < bgLum;
-
-  Color adjusted = foreground;
-  for (int i = 0; i < 100; i++) {
-    final hsl = HSLColor.fromColor(adjusted);
-    double newLightness = needLighter
-        ? math.min(1.0, hsl.lightness + 0.01)
-        : math.max(0.0, hsl.lightness - 0.01);
-    adjusted = hsl.withLightness(newLightness).toColor();
-    ratio = _contrastRatio(adjusted, background);
-    if (ratio >= minRatio) break;
-  }
-  return adjusted;
-}
-
-double _contrastRatio(Color foreground, Color background) {
-  final lum1 = _relativeLuminance(foreground);
-  final lum2 = _relativeLuminance(background);
-  final lighter = lum1 > lum2 ? lum1 : lum2;
-  final darker = lum1 > lum2 ? lum2 : lum1;
-  return (lighter + 0.05) / (darker + 0.05);
-}
-
-double _relativeLuminance(Color color) {
-  double sr = _srgbToLinear(color.r / 255.0);
-  double sg = _srgbToLinear(color.g / 255.0);
-  double sb = _srgbToLinear(color.b / 255.0);
-  return 0.2126 * sr + 0.7152 * sg + 0.0722 * sb;
-}
-
-double _srgbToLinear(double c) {
-  if (c <= 0.03928) return c / 12.92;
-  return math.pow((c + 0.055) / 1.055, 2.4).toDouble();
-}
-
 /// Spacing scale (multiples of 4)
 class SpacingTokens {
   const SpacingTokens();
@@ -303,6 +260,51 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     return hsl.hue;
   }
 
+  /// Adjusts foreground color in small steps until contrast ratio against background meets minimum.
+  static Color ensureContrast(Color foreground, Color background, double minRatio) {
+    double ratio = _contrastRatio(foreground, background);
+    if (ratio >= minRatio) return foreground;
+
+    final bgLum = _relativeLuminance(background);
+    final fgLum = _relativeLuminance(foreground);
+    final needLighter = fgLum < bgLum;
+
+    Color adjusted = foreground;
+    for (int i = 0; i < 100; i++) {
+      final hsl = HSLColor.fromColor(adjusted);
+      double newLightness = needLighter
+          ? math.min(1.0, hsl.lightness + 0.01)
+          : math.max(0.0, hsl.lightness - 0.01);
+      adjusted = hsl.withLightness(newLightness).toColor();
+      ratio = _contrastRatio(adjusted, background);
+      if (ratio >= minRatio) break;
+    }
+    return adjusted;
+  }
+
+  static double _contrastRatio(Color foreground, Color background) {
+    final lum1 = _relativeLuminance(foreground);
+    final lum2 = _relativeLuminance(background);
+    final lighter = lum1 > lum2 ? lum1 : lum2;
+    final darker = lum1 > lum2 ? lum2 : lum1;
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
+  static double _relativeLuminance(Color color) {
+    double sr = _srgbToLinear(color.r / 255.0);
+    double sg = _srgbToLinear(color.g / 255.0);
+    double sb = _srgbToLinear(color.b / 255.0);
+    return 0.2126 * sr + 0.7152 * sg + 0.0722 * sb;
+  }
+
+  static double _srgbToLinear(double c) {
+    if (c <= 0.03928) return c / 12.92;
+    return math.pow((c + 0.055) / 1.055, 2.4).toDouble();
+  }
+
+  /// Public contrast ratio for testing
+  static double contrastRatio(Color foreground, Color background) => _contrastRatio(foreground, background);
+
   static PaletteTokens _deriveDarkPalette(String id, String name, double hue) {
     // Dark theme derivation from accent hue per spec
     // background = hue, 40% sat, 7% light
@@ -460,25 +462,4 @@ extension TokensContext on BuildContext {
   PipesTokens get tokens => Theme.of(this).extension<PipesTokens>() ?? PipesTokens.createDefault();
   
   PaletteTokens get palette => tokens.currentPalette;
-}
-
-/// Public contrast utilities for testing
-double contrastRatio(Color foreground, Color background) {
-  final lum1 = _relativeLuminance(foreground);
-  final lum2 = _relativeLuminance(background);
-  final lighter = lum1 > lum2 ? lum1 : lum2;
-  final darker = lum1 > lum2 ? lum2 : lum1;
-  return (lighter + 0.05) / (darker + 0.05);
-}
-
-double _relativeLuminance(Color color) {
-  double sr = _srgbToLinear(color.r / 255.0);
-  double sg = _srgbToLinear(color.g / 255.0);
-  double sb = _srgbToLinear(color.b / 255.0);
-  return 0.2126 * sr + 0.7152 * sg + 0.0722 * sb;
-}
-
-double _srgbToLinear(double c) {
-  if (c <= 0.03928) return c / 12.92;
-  return math.pow((c + 0.055) / 1.055, 2.4).toDouble();
 }
