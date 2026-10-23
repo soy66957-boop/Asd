@@ -1,6 +1,9 @@
 // Contrast ratio tests for all palettes
 // Ensures WCAG AA compliance (4.5:1 for text, 3:1 for UI elements)
 
+import 'dart:math' as math;
+import 'dart:ui' show Color;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 
@@ -140,5 +143,5 @@ double _srgbToLinear(double c) {
   if (c <= 0.03928) {
     return c / 12.92;
   }
-  return ((c + 0.055) / 1.055).clamp(0.0, 1.0).pow(2.4);
+  return math.pow((c + 0.055) / 1.055, 2.4).toDouble();
 }
