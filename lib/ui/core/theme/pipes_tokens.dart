@@ -261,7 +261,7 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
   }
 
   /// Adjusts foreground color luminance until contrast ratio against background meets minimum.
-  /// Returns the adjusted foreground color.
+  /// Returns the adjusted foreground color. Preserves hue as much as possible.
   static Color ensureContrast(Color foreground, Color background, double minRatio) {
     double ratio = _contrastRatio(foreground, background);
     if (ratio >= minRatio) return foreground;
@@ -278,7 +278,7 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
         : (bgLum + 0.05) / minRatio - 0.05;
     targetLum = targetLum.clamp(0.0, 1.0);
 
-    // Adjust foreground by scaling RGB toward target luminance
+    // Fast path: scale RGB toward target luminance
     double scale = targetLum / fgLum;
     if (scale > 2.0) scale = 2.0;
     if (scale < 0.5) scale = 0.5;
@@ -290,18 +290,20 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     double newRatio = _contrastRatio(adjusted, background);
     if (newRatio >= minRatio) return adjusted;
 
-    // Fallback: iterative HSL adjustment
-    Color adjusted2 = foreground;
-    for (int i = 0; i < 50; i++) {
-      final hsl = HSLColor.fromColor(adjusted2);
-      double newLightness = needLighter
-          ? math.min(1.0, hsl.lightness + 0.01)
-          : math.max(0.0, hsl.lightness - 0.01);
-      adjusted2 = hsl.withLightness(newLightness).toColor();
-      newRatio = _contrastRatio(adjusted2, background);
-      if (newRatio >= minRatio) return adjusted2;
+    // Robust fallback: interpolate toward white (if needLighter) or black (if darker).
+    // This guarantees convergence because white has luminance 1.0, black has 0.0.
+    Color target = needLighter ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
+    Color current = adjusted;
+    for (int i = 0; i < 100; i++) {
+      double t = (i + 1) / 100.0; // 1% to 100%
+      int nr = (current.r + (target.r - current.r) * t).round();
+      int ng = (current.g + (target.g - current.g) * t).round();
+      int nb = (current.b + (target.b - current.b) * t).round();
+      Color candidate = Color.fromARGB(255, nr, ng, nb);
+      newRatio = _contrastRatio(candidate, background);
+      if (newRatio >= minRatio) return candidate;
     }
-    return adjusted2;
+    return target;
   }
 
   static double _contrastRatio(Color foreground, Color background) {
