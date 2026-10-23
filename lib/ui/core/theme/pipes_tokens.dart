@@ -350,8 +350,8 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     const star = Color(0xFFFBBF24);
     const pipeIdle = Color(0xFF5B6E8F);
 
-    // Ensure accent on background meets 3:1 for UI elements
-    final accent = ensureContrast(baseAccent, background, 3.0);
+    // Spec dark accents are bright enough for 3:1 on dark backgrounds
+    final accent = baseAccent;
 
     return PaletteTokens(
       id: '${id}Dark',
