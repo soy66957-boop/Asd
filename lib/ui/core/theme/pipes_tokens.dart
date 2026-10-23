@@ -2,7 +2,51 @@
 // All colors, spacing, radii, motion, typography defined here.
 // Screens read tokens via context.tokens extension.
 
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
+
+/// Adjusts foreground color in small steps until contrast ratio against background meets minimum.
+/// Returns the adjusted foreground color.
+Color ensureContrast(Color foreground, Color background, double minRatio) {
+  double ratio = _contrastRatio(foreground, background);
+  if (ratio >= minRatio) return foreground;
+
+  final bgLum = _relativeLuminance(background);
+  final fgLum = _relativeLuminance(foreground);
+  final needLighter = fgLum < bgLum;
+
+  Color adjusted = foreground;
+  for (int i = 0; i < 100; i++) {
+    final hsl = HSLColor.fromColor(adjusted);
+    double newLightness = needLighter
+        ? math.min(1.0, hsl.lightness + 0.01)
+        : math.max(0.0, hsl.lightness - 0.01);
+    adjusted = hsl.withLightness(newLightness).toColor();
+    ratio = _contrastRatio(adjusted, background);
+    if (ratio >= minRatio) break;
+  }
+  return adjusted;
+}
+
+double _contrastRatio(Color foreground, Color background) {
+  final lum1 = _relativeLuminance(foreground);
+  final lum2 = _relativeLuminance(background);
+  final lighter = lum1 > lum2 ? lum1 : lum2;
+  final darker = lum1 > lum2 ? lum2 : lum1;
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+double _relativeLuminance(Color color) {
+  double sr = _srgbToLinear(color.r / 255.0);
+  double sg = _srgbToLinear(color.g / 255.0);
+  double sb = _srgbToLinear(color.b / 255.0);
+  return 0.2126 * sr + 0.7152 * sg + 0.0722 * sb;
+}
+
+double _srgbToLinear(double c) {
+  if (c <= 0.03928) return c / 12.92;
+  return math.pow((c + 0.055) / 1.055, 2.4).toDouble();
+}
 
 /// Spacing scale (multiples of 4)
 class SpacingTokens {
@@ -260,26 +304,30 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
   }
 
   static PaletteTokens _deriveDarkPalette(String id, String name, double hue) {
-    // Dark theme derivation from accent hue
+    // Dark theme derivation from accent hue per spec
     // background = hue, 40% sat, 7% light
     // surface = hue, 35%, 11%
     // glass = white @ 8% with 1px border of white @ 14%
     // text primary #E8F1FF, text secondary #9FB3CF
-    // accent: use bright accent per spec
+    // accent: bright accent per spec (ensure 3:1 on background for UI)
     // success #34D399, danger #FB7185, star #FBBF24
     // pipeIdle #5B6E8F, pipeFlow = accent, pipeGlow = accent @ 40%
     // source = accent, boardSurface = surface, boardBorder = glass border
 
-    final accent = _getDarkAccent(id, hue);
+    final baseAccent = _getDarkAccent(id, hue);
     final background = HSLColor.fromAHSL(1.0, hue, 0.40, 0.07).toColor();
     final surface = HSLColor.fromAHSL(1.0, hue, 0.35, 0.11).toColor();
     final glass = const Color(0x14FFFFFF); // white @ 8%
     final glassBorder = const Color(0x24FFFFFF); // white @ 14%
-    final textPrimary = const Color(0xFFE8F1FF);
-    final textSecondary = const Color(0xFF9FB3CF);
-    final success = const Color(0xFF34D399);
-    final danger = const Color(0xFFFB7185);
-    final star = const Color(0xFFFBBF24);
+    const textPrimary = Color(0xFFE8F1FF);
+    const textSecondary = Color(0xFF9FB3CF);
+    const success = Color(0xFF34D399);
+    const danger = Color(0xFFFB7185);
+    const star = Color(0xFFFBBF24);
+    const pipeIdle = Color(0xFF5B6E8F);
+
+    // Ensure accent on background meets 3:1 for UI elements
+    final accent = ensureContrast(baseAccent, background, 3.0);
 
     return PaletteTokens(
       id: '${id}Dark',
@@ -295,7 +343,7 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
       success: success,
       danger: danger,
       star: star,
-      pipeIdle: const Color(0xFF5B6E8F),
+      pipeIdle: pipeIdle,
       pipeFlow: accent,
       pipeGlow: accent.withValues(alpha: 0.40),
       source: accent,
@@ -305,24 +353,31 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
   }
 
   static PaletteTokens _deriveLightPalette(String id, String name, double hue) {
-    // Light theme derivation
+    // Light theme derivation per spec:
     // background = hue, 60%, 96%
-    // text #0F1B2D
+    // surface = hue, 45%, 92%
+    // text primary #0F1B2D
+    // text secondary #475569 (ensure 4.5:1 on background)
     // accent darkened until white text on it reaches 4.5:1
-    // success #34D399 -> darkened to #059669, danger #FB7185 -> #DC2626, star #FBBF24 -> #B45309
-    // pipeIdle #6B7C99 (light), pipeFlow = accent, pipeGlow = accent @ 40%
-    // source = accent, boardSurface = surface, boardBorder = glass border
+    // pipeIdle #6B7C99 (ensure 3:1 on boardSurface)
+    // boardSurface = surface
 
     final background = HSLColor.fromAHSL(1.0, hue, 0.60, 0.96).toColor();
-    final surface = HSLColor.fromAHSL(1.0, hue, 0.55, 0.92).toColor();
+    final surface = HSLColor.fromAHSL(1.0, hue, 0.45, 0.92).toColor();
     final glass = const Color(0x14000000); // black @ 8%
     final glassBorder = const Color(0x24000000); // black @ 14%
-    final textPrimary = const Color(0xFF0F1B2D);
-    final textSecondary = const Color(0xFF4A5D7A);
+    const textPrimary = Color(0xFF0F1B2D);
+    const baseTextSecondary = Color(0xFF475569);
+    const basePipeIdle = Color(0xFF6B7C99);
     final accent = _getLightAccent(id, hue);
-    final success = const Color(0xFF059669); // Darkened for 4.5:1 on white
-    final danger = const Color(0xFFDC2626); // Darkened for 4.5:1 on white
-    final star = const Color(0xFFB45309); // Darkened for 4.5:1 on white
+    const success = Color(0xFF059669);
+    const danger = Color(0xFFDC2626);
+    const star = Color(0xFFB45309);
+
+    // Ensure contrast for textSecondary on background (4.5:1)
+    final textSecondary = ensureContrast(baseTextSecondary, background, 4.5);
+    // Ensure contrast for pipeIdle on boardSurface (3:1)
+    final pipeIdle = ensureContrast(basePipeIdle, surface, 3.0);
 
     return PaletteTokens(
       id: '${id}Light',
@@ -338,7 +393,7 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
       success: success,
       danger: danger,
       star: star,
-      pipeIdle: const Color(0xFF6B7C99),
+      pipeIdle: pipeIdle,
       pipeFlow: accent,
       pipeGlow: accent.withValues(alpha: 0.40),
       source: accent,
@@ -405,4 +460,25 @@ extension TokensContext on BuildContext {
   PipesTokens get tokens => Theme.of(this).extension<PipesTokens>() ?? PipesTokens.createDefault();
   
   PaletteTokens get palette => tokens.currentPalette;
+}
+
+/// Public contrast utilities for testing
+double contrastRatio(Color foreground, Color background) {
+  final lum1 = _relativeLuminance(foreground);
+  final lum2 = _relativeLuminance(background);
+  final lighter = lum1 > lum2 ? lum1 : lum2;
+  final darker = lum1 > lum2 ? lum2 : lum1;
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+double _relativeLuminance(Color color) {
+  double sr = _srgbToLinear(color.r / 255.0);
+  double sg = _srgbToLinear(color.g / 255.0);
+  double sb = _srgbToLinear(color.b / 255.0);
+  return 0.2126 * sr + 0.7152 * sg + 0.0722 * sb;
+}
+
+double _srgbToLinear(double c) {
+  if (c <= 0.03928) return c / 12.92;
+  return math.pow((c + 0.055) / 1.055, 2.4).toDouble();
 }
