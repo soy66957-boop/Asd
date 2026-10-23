@@ -2,7 +2,6 @@
 // All colors, spacing, radii, motion, typography defined here.
 // Screens read tokens via context.tokens extension.
 
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 /// Spacing scale (multiples of 4)
@@ -280,7 +279,6 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     final hsl = HSLColor.fromColor(foreground);
 
     // Step lightness toward white (dark bg) or black (light bg)
-    final targetLightness = isDarkBg ? 1.0 : 0.0;
     final step = isDarkBg ? 0.02 : -0.02;
     double lightness = hsl.lightness;
 

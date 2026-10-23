@@ -1,6 +1,7 @@
 // Contrast ratio tests for all palettes
 // Ensures WCAG AA compliance (4.5:1 for text, 3:1 for UI elements)
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 
