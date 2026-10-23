@@ -260,28 +260,48 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     return hsl.hue;
   }
 
-  /// Adjusts foreground color in small steps until contrast ratio against background meets minimum.
+  /// Adjusts foreground color luminance until contrast ratio against background meets minimum.
+  /// Returns the adjusted foreground color.
   static Color ensureContrast(Color foreground, Color background, double minRatio) {
     double ratio = _contrastRatio(foreground, background);
     if (ratio >= minRatio) return foreground;
 
     final bgLum = _relativeLuminance(background);
     final fgLum = _relativeLuminance(foreground);
-    // If foreground is lighter than background, make it EVEN LIGHTER.
-    // If foreground is darker than background, make it EVEN DARKER.
     final needLighter = fgLum > bgLum;
 
-    Color adjusted = foreground;
-    for (int i = 0; i < 100; i++) {
-      final hsl = HSLColor.fromColor(adjusted);
+    // Target luminance for desired contrast:
+    // If fg is lighter: L_fg = minRatio * (L_bg + 0.05) - 0.05
+    // If fg is darker: L_fg = (L_bg + 0.05) / minRatio - 0.05
+    double targetLum = needLighter
+        ? minRatio * (bgLum + 0.05) - 0.05
+        : (bgLum + 0.05) / minRatio - 0.05;
+    targetLum = targetLum.clamp(0.0, 1.0);
+
+    // Adjust foreground by scaling RGB toward target luminance
+    double scale = targetLum / fgLum;
+    if (scale > 2.0) scale = 2.0;
+    if (scale < 0.5) scale = 0.5;
+    int r = (foreground.r * scale).round().clamp(0, 255);
+    int g = (foreground.g * scale).round().clamp(0, 255);
+    int b = (foreground.b * scale).round().clamp(0, 255);
+
+    Color adjusted = Color.fromARGB(255, r, g, b);
+    double newRatio = _contrastRatio(adjusted, background);
+    if (newRatio >= minRatio) return adjusted;
+
+    // Fallback: iterative HSL adjustment
+    Color adjusted2 = foreground;
+    for (int i = 0; i < 50; i++) {
+      final hsl = HSLColor.fromColor(adjusted2);
       double newLightness = needLighter
           ? math.min(1.0, hsl.lightness + 0.01)
           : math.max(0.0, hsl.lightness - 0.01);
-      adjusted = hsl.withLightness(newLightness).toColor();
-      ratio = _contrastRatio(adjusted, background);
-      if (ratio >= minRatio) break;
+      adjusted2 = hsl.withLightness(newLightness).toColor();
+      newRatio = _contrastRatio(adjusted2, background);
+      if (newRatio >= minRatio) return adjusted2;
     }
-    return adjusted;
+    return adjusted2;
   }
 
   static double _contrastRatio(Color foreground, Color background) {
