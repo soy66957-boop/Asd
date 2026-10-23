@@ -260,62 +260,40 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     return hsl.hue;
   }
 
-  /// Adjusts foreground color luminance until contrast ratio against background meets minimum.
-  /// Returns the adjusted foreground color. Preserves hue as much as possible.
-  static Color ensureContrast(Color foreground, Color background, double minRatio) {
-    double ratio = _contrastRatio(foreground, background);
-    if (ratio >= minRatio) return foreground;
-
-    final bgLum = _relativeLuminance(background);
-    final fgLum = _relativeLuminance(foreground);
-    final needLighter = fgLum > bgLum;
-
-    // Target luminance for desired contrast:
-    // If fg is lighter: L_fg = minRatio * (L_bg + 0.05) - 0.05
-    // If fg is darker: L_fg = (L_bg + 0.05) / minRatio - 0.05
-    double targetLum = needLighter
-        ? minRatio * (bgLum + 0.05) - 0.05
-        : (bgLum + 0.05) / minRatio - 0.05;
-    targetLum = targetLum.clamp(0.0, 1.0);
-
-    // Fast path: scale RGB toward target luminance
-    double scale = targetLum / fgLum;
-    if (scale > 2.0) scale = 2.0;
-    if (scale < 0.5) scale = 0.5;
-    int r = (foreground.r * scale).round().clamp(0, 255);
-    int g = (foreground.g * scale).round().clamp(0, 255);
-    int b = (foreground.b * scale).round().clamp(0, 255);
-
-    Color adjusted = Color.fromARGB(255, r, g, b);
-    double newRatio = _contrastRatio(adjusted, background);
-    if (newRatio >= minRatio) return adjusted;
-
-    // Guaranteed fallback: white on dark, black on light always meets WCAG AA
-    return needLighter ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
-  }
-
-  static double _contrastRatio(Color foreground, Color background) {
-    final lum1 = _relativeLuminance(foreground);
-    final lum2 = _relativeLuminance(background);
+  /// Computes WCAG contrast ratio between two colors using Flutter's built-in luminance.
+  static double contrastRatio(Color foreground, Color background) {
+    final lum1 = foreground.computeLuminance();
+    final lum2 = background.computeLuminance();
     final lighter = lum1 > lum2 ? lum1 : lum2;
     final darker = lum1 > lum2 ? lum2 : lum1;
     return (lighter + 0.05) / (darker + 0.05);
   }
 
-  static double _relativeLuminance(Color color) {
-    double sr = _srgbToLinear(color.r / 255.0);
-    double sg = _srgbToLinear(color.g / 255.0);
-    double sb = _srgbToLinear(color.b / 255.0);
-    return 0.2126 * sr + 0.7152 * sg + 0.0722 * sb;
-  }
+  /// Adjusts foreground color lightness in HSL space until contrast ratio against background meets minimum.
+  /// Preserves hue and saturation. Steps toward white (dark mode) or black (light mode) in ~2% increments.
+  /// Falls back to pure white or black only if no step passes.
+  static Color ensureContrast(Color foreground, Color background, double minRatio) {
+    if (contrastRatio(foreground, background) >= minRatio) return foreground;
 
-  static double _srgbToLinear(double c) {
-    if (c <= 0.03928) return c / 12.92;
-    return math.pow((c + 0.055) / 1.055, 2.4).toDouble();
-  }
+    final bgLum = background.computeLuminance();
+    final isDarkBg = bgLum < 0.5;
+    final hsl = HSLColor.fromColor(foreground);
 
-  /// Public contrast ratio for testing
-  static double contrastRatio(Color foreground, Color background) => _contrastRatio(foreground, background);
+    // Step lightness toward white (dark bg) or black (light bg)
+    final targetLightness = isDarkBg ? 1.0 : 0.0;
+    final step = isDarkBg ? 0.02 : -0.02;
+    double lightness = hsl.lightness;
+
+    for (int i = 0; i < 50; i++) {
+      lightness = (lightness + step).clamp(0.0, 1.0);
+      final adjusted = hsl.withLightness(lightness).toColor();
+      if (contrastRatio(adjusted, background) >= minRatio) return adjusted;
+      if ((isDarkBg && lightness >= 1.0) || (!isDarkBg && lightness <= 0.0)) break;
+    }
+
+    // Fallback: pure white on dark, pure black on light
+    return isDarkBg ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
+  }
 
   static PaletteTokens _deriveDarkPalette(String id, String name, double hue) {
     // Dark theme derivation from accent hue per spec

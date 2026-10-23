@@ -5,115 +5,119 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 
 void main() {
+  group('PipesTokens contrastRatio helper sanity', () {
+    test('contrastRatio(black, white) ~ 21', () {
+      final ratio = PipesTokens.contrastRatio(
+        const Color(0xFF000000),
+        const Color(0xFFFFFFFF),
+      );
+      expect(ratio, closeTo(21.0, 0.1));
+    });
+
+    test('contrastRatio(white, white) == 1', () {
+      final ratio = PipesTokens.contrastRatio(
+        const Color(0xFFFFFFFF),
+        const Color(0xFFFFFFFF),
+      );
+      expect(ratio, closeTo(1.0, 0.001));
+    });
+
+    test('contrastRatio(#E8F1FF, #0B1220) > 10', () {
+      final ratio = PipesTokens.contrastRatio(
+        const Color(0xFFE8F1FF),
+        const Color(0xFF0B1220),
+      );
+      expect(ratio, greaterThan(10.0));
+    });
+  });
+
   group('PipesTokens contrast ratios', () {
     final tokens = PipesTokens.createDefault();
 
-    test('All dark palettes: text on background >= 4.5:1', () {
-      for (final palette in tokens.palettes.values) {
-        if (!palette.isDark) continue;
-
-        final contrast = PipesTokens.contrastRatio(palette.textPrimary, palette.background);
-        expect(
-          contrast >= 4.5,
-          isTrue,
-          reason:
-              'Dark palette ${palette.id}: textPrimary on background contrast is $contrast:1 (need >= 4.5:1)',
-        );
+    void expectAllPass(String description, Iterable<PaletteTokens> palettes,
+        double Function(PaletteTokens p) getRatio, double minRatio) {
+      final failures = <String>[];
+      for (final palette in palettes) {
+        final ratio = getRatio(palette);
+        if (ratio < minRatio) {
+          failures.add(
+            '$description - ${palette.id}: ratio ${ratio.toStringAsFixed(4)}:1 (need >= $minRatio:1)',
+          );
+        }
       }
+      expect(failures, isEmpty, reason: failures.join('\n'));
+    }
+
+    test('All dark palettes: textPrimary on background >= 4.5:1', () {
+      expectAllPass(
+        'Dark palette textPrimary on background',
+        tokens.palettes.values.where((p) => p.isDark),
+        (p) => PipesTokens.contrastRatio(p.textPrimary, p.background),
+        4.5,
+      );
     });
 
-    test('All dark palettes: text on surface >= 4.5:1', () {
-      for (final palette in tokens.palettes.values) {
-        if (!palette.isDark) continue;
-
-        final contrast = PipesTokens.contrastRatio(palette.textPrimary, palette.surface);
-        expect(
-          contrast >= 4.5,
-          isTrue,
-          reason:
-              'Dark palette ${palette.id}: textPrimary on surface contrast is $contrast:1 (need >= 4.5:1)',
-        );
-      }
+    test('All dark palettes: textPrimary on surface >= 4.5:1', () {
+      expectAllPass(
+        'Dark palette textPrimary on surface',
+        tokens.palettes.values.where((p) => p.isDark),
+        (p) => PipesTokens.contrastRatio(p.textPrimary, p.surface),
+        4.5,
+      );
     });
 
-    test('All light palettes: text on background >= 4.5:1', () {
-      for (final palette in tokens.palettes.values) {
-        if (palette.isDark) continue;
-
-        final contrast = PipesTokens.contrastRatio(palette.textPrimary, palette.background);
-        expect(
-          contrast >= 4.5,
-          isTrue,
-          reason:
-              'Light palette ${palette.id}: textPrimary on background contrast is $contrast:1 (need >= 4.5:1)',
-        );
-      }
+    test('All light palettes: textPrimary on background >= 4.5:1', () {
+      expectAllPass(
+        'Light palette textPrimary on background',
+        tokens.palettes.values.where((p) => !p.isDark),
+        (p) => PipesTokens.contrastRatio(p.textPrimary, p.background),
+        4.5,
+      );
     });
 
-    test('All light palettes: text on surface >= 4.5:1', () {
-      for (final palette in tokens.palettes.values) {
-        if (palette.isDark) continue;
-
-        final contrast = PipesTokens.contrastRatio(palette.textPrimary, palette.surface);
-        expect(
-          contrast >= 4.5,
-          isTrue,
-          reason:
-              'Light palette ${palette.id}: textPrimary on surface contrast is $contrast:1 (need >= 4.5:1)',
-        );
-      }
+    test('All light palettes: textPrimary on surface >= 4.5:1', () {
+      expectAllPass(
+        'Light palette textPrimary on surface',
+        tokens.palettes.values.where((p) => !p.isDark),
+        (p) => PipesTokens.contrastRatio(p.textPrimary, p.surface),
+        4.5,
+      );
     });
 
     test('All palettes: pipeIdle on boardSurface >= 3:1', () {
-      for (final palette in tokens.palettes.values) {
-        final contrast = PipesTokens.contrastRatio(palette.pipeIdle, palette.boardSurface);
-        expect(
-          contrast >= 3.0,
-          isTrue,
-          reason:
-              'Palette ${palette.id}: pipeIdle on boardSurface contrast is $contrast:1 (need >= 3:1)',
-        );
-      }
+      expectAllPass(
+        'Palette pipeIdle on boardSurface',
+        tokens.palettes.values,
+        (p) => PipesTokens.contrastRatio(p.pipeIdle, p.boardSurface),
+        3.0,
+      );
     });
 
-    test('All dark palettes: secondary text on background >= 4.5:1', () {
-      for (final palette in tokens.palettes.values) {
-        if (!palette.isDark) continue;
-
-        final contrast = PipesTokens.contrastRatio(palette.textSecondary, palette.background);
-        expect(
-          contrast >= 4.5,
-          isTrue,
-          reason:
-              'Dark palette ${palette.id}: textSecondary on background contrast is $contrast:1 (need >= 4.5:1)',
-        );
-      }
+    test('All dark palettes: textSecondary on background >= 4.5:1', () {
+      expectAllPass(
+        'Dark palette textSecondary on background',
+        tokens.palettes.values.where((p) => p.isDark),
+        (p) => PipesTokens.contrastRatio(p.textSecondary, p.background),
+        4.5,
+      );
     });
 
-    test('All light palettes: secondary text on background >= 4.5:1', () {
-      for (final palette in tokens.palettes.values) {
-        if (palette.isDark) continue;
-
-        final contrast = PipesTokens.contrastRatio(palette.textSecondary, palette.background);
-        expect(
-          contrast >= 4.5,
-          isTrue,
-          reason:
-              'Light palette ${palette.id}: textSecondary on background contrast is $contrast:1 (need >= 4.5:1)',
-        );
-      }
+    test('All light palettes: textSecondary on background >= 4.5:1', () {
+      expectAllPass(
+        'Light palette textSecondary on background',
+        tokens.palettes.values.where((p) => !p.isDark),
+        (p) => PipesTokens.contrastRatio(p.textSecondary, p.background),
+        4.5,
+      );
     });
 
     test('All palettes: accent on background >= 3:1 (UI elements)', () {
-      for (final palette in tokens.palettes.values) {
-        final contrast = PipesTokens.contrastRatio(palette.accent, palette.background);
-        expect(
-          contrast >= 3.0,
-          isTrue,
-          reason:
-              'Palette ${palette.id}: accent on background contrast is $contrast:1 (need >= 3:1 for UI)',
-        );
-      }
+      expectAllPass(
+        'Palette accent on background',
+        tokens.palettes.values,
+        (p) => PipesTokens.contrastRatio(p.accent, p.background),
+        3.0,
+      );
     });
   });
 }
