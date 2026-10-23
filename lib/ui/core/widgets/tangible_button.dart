@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pipes/ui/core/theme/app_colors.dart';
+import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 
 class TangibleButton extends StatefulWidget {
   const TangibleButton({
@@ -31,14 +31,16 @@ class _TangibleButtonState extends State<TangibleButton> {
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    final palette = context.palette;
     final isInteractive = widget.onPressed != null;
     final isPressedNow = _isPressed && isInteractive;
 
     final Color buttonBg = widget.backgroundColor ??
-        (widget.isSecondary ? AppColors.surface : AppColors.primary);
+        (widget.isSecondary ? palette.surface : palette.accent);
 
-    final Color textColor = widget.textColor ?? AppColors.headingDark;
-    final Color borderColor = widget.borderColor ?? AppColors.border;
+    final Color textColor = widget.textColor ?? palette.textPrimary;
+    final Color borderColor = widget.borderColor ?? palette.glassBorder;
 
     final double shadowDepth = isPressedNow ? 1.0 : 4.0;
     final double translateY = isPressedNow ? 3.0 : 0.0;
@@ -60,21 +62,21 @@ class _TangibleButtonState extends State<TangibleButton> {
         if (isInteractive) setState(() => _isPressed = false);
       },
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 80),
-        curve: Curves.easeOut,
+        duration: tokens.motion.fast,
+        curve: tokens.curves.easeOutCubic,
         transform: Matrix4.translationValues(0, translateY, 0),
         height: widget.height,
         width: double.infinity,
         decoration: BoxDecoration(
           color: buttonBg,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(tokens.radius.md),
           border: Border.all(
             color: borderColor,
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.headingDark.withValues(alpha: 0.12),
+              color: palette.textPrimary.withValues(alpha: 0.12),
               offset: Offset(0, shadowDepth),
               blurRadius: isPressedNow ? 1.0 : 4.0,
             ),
@@ -84,11 +86,7 @@ class _TangibleButtonState extends State<TangibleButton> {
         child: Text(
           widget.text,
           textAlign: TextAlign.center,
-          style: TextStyle(
-            color: textColor,
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-          ),
+          style: tokens.text.button.copyWith(color: textColor),
         ),
       ),
     );

@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pipes/ui/core/theme/app_colors.dart';
+import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/features/game/views/game_view.dart';
 import 'package:pipes/ui/providers.dart';
 
@@ -23,34 +23,38 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
   Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
     final state = ref.watch(homeViewModelProvider);
-    AppColors.currentTheme = settings.theme;
+    final palette = context.palette;
+    final tokens = context.tokens;
     final highestCompleted = state.progress?.highestLevelCompleted ?? 0;
     final unlockedLevel = math.max(highestCompleted + 1, state.progress?.currentLevel ?? 1);
     final int totalLevelsToShow = unlockedLevel + 10;
 
     return Scaffold(
-      backgroundColor: AppColors.bg,
+      backgroundColor: palette.background,
       body: SafeArea(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(
+                horizontal: tokens.spacing.md,
+                vertical: tokens.spacing.sm,
+              ),
               child: Row(
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: EdgeInsets.all(tokens.spacing.md),
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: palette.surface,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: AppColors.border,
+                          color: palette.glassBorder,
                           width: 1.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.headingDark.withValues(alpha: 0.08),
+                            color: palette.textPrimary.withValues(alpha: 0.08),
                             offset: const Offset(0, 3),
                             blurRadius: 4,
                           ),
@@ -59,7 +63,7 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
                         size: 18,
-                        color: AppColors.headingDark,
+                        color: palette.textPrimary,
                       ),
                     ),
                   ),
@@ -67,25 +71,28 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
                     child: Center(
                       child: Text(
                         'Levels',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.headingDark,
+                        style: tokens.text.title.copyWith(
+                          color: palette.textPrimary,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 44),
+                  SizedBox(width: tokens.spacing.xl),
                 ],
               ),
             ),
             Expanded(
               child: GridView.builder(
-                padding: const EdgeInsets.fromLTRB(24, 24, 28, 28),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                padding: EdgeInsets.fromLTRB(
+                  tokens.spacing.xl,
+                  tokens.spacing.xl,
+                  tokens.spacing.xxl,
+                  tokens.spacing.xxl,
+                ),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
+                  crossAxisSpacing: tokens.spacing.lg,
+                  mainAxisSpacing: tokens.spacing.lg,
                   childAspectRatio: 1.0,
                 ),
                 itemCount: totalLevelsToShow,
@@ -118,36 +125,39 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
     required bool isCurrent,
     required bool isLocked,
   }) {
-    Color cardBg = AppColors.surface;
-    Color textColor = AppColors.headingDark;
-    Color borderColor = AppColors.border;
+    final palette = context.palette;
+    final tokens = context.tokens;
+
+    Color cardBg = palette.surface;
+    Color textColor = palette.textPrimary;
+    Color borderColor = palette.glassBorder;
     Widget content;
     bool isClickable = !isLocked;
 
     if (isCompleted) {
-      cardBg = const Color(0xFF10B981);
+      cardBg = palette.success;
       textColor = Colors.white;
-      borderColor = const Color(0xFF059669);
+      borderColor = palette.success;
       content = Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
+        children: [
           Icon(
             Icons.check_circle_rounded,
             size: 20,
             color: Colors.white,
           ),
-          SizedBox(height: 2),
+          SizedBox(height: tokens.spacing.xs),
         ],
       );
     } else if (isCurrent) {
-      cardBg = AppColors.primary;
-      textColor = AppColors.headingDark;
-      borderColor = AppColors.accent;
+      cardBg = palette.accent;
+      textColor = palette.textPrimary;
+      borderColor = palette.accent;
       content = const SizedBox.shrink();
     } else {
-      cardBg = AppColors.surface.withValues(alpha: 0.5);
-      textColor = AppColors.subtext;
-      borderColor = AppColors.border.withValues(alpha: 0.4);
+      cardBg = palette.surface.withValues(alpha: 0.5);
+      textColor = palette.textSecondary;
+      borderColor = palette.glassBorder.withValues(alpha: 0.4);
       content = const SizedBox.shrink();
     }
 
@@ -165,17 +175,17 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
             }
           : null,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
+        duration: tokens.motion.fast,
         decoration: BoxDecoration(
           color: cardBg,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(tokens.radius.md),
           border: Border.all(
             color: borderColor,
             width: isCurrent ? 2.5 : 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.headingDark.withValues(alpha: 0.06),
+              color: palette.textPrimary.withValues(alpha: 0.06),
               offset: const Offset(0, 3),
               blurRadius: 4,
             ),
@@ -186,14 +196,14 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
             ? Icon(
                 Icons.lock_rounded,
                 size: 20,
-                color: AppColors.subtext.withValues(alpha: 0.6),
+                color: palette.textSecondary.withValues(alpha: 0.6),
               )
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     '$levelNumber',
-                    style: TextStyle(
+                    style: tokens.text.body.copyWith(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: textColor,

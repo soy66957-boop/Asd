@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
-import 'package:pipes/ui/core/theme/app_colors.dart';
-import 'package:pipes/ui/core/widgets/tangible_button.dart';
+import 'package:pipes/ui/core/theme/pipes_tokens.dart';
+import 'package:pipes/ui/core/widgets/tangible_button.dart'
 import 'package:pipes/ui/core/url_launcher.dart';
 import 'package:pipes/ui/features/game/views/game_view.dart';
 import 'package:pipes/ui/features/how_to_play/views/how_to_play_view.dart';
@@ -30,23 +30,25 @@ class _HomeViewState extends ConsumerState<HomeView> {
     double iconSize = 20,
     Color? iconColor,
   }) {
+    final palette = context.palette;
+    final tokens = context.tokens;
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
         onTap();
       },
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(tokens.spacing.md),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: palette.surface,
           shape: BoxShape.circle,
           border: Border.all(
-            color: AppColors.border,
+            color: palette.glassBorder,
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.headingDark.withValues(alpha: 0.08),
+              color: palette.textPrimary.withValues(alpha: 0.08),
               offset: const Offset(0, 3),
               blurRadius: 4,
             ),
@@ -55,7 +57,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
         child: Icon(
           icon,
           size: iconSize,
-          color: iconColor ?? AppColors.headingDark,
+          color: iconColor ?? palette.textPrimary,
         ),
       ),
     );
@@ -65,13 +67,17 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
     final state = ref.watch(homeViewModelProvider);
-    AppColors.currentTheme = settings.theme;
+    final palette = context.palette;
+    final tokens = context.tokens;
 
     return Scaffold(
-      backgroundColor: AppColors.bg,
+      backgroundColor: palette.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          padding: EdgeInsets.symmetric(
+            horizontal: tokens.spacing.xl,
+            vertical: tokens.spacing.xl,
+          ),
           child: Column(
             children: [
               Row(
@@ -79,26 +85,27 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 children: [
                   _circleButton(
                     icon: Icons.star_rounded,
-                    iconColor: const Color(0xFFFF9800),
+                    iconColor: palette.star,
                     onTap: () => openUrl('https://github.com/sidhant947/Pipes'),
                   ),
                   if (state.progress != null)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: tokens.spacing.xl,
+                        vertical: tokens.spacing.sm,
+                      ),
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(30),
+                        color: palette.surface,
+                        borderRadius: BorderRadius.circular(tokens.radius.pill),
                         border: Border.all(
-                          color: AppColors.border,
+                          color: palette.glassBorder,
                           width: 1.0,
                         ),
                       ),
                       child: Text(
                         'Level ${state.progress!.currentLevel}',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.headingDark,
+                        style: tokens.text.label.copyWith(
+                          color: palette.textPrimary,
                         ),
                       ),
                     )
@@ -122,13 +129,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
                         await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => GameView(levelNumber: state.progress?.currentLevel ?? 1),
+                            builder: (context) => GameView(
+                              levelNumber: state.progress?.currentLevel ?? 1,
+                            ),
                           ),
                         );
                         ref.read(homeViewModelProvider.notifier).loadProgress();
                       },
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: tokens.spacing.lg),
               TangibleButton(
                 text: 'Levels',
                 isSecondary: true,
@@ -142,13 +151,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   ref.read(homeViewModelProvider.notifier).loadProgress();
                 },
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: tokens.spacing.lg),
               TangibleButton(
                 text: 'Random',
                 isSecondary: true,
                 onPressed: () => _showDifficultyDialog(context),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: tokens.spacing.lg),
               TangibleButton(
                 text: 'How to Play',
                 isSecondary: true,
@@ -159,7 +168,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: tokens.spacing.lg),
               TangibleButton(
                 text: 'Settings',
                 isSecondary: true,
@@ -186,6 +195,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
       'Expert',
       'Master',
     ];
+    final palette = context.palette;
+    final tokens = context.tokens;
 
     showDialog(
       context: context,
@@ -193,14 +204,17 @@ class _HomeViewState extends ConsumerState<HomeView> {
         backgroundColor: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
-            color: AppColors.bg,
-            borderRadius: BorderRadius.circular(20),
+            color: palette.background,
+            borderRadius: BorderRadius.circular(tokens.radius.lg),
             border: Border.all(
-              color: AppColors.border,
+              color: palette.glassBorder,
               width: 1.0,
             ),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          padding: EdgeInsets.symmetric(
+            horizontal: tokens.spacing.xl,
+            vertical: tokens.spacing.xl,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -208,29 +222,26 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   'Choose Difficulty',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.headingDark,
+                  style: tokens.text.title.copyWith(
+                    color: palette.textPrimary,
                   ),
                 ),
               ),
-              const SizedBox(height: 6),
+              SizedBox(height: tokens.spacing.sm),
               FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(
                   'Play a dynamically generated Pipes puzzle.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AppColors.subtext,
+                  style: tokens.text.caption.copyWith(
+                    color: palette.textSecondary,
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: tokens.spacing.xl),
               for (final stage in stages)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
+                  padding: EdgeInsets.only(bottom: tokens.spacing.md),
                   child: TangibleButton(
                     text: stage,
                     height: 44,
@@ -250,15 +261,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     },
                   ),
                 ),
-              const SizedBox(height: 6),
+              SizedBox(height: tokens.spacing.sm),
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'Cancel',
-                  style: TextStyle(
-                    color: AppColors.subtext,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                  style: tokens.text.label.copyWith(
+                    color: palette.textSecondary,
                   ),
                 ),
               ),

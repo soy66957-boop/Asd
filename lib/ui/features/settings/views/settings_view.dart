@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package/flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/domain/models/app_settings.dart';
-import 'package:pipes/ui/core/theme/app_colors.dart';
+import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/core/widgets/tangible_button.dart';
 import 'package:pipes/ui/providers.dart';
 
@@ -12,14 +12,19 @@ class SettingsView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
+    final palette = context.palette;
+    final tokens = context.tokens;
 
     return Scaffold(
-      backgroundColor: AppColors.bg,
+      backgroundColor: palette.background,
       body: SafeArea(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: EdgeInsets.symmetric(
+                horizontal: tokens.spacing.lg,
+                vertical: tokens.spacing.md,
+              ),
               child: Row(
                 children: [
                   GestureDetector(
@@ -31,12 +36,15 @@ class SettingsView extends ConsumerWidget {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: palette.surface,
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.border, width: 1.5),
+                        border: Border.all(
+                          color: palette.glassBorder,
+                          width: 1.5,
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.headingDark.withValues(alpha: 0.08),
+                            color: palette.textPrimary.withValues(alpha: 0.08),
                             offset: const Offset(0, 3),
                             blurRadius: 4,
                           ),
@@ -45,7 +53,7 @@ class SettingsView extends ConsumerWidget {
                       child: Icon(
                         Icons.close_rounded,
                         size: 20,
-                        color: AppColors.headingDark,
+                        color: palette.textPrimary,
                       ),
                     ),
                   ),
@@ -53,37 +61,37 @@ class SettingsView extends ConsumerWidget {
                     child: Center(
                       child: Text(
                         'Settings',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.headingDark,
+                        style: tokens.text.title.copyWith(
+                          color: palette.textPrimary,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 44),
+                  SizedBox(width: tokens.spacing.xl),
                 ],
               ),
             ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                padding: EdgeInsets.symmetric(
+                  horizontal: tokens.spacing.xl,
+                  vertical: tokens.spacing.md,
+                ),
                 children: [
                   Text(
                     'Theme',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.headingDark,
+                    style: tokens.text.label.copyWith(
+                      color: palette.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: tokens.spacing.md),
                   SizedBox(
                     height: 46,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: AppThemePreset.values.length,
-                      separatorBuilder: (context, index) => const SizedBox(width: 10),
+                      separatorBuilder: (context, index) =>
+                          SizedBox(width: tokens.spacing.md),
                       itemBuilder: (context, index) {
                         final preset = AppThemePreset.values[index];
                         final isSelected = settings.theme == preset;
@@ -95,7 +103,7 @@ class SettingsView extends ConsumerWidget {
                                 .setTheme(preset);
                           },
                           child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 150),
+                            duration: tokens.motion.fast,
                             width: 44,
                             height: 44,
                             decoration: BoxDecoration(
@@ -151,12 +159,12 @@ class SettingsView extends ConsumerWidget {
                     text: 'Reset Progress',
                     isSecondary: true,
                     height: 48,
-                    backgroundColor: AppColors.surface,
-                    textColor: const Color(0xFFFF5252),
-                    borderColor: const Color(0x55FF5252),
+                    backgroundColor: palette.surface,
+                    textColor: palette.danger,
+                    borderColor: palette.danger.withValues(alpha: 0.33),
                     onPressed: () => _confirmReset(context, ref),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: tokens.spacing.lg),
                 ],
               ),
             ),
@@ -167,10 +175,12 @@ class SettingsView extends ConsumerWidget {
   }
 
   Widget _divider() {
+    final palette = context.palette;
+    final tokens = context.tokens;
     return Container(
       height: 1,
-      color: AppColors.border.withValues(alpha: 0.25),
-      margin: const EdgeInsets.symmetric(vertical: 18),
+      color: palette.glassBorder.withValues(alpha: 0.25),
+      margin: EdgeInsets.symmetric(vertical: tokens.spacing.xl),
     );
   }
 
@@ -179,6 +189,8 @@ class SettingsView extends ConsumerWidget {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
+    final palette = context.palette;
+    final tokens = context.tokens;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -186,37 +198,37 @@ class SettingsView extends ConsumerWidget {
         onChanged(!value);
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
+        padding: EdgeInsets.symmetric(vertical: tokens.spacing.sm),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               label,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.headingDark,
+              style: tokens.text.label.copyWith(
+                color: palette.textPrimary,
               ),
             ),
             AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
+              duration: tokens.motion.base,
               width: 48,
               height: 28,
-              padding: const EdgeInsets.all(3),
+              padding: EdgeInsets.all(tokens.spacing.xs),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(tokens.radius.pill),
                 color: value
-                    ? AppColors.accent
-                    : AppColors.headingDark.withValues(alpha: 0.12),
+                    ? palette.accent
+                    : palette.textPrimary.withValues(alpha: 0.12),
                 border: Border.all(
-                  color: value ? AppColors.accent : AppColors.border,
+                  color: value ? palette.accent : palette.glassBorder,
                   width: 1.0,
                 ),
               ),
               child: AnimatedAlign(
-                duration: const Duration(milliseconds: 180),
-                curve: Curves.easeInOut,
-                alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+                duration: tokens.motion.base,
+                curve: tokens.curves.easeOutCubic,
+                alignment: value
+                    ? Alignment.centerRight
+                    : Alignment.centerLeft,
                 child: Container(
                   width: 20,
                   height: 20,
@@ -241,6 +253,8 @@ class SettingsView extends ConsumerWidget {
   }
 
   void _confirmReset(BuildContext context, WidgetRef ref) {
+    final palette = context.palette;
+    final tokens = context.tokens;
     showDialog(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.75),
@@ -249,37 +263,32 @@ class SettingsView extends ConsumerWidget {
         elevation: 0,
         child: Container(
           decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(20),
+            color: palette.surface,
+            borderRadius: BorderRadius.circular(tokens.radius.lg),
             border: Border.all(
-              color: const Color(0xFFFF5252).withValues(alpha: 0.5),
+              color: palette.danger.withValues(alpha: 0.5),
               width: 1.5,
             ),
           ),
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(tokens.spacing.xl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 'Reset progress?',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.headingDark,
+                style: tokens.text.title.copyWith(
+                  color: palette.textPrimary,
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: tokens.spacing.md),
               Text(
                 'All solved puzzles, best times, and saved games will be permanently erased.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.normal,
-                  color: AppColors.subtext,
-                  height: 1.35,
+                style: tokens.text.body.copyWith(
+                  color: palette.textSecondary,
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: tokens.spacing.xl),
               Row(
                 children: [
                   Expanded(
@@ -290,13 +299,13 @@ class SettingsView extends ConsumerWidget {
                       onPressed: () => Navigator.pop(dialogContext),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: tokens.spacing.md),
                   Expanded(
                     child: TangibleButton(
                       text: 'Reset',
-                      backgroundColor: const Color(0xFFD32F2F),
+                      backgroundColor: palette.danger,
                       textColor: Colors.white,
-                      borderColor: const Color(0xFFFF5252),
+                      borderColor: palette.danger,
                       height: 44,
                       onPressed: () async {
                         await ref

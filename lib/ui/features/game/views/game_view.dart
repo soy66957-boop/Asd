@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
-import 'package:pipes/ui/core/theme/app_colors.dart';
+import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/core/widgets/pipe_widget.dart';
 import 'package:pipes/ui/core/widgets/tangible_button.dart';
 import 'package:pipes/ui/features/game/view_models/game_view_model.dart';
@@ -64,7 +64,8 @@ class _GameViewState extends ConsumerState<GameView>
   Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
     final state = ref.watch(gameViewModelProvider);
-    AppColors.currentTheme = settings.theme;
+    final palette = context.palette;
+    final tokens = context.tokens;
 
     ref.listen<GameViewModelState>(gameViewModelProvider, (prev, next) {
       if (next.isComplete && !(prev?.isComplete ?? false)) {
@@ -73,16 +74,16 @@ class _GameViewState extends ConsumerState<GameView>
     });
 
     return Scaffold(
-      backgroundColor: AppColors.bg,
+      backgroundColor: palette.background,
       body: SafeArea(
         child: Stack(
           children: [
             Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: tokens.spacing.md,
+                    vertical: tokens.spacing.sm,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -97,10 +98,8 @@ class _GameViewState extends ConsumerState<GameView>
                             ? (state.randomDifficulty ??
                                   widget.randomDifficulty)
                             : 'Level ${widget.levelNumber}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.headingDark,
+                        style: tokens.text.title.copyWith(
+                          color: palette.textPrimary,
                         ),
                       ),
                       _circleButton(
@@ -128,12 +127,12 @@ class _GameViewState extends ConsumerState<GameView>
                             children: [
                               Text(
                                 state.error!,
-                                style: const TextStyle(
-                                  color: Colors.red,
+                                style: TextStyle(
+                                  color: palette.danger,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: tokens.spacing.lg),
                               ElevatedButton(
                                 onPressed: () => ref
                                     .read(gameViewModelProvider.notifier)
@@ -162,10 +161,18 @@ class _GameViewState extends ConsumerState<GameView>
       return const Center(child: CircularProgressIndicator());
     }
 
+    final palette = context.palette;
+    final tokens = context.tokens;
+
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+          padding: EdgeInsets.fromLTRB(
+            tokens.spacing.xl,
+            tokens.spacing.sm,
+            tokens.spacing.xl,
+            tokens.spacing.lg,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -182,7 +189,7 @@ class _GameViewState extends ConsumerState<GameView>
         Expanded(
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(tokens.spacing.lg),
               child: AspectRatio(
                 aspectRatio: 1.0,
                 child: AnimatedBuilder(
@@ -211,7 +218,7 @@ class _GameViewState extends ConsumerState<GameView>
                                     gridSize: level.gridSize,
                                     sourceRow: level.sourceRow,
                                     sourceCol: level.sourceCol,
-                                    waveColor: AppColors.primary,
+                                    waveColor: palette.accent,
                                   ),
                                 ),
                               ),
@@ -233,7 +240,7 @@ class _GameViewState extends ConsumerState<GameView>
                     sourceRow: level.sourceRow,
                     sourceCol: level.sourceCol,
                     hintCell: state.hintCell,
-                    bgColor: AppColors.bg,
+                    bgColor: palette.background,
                     onTileTap: state.isComplete
                         ? null
                         : (r, c) {
@@ -250,11 +257,11 @@ class _GameViewState extends ConsumerState<GameView>
         if (state.isComplete)
           TweenAnimationBuilder<double>(
             tween: Tween<double>(begin: 0.0, end: 1.0),
-            duration: const Duration(milliseconds: 380),
+            duration: tokens.motion.base,
             curve: Curves.easeOutBack,
             builder: (context, value, child) {
               return Transform.translate(
-                offset: Offset(0, 24 * (1.0 - value)),
+                offset: Offset(0, tokens.spacing.lg * (1.0 - value)),
                 child: Opacity(opacity: value.clamp(0.0, 1.0), child: child),
               );
             },
@@ -262,7 +269,7 @@ class _GameViewState extends ConsumerState<GameView>
           )
         else ...[
           if (settings.isHintEnabled) ...[
-            const SizedBox(height: 12),
+            SizedBox(height: tokens.spacing.md),
             GestureDetector(
               onTap: !state.isComplete
                   ? () => ref.read(gameViewModelProvider.notifier).revealHint()
@@ -270,17 +277,20 @@ class _GameViewState extends ConsumerState<GameView>
               child: Opacity(
                 opacity: !state.isComplete ? 1.0 : 0.35,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 10,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: tokens.spacing.xl,
+                    vertical: tokens.spacing.md,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.border, width: 1.5),
+                    color: palette.surface,
+                    borderRadius: BorderRadius.circular(tokens.radius.md),
+                    border: Border.all(
+                      color: palette.glassBorder,
+                      width: 1.5,
+                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.headingDark.withValues(alpha: 0.08),
+                        color: palette.textPrimary.withValues(alpha: 0.08),
                         offset: const Offset(0, 3),
                         blurRadius: 4,
                       ),
@@ -289,18 +299,16 @@ class _GameViewState extends ConsumerState<GameView>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.lightbulb_rounded,
-                        color: Color(0xFFFFCC00),
+                        color: palette.star,
                         size: 18,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: tokens.spacing.sm),
                       Text(
                         'Hint',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.headingDark,
+                        style: tokens.text.label.copyWith(
+                          color: palette.textPrimary,
                         ),
                       ),
                     ],
@@ -310,13 +318,13 @@ class _GameViewState extends ConsumerState<GameView>
             ),
           ],
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: EdgeInsets.symmetric(vertical: tokens.spacing.lg),
             child: Text(
               'Tap any pipe to rotate clockwise',
-              style: TextStyle(fontSize: 12, color: AppColors.subtext),
+              style: tokens.text.caption.copyWith(color: palette.textSecondary),
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: tokens.spacing.xl),
         ],
       ],
     );
@@ -328,6 +336,8 @@ class _GameViewState extends ConsumerState<GameView>
     double iconSize = 20,
     bool enabled = true,
   }) {
+    final palette = context.palette;
+    final tokens = context.tokens;
     return GestureDetector(
       onTap: enabled
           ? () {
@@ -338,20 +348,20 @@ class _GameViewState extends ConsumerState<GameView>
       child: Opacity(
         opacity: enabled ? 1.0 : 0.35,
         child: Container(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(tokens.spacing.md),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: palette.surface,
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.border, width: 1.5),
+            border: Border.all(color: palette.glassBorder, width: 1.5),
             boxShadow: [
               BoxShadow(
-                color: AppColors.headingDark.withValues(alpha: 0.08),
+                color: palette.textPrimary.withValues(alpha: 0.08),
                 offset: const Offset(0, 3),
                 blurRadius: 4,
               ),
             ],
           ),
-          child: Icon(icon, size: iconSize, color: AppColors.headingDark),
+          child: Icon(icon, size: iconSize, color: palette.textPrimary),
         ),
       ),
     );
@@ -364,26 +374,26 @@ class _GameViewState extends ConsumerState<GameView>
   }
 
   Widget _stat(String label, String value, IconData icon) {
+    final palette = context.palette;
+    final tokens = context.tokens;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 15, color: AppColors.headingDark),
-        const SizedBox(height: 3),
+        Icon(icon, size: 15, color: palette.textPrimary),
+        SizedBox(height: tokens.spacing.xs),
         Text(
           value,
-          style: TextStyle(
+          style: tokens.text.body.copyWith(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: AppColors.headingDark,
+            color: palette.textPrimary,
           ),
         ),
-        const SizedBox(height: 1),
+        SizedBox(height: tokens.spacing.xs),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w500,
-            color: AppColors.subtext,
+          style: tokens.text.caption.copyWith(
+            color: palette.textSecondary,
           ),
         ),
       ],
@@ -391,7 +401,8 @@ class _GameViewState extends ConsumerState<GameView>
   }
 
   Widget _verticalDivider() {
-    return Container(width: 1, height: 32, color: AppColors.gridLines);
+    final palette = context.palette;
+    return Container(width: 1, height: 32, color: palette.glassBorder);
   }
 
   Future<void> _onLevelComplete(GameViewModelState state) async {
@@ -402,26 +413,31 @@ class _GameViewState extends ConsumerState<GameView>
   }
 
   Widget _buildCompletionBottomBar(GameViewModelState state) {
+    final palette = context.palette;
+    final tokens = context.tokens;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+      padding: EdgeInsets.fromLTRB(
+        tokens.spacing.xl,
+        tokens.spacing.sm,
+        tokens.spacing.xl,
+        tokens.spacing.lg,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             'Congratulations!',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppColors.headingDark,
+            style: tokens.text.title.copyWith(
+              color: palette.textPrimary,
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: tokens.spacing.md),
           TangibleButton(
             text: state.isRandomMode ? 'Play Again' : 'Next Level',
             height: 42,
-            backgroundColor: AppColors.primary,
-            textColor: AppColors.headingDark,
-            borderColor: AppColors.border,
+            backgroundColor: palette.accent,
+            textColor: palette.textPrimary,
+            borderColor: palette.glassBorder,
             onPressed: () {
               final notifier = ref.read(gameViewModelProvider.notifier);
               if (state.isRandomMode) {
@@ -437,14 +453,14 @@ class _GameViewState extends ConsumerState<GameView>
               }
             },
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: tokens.spacing.md),
           TangibleButton(
             text: 'Home',
             isSecondary: true,
             height: 42,
-            backgroundColor: AppColors.surface,
-            textColor: AppColors.headingDark,
-            borderColor: AppColors.border,
+            backgroundColor: palette.surface,
+            textColor: palette.textPrimary,
+            borderColor: palette.glassBorder,
             onPressed: () => Navigator.pop(context),
           ),
         ],

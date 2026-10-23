@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:pipes/ui/core/theme/app_colors.dart';
+import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 
 class PipeRulesHelper {
   const PipeRulesHelper._();
@@ -61,6 +61,7 @@ class PipePainter extends CustomPainter {
     this.pipeColor,
     this.activeColor,
     this.bgColor,
+    this.palette,
   });
 
   final int mask;
@@ -69,10 +70,7 @@ class PipePainter extends CustomPainter {
   final Color? pipeColor;
   final Color? activeColor;
   final Color? bgColor;
-
-  static const Color defaultOffLight = Color(0xFFCBD5E1);
-  static const Color defaultOffDark = Color(0xFF334155);
-  static const Color defaultWaterColor = Color(0xFF0284C7);
+  final PaletteTokens? palette;
 
   void _drawGeometry(
     Canvas canvas,
@@ -165,9 +163,9 @@ class PipePainter extends CustomPainter {
     final strokeWidth = size.width * 0.26;
     final bulbRadius = size.width * 0.22;
 
-    final isDark = AppColors.currentTheme.isDark;
-    final offColor = pipeColor ?? (isDark ? defaultOffDark : defaultOffLight);
-    final onColor = activeColor ?? defaultWaterColor;
+    final p = palette;
+    final offColor = pipeColor ?? (p?.pipeIdle ?? const Color(0xFF5B6E8F));
+    final onColor = activeColor ?? (p?.pipeFlow ?? const Color(0xFF22D3EE));
     final color = hasWater ? onColor : offColor;
 
     final pipePaint = Paint()
@@ -222,7 +220,8 @@ class PipePainter extends CustomPainter {
         oldDelegate.isSource != isSource ||
         oldDelegate.pipeColor != pipeColor ||
         oldDelegate.activeColor != activeColor ||
-        oldDelegate.bgColor != bgColor;
+        oldDelegate.bgColor != bgColor ||
+        oldDelegate.palette != palette;
   }
 }
 
@@ -232,6 +231,7 @@ class SourceBadgePainter extends CustomPainter {
     this.pipeColor,
     this.activeColor,
     this.bgColor,
+    this.palette,
     this.pulse = 0.0,
   });
 
@@ -239,11 +239,8 @@ class SourceBadgePainter extends CustomPainter {
   final Color? pipeColor;
   final Color? activeColor;
   final Color? bgColor;
+  final PaletteTokens? palette;
   final double pulse;
-
-  static const Color defaultOffLight = Color(0xFFCBD5E1);
-  static const Color defaultOffDark = Color(0xFF334155);
-  static const Color defaultWaterColor = Color(0xFF0284C7);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -252,9 +249,9 @@ class SourceBadgePainter extends CustomPainter {
     final strokeWidth = size.width * 0.26;
     final badgeRadius = strokeWidth * 0.95;
 
-    final isDark = AppColors.currentTheme.isDark;
-    final onColor = activeColor ?? defaultWaterColor;
-    final offColor = pipeColor ?? (isDark ? defaultOffDark : defaultOffLight);
+    final p = palette;
+    final onColor = activeColor ?? (p?.pipeFlow ?? const Color(0xFF22D3EE));
+    final offColor = pipeColor ?? (p?.pipeIdle ?? const Color(0xFF5B6E8F));
     final color = hasWater ? onColor : offColor;
 
     if (hasWater && pulse > 0.0) {
@@ -291,6 +288,7 @@ class SourceBadgePainter extends CustomPainter {
         oldDelegate.pipeColor != pipeColor ||
         oldDelegate.activeColor != activeColor ||
         oldDelegate.bgColor != bgColor ||
+        oldDelegate.palette != palette ||
         oldDelegate.pulse != pulse;
   }
 }
@@ -414,6 +412,8 @@ class _PipeTileState extends State<PipeTile> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    final palette = context.palette;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: widget.onTap == null
@@ -436,13 +436,13 @@ class _PipeTileState extends State<PipeTile> with TickerProviderStateMixin {
                 height: widget.size * 0.88,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFF0284C7).withValues(alpha: 0.22),
+                  color: palette.accent.withValues(alpha: 0.22),
                 ),
               ),
             AnimatedRotation(
               turns: _turns * 0.25,
-              duration: const Duration(milliseconds: 180),
-              curve: Curves.easeOutCubic,
+              duration: tokens.motion.base,
+              curve: tokens.curves.easeOutCubic,
               child: CustomPaint(
                 size: Size(widget.size, widget.size),
                 painter: PipePainter(
@@ -452,6 +452,7 @@ class _PipeTileState extends State<PipeTile> with TickerProviderStateMixin {
                   pipeColor: widget.pipeColor,
                   activeColor: widget.activeColor,
                   bgColor: widget.bgColor,
+                  palette: palette,
                 ),
               ),
             ),
@@ -467,6 +468,7 @@ class _PipeTileState extends State<PipeTile> with TickerProviderStateMixin {
                             pipeColor: widget.pipeColor,
                             activeColor: widget.activeColor,
                             bgColor: widget.bgColor,
+                            palette: palette,
                             pulse: _sourcePulseController!.value,
                           ),
                         );
@@ -479,6 +481,7 @@ class _PipeTileState extends State<PipeTile> with TickerProviderStateMixin {
                         pipeColor: widget.pipeColor,
                         activeColor: widget.activeColor,
                         bgColor: widget.bgColor,
+                        palette: palette,
                       ),
                     ),
           ],
@@ -518,6 +521,7 @@ class PipeGameBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.palette;
     return LayoutBuilder(
       builder: (context, constraints) {
         final boardSize = math.min(constraints.maxWidth, constraints.maxHeight);
@@ -582,6 +586,7 @@ class PipeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.palette;
     return SizedBox(
       width: size,
       height: size,
@@ -594,6 +599,7 @@ class PipeWidget extends StatelessWidget {
           pipeColor: pipeColor,
           activeColor: activeColor,
           bgColor: bgColor,
+          palette: palette,
         ),
       ),
     );
@@ -607,6 +613,7 @@ class PipeLogoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.palette;
     return SizedBox(
       width: size,
       height: size,
@@ -615,7 +622,7 @@ class PipeLogoWidget extends StatelessWidget {
         hasWater: true,
         isSource: true,
         size: size,
-        bgColor: AppColors.surface,
+        bgColor: palette.surface,
       ),
     );
   }

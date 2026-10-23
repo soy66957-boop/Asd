@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pipes/ui/core/theme/app_colors.dart';
-import 'package:pipes/ui/core/widgets/tangible_button.dart';
+import 'package:pipes/ui/core/theme/pipes_tokens.dart';
+import 'package:pipes/ui/core/widgets/tangible_button.dart'
 import 'package:pipes/ui/providers.dart';
 
 class HowToPlayView extends ConsumerWidget {
@@ -10,33 +10,37 @@ class HowToPlayView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
-    AppColors.currentTheme = settings.theme;
+    final palette = context.palette;
+    final tokens = context.tokens;
 
     return Scaffold(
-      backgroundColor: AppColors.bg,
+      backgroundColor: palette.background,
       body: SafeArea(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: EdgeInsets.symmetric(
+                horizontal: tokens.spacing.md,
+                vertical: tokens.spacing.md,
+              ),
               child: Row(
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: EdgeInsets.all(tokens.spacing.md),
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: palette.surface,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: AppColors.border,
+                          color: palette.glassBorder,
                           width: 1.5,
                         ),
                       ),
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
                         size: 18,
-                        color: AppColors.headingDark,
+                        color: palette.textPrimary,
                       ),
                     ),
                   ),
@@ -44,51 +48,56 @@ class HowToPlayView extends ConsumerWidget {
                     child: Center(
                       child: Text(
                         'How to Play',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.headingDark,
+                        style: tokens.text.title.copyWith(
+                          color: palette.textPrimary,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 44),
+                  SizedBox(width: tokens.spacing.xl),
                 ],
               ),
             ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: EdgeInsets.symmetric(
+                  horizontal: tokens.spacing.xl,
+                  vertical: tokens.spacing.lg,
+                ),
                 children: [
                   _guideStep(
                     stepNumber: '1',
                     title: 'Goal',
-                    description: 'Connect every pipe on the grid so water flows from the source to every single pipe.',
+                    description:
+                        'Connect every pipe on the grid so water flows from the source to every single pipe.',
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: tokens.spacing.xl),
                   _guideStep(
                     stepNumber: '2',
                     title: 'Water Source',
-                    description: 'The source is at the center tile. Water automatically flows through any aligned, matching pipe connections.',
+                    description:
+                        'The source is at the center tile. Water automatically flows through any aligned, matching pipe connections.',
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: tokens.spacing.xl),
                   _guideStep(
                     stepNumber: '3',
                     title: 'Rotate Pipes',
-                    description: 'Tap any pipe tile to rotate it 90° clockwise. Align each pipe with adjacent neighbors to expand the water circuit.',
+                    description:
+                        'Tap any pipe tile to rotate it 90° clockwise. Align each pipe with adjacent neighbors to expand the water circuit.',
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: tokens.spacing.xl),
                   _guideStep(
                     stepNumber: '4',
                     title: 'Completion',
-                    description: 'The puzzle is completed when all pipes are connected to the source without any loose, leaking ends.',
+                    description:
+                        'The puzzle is completed when all pipes are connected to the source without any loose, leaking ends.',
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: tokens.spacing.xxl),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(tokens.spacing.xl),
               child: TangibleButton(
                 text: 'Got it',
                 height: 44,
@@ -106,37 +115,36 @@ class HowToPlayView extends ConsumerWidget {
     required String title,
     required String description,
   }) {
+    final palette = context.palette;
+    final tokens = context.tokens;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '$stepNumber.',
-          style: TextStyle(
+          style: tokens.text.label.copyWith(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            color: AppColors.headingDark,
+            color: palette.textPrimary,
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: tokens.spacing.md),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.headingDark,
+                style: tokens.text.label.copyWith(
+                  color: palette.textPrimary,
                 ),
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: tokens.spacing.xs),
               Text(
                 description,
-                style: TextStyle(
-                  fontSize: 14,
+                style: tokens.text.body.copyWith(
+                  color: palette.textSecondary,
                   height: 1.4,
-                  color: AppColors.subtext,
                 ),
               ),
             ],
