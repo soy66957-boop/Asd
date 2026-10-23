@@ -290,34 +290,8 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     double newRatio = _contrastRatio(adjusted, background);
     if (newRatio >= minRatio) return adjusted;
 
-    // Robust fallback: binary search on luminance by interpolating toward white/black in HSL space.
-    // This guarantees convergence because white has luminance 1.0, black has 0.0.
-    Color target = needLighter ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
-    Color low = adjusted;
-    Color high = target;
-    for (int i = 0; i < 50; i++) {
-      // Interpolate in HSL space for better color preservation
-      final lowHsl = HSLColor.fromColor(low);
-      final highHsl = HSLColor.fromColor(high);
-      final midHsl = HSLColor.fromAHSL(
-        1.0,
-        (lowHsl.hue + highHsl.hue) / 2,
-        (lowHsl.saturation + highHsl.saturation) / 2,
-        (lowHsl.lightness + highHsl.lightness) / 2,
-      );
-      Color mid = midHsl.toColor();
-      newRatio = _contrastRatio(mid, background);
-      if (newRatio >= minRatio) {
-        high = mid;
-      } else {
-        low = mid;
-      }
-      // Check if we've converged
-      if ((highHsl.lightness - lowHsl.lightness).abs() < 0.001) {
-        return high;
-      }
-    }
-    return high;
+    // Guaranteed fallback: white on dark, black on light always meets WCAG AA
+    return needLighter ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
   }
 
   static double _contrastRatio(Color foreground, Color background) {
