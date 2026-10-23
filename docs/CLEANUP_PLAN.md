@@ -7,7 +7,7 @@ Each item: file, line, what, why safe to remove.
 ## Safe to Remove (Auto-approve)
 
 | # | File | Line | What | Why Safe |
-|---|------|------|------|----------|
+|---|------|------|------|------|----------|
 | 1 | `android/app/build.gradle.kts` | 33-34 | `TODO: Specify your own unique Application ID` comment | Boilerplate comment, app ID already set |
 | 2 | `android/app/build.gradle.kts` | 54-55 | `TODO: Add your own signing config for the release build` comment | Boilerplate comment, signing config exists |
 | 3 | `lib/ui/core/widgets/pipe_widget.dart` | 625-644 | `ConfettiPainter` class | Unused - no confetti trigger in game_view.dart |
@@ -23,17 +23,17 @@ Each item: file, line, what, why safe to remove.
 
 ---
 
-## Needs My Decision
+## Cleanup Decisions Applied (2025-10-22)
 
-| # | File | Line | What | Question |
-|---|------|------|------|----------|
-| A | `README.md` | 9 | Ko-fi badge/button (`<a href='https://ko-fi.com/M4M01C1R6J'...`) | Plain link to developer page. Remove? |
-| B | `lib/ui/features/home/views/home_view.dart` | 193 | Ko-fi link in "Become a Backer" dialog (`https://ko-fi.com/sidhant947`) | Button in dialog. Remove dialog entirely or just the link? |
-| C | `lib/ui/features/game/views/game_view.dart` | 467 | Ko-fi link in win dialog (`https://ko-fi.com/sidhant947`) | Button in win dialog. Remove? |
-| D | `lib/ui/features/settings/views/settings_view.dart` | 158 | Liberapay donate link (`https://liberapay.com/sidhant947/donate`) | "Support the Developer" section. Remove entire section? |
-| E | `.github/FUNDING.yml` | 3-15 | All funding platform entries (Ko-fi, Liberapay, etc.) | GitHub-native funding config. Keep or remove? |
-| F | `.github/workflows/test.yml` | - | Entire workflow (manual build with keystore secrets) | Dev-only release build workflow. Delete? |
-| G | `fastlane/` | - | Entire directory (Play Store metadata) | Store deployment config. Keep for releases? |
+| # | File | Line | What | Decision | Status |
+|---|------|------|------|----------|--------|
+| A | `README.md` | 9 | Ko-fi badge/button | Remove badge, keep credit line | ✅ Done |
+| B | `lib/ui/features/home/views/home_view.dart` | - | "Become a Backer" dialog with Ko-fi link | Remove entire dialog & heart button | ✅ Done |
+| C | `lib/ui/features/game/views/game_view.dart` | - | Ko-fi link in win dialog | Remove "Buy me a Coffee" button | ✅ Done |
+| D | `lib/ui/features/settings/views/settings_view.dart` | - | Liberapay donate link | Remove "Support the Developer" section | ✅ Done |
+| E | `.github/FUNDING.yml` | - | All funding platform entries | Delete file | ✅ Done |
+| F | `.github/workflows/test.yml` | - | Entire workflow | Delete file | ✅ Done |
+| G | `fastlane/` | - | Entire directory | Keep (for releases) | Kept |
 
 ---
 

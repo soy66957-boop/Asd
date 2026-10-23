@@ -104,11 +104,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     )
                   else
                     const SizedBox.shrink(),
-                  _circleButton(
-                    icon: Icons.favorite_rounded,
-                    iconColor: const Color(0xFFEF4444),
-                    onTap: _openKoFiUrl,
-                  ),
+                  // Heart button removed (was donation link)
                 ],
               ),
               const Spacer(flex: 3),
@@ -180,10 +176,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
         ),
       ),
     );
-  }
-
-  Future<void> _openKoFiUrl() async {
-    await openUrl('https://ko-fi.com/sidhant947');
   }
 
   void _showDifficultyDialog(BuildContext context) {

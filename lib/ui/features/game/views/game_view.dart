@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:pipes/ui/core/theme/app_colors.dart';
 import 'package:pipes/ui/core/widgets/pipe_widget.dart';
 import 'package:pipes/ui/core/widgets/tangible_button.dart';
-import 'package:pipes/ui/core/url_launcher.dart';
 import 'package:pipes/ui/features/game/view_models/game_view_model.dart';
 import 'package:pipes/ui/providers.dart';
 
@@ -448,23 +447,9 @@ class _GameViewState extends ConsumerState<GameView>
             borderColor: AppColors.border,
             onPressed: () => Navigator.pop(context),
           ),
-          const SizedBox(height: 8),
-          TangibleButton(
-            text: 'Buy me a Coffee',
-            isSecondary: true,
-            height: 42,
-            backgroundColor: AppColors.surface,
-            textColor: AppColors.headingDark,
-            borderColor: AppColors.border,
-            onPressed: _openKoFiUrl,
-          ),
         ],
       ),
     );
-  }
-
-  Future<void> _openKoFiUrl() async {
-    await openUrl('https://ko-fi.com/sidhant947');
   }
 }
 
