@@ -267,7 +267,9 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
 
     final bgLum = _relativeLuminance(background);
     final fgLum = _relativeLuminance(foreground);
-    final needLighter = fgLum < bgLum;
+    // If foreground is lighter than background, make it EVEN LIGHTER.
+    // If foreground is darker than background, make it EVEN DARKER.
+    final needLighter = fgLum > bgLum;
 
     Color adjusted = foreground;
     for (int i = 0; i < 100; i++) {
