@@ -290,20 +290,33 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     double newRatio = _contrastRatio(adjusted, background);
     if (newRatio >= minRatio) return adjusted;
 
-    // Robust fallback: interpolate toward white (if needLighter) or black (if darker).
+    // Robust fallback: binary search on luminance by interpolating toward white/black in HSL space.
     // This guarantees convergence because white has luminance 1.0, black has 0.0.
     Color target = needLighter ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
-    Color current = adjusted;
-    for (int i = 0; i < 100; i++) {
-      double t = (i + 1) / 100.0; // 1% to 100%
-      int nr = (current.r + (target.r - current.r) * t).round();
-      int ng = (current.g + (target.g - current.g) * t).round();
-      int nb = (current.b + (target.b - current.b) * t).round();
-      Color candidate = Color.fromARGB(255, nr, ng, nb);
-      newRatio = _contrastRatio(candidate, background);
-      if (newRatio >= minRatio) return candidate;
+    Color low = adjusted;
+    Color high = target;
+    for (int i = 0; i < 50; i++) {
+      // Interpolate in HSL space for better color preservation
+      final lowHsl = HSLColor.fromColor(low);
+      final highHsl = HSLColor.fromColor(high);
+      final midHsl = HSLColor(
+        lightness: (lowHsl.lightness + highHsl.lightness) / 2,
+        saturation: (lowHsl.saturation + highHsl.saturation) / 2,
+        hue: (lowHsl.hue + highHsl.hue) / 2,
+      );
+      Color mid = midHsl.toColor();
+      newRatio = _contrastRatio(mid, background);
+      if (newRatio >= minRatio) {
+        high = mid;
+      } else {
+        low = mid;
+      }
+      // Check if we've converged
+      if ((highHsl.lightness - lowHsl.lightness).abs() < 0.001) {
+        return high;
+      }
     }
-    return target;
+    return high;
   }
 
   static double _contrastRatio(Color foreground, Color background) {
