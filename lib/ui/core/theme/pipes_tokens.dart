@@ -397,7 +397,7 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     const textPrimary = Color(0xFF0F1B2D);
     const baseTextSecondary = Color(0xFF475569);
     const basePipeIdle = Color(0xFF6B7C99);
-    final accent = _getLightAccent(id, hue);
+    final baseAccent = _getLightAccent(id, hue);
     const success = Color(0xFF059669);
     const danger = Color(0xFFDC2626);
     const star = Color(0xFFB45309);
@@ -407,7 +407,7 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     // Ensure contrast for pipeIdle on boardSurface (3:1)
     final pipeIdle = ensureContrast(basePipeIdle, surface, 3.0);
     // Ensure contrast for accent on background (3:1 for UI elements)
-    final accent = ensureContrast(accent, background, 3.0);
+    final accent = ensureContrast(baseAccent, background, 3.0);
 
     return PaletteTokens(
       id: '${id}Light',
