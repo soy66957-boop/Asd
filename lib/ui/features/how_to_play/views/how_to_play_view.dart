@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
-import 'package:pipes/ui/core/widgets/tangible_button.dart'
+import 'package:pipes/ui/core/widgets/tangible_button.dart';
 import 'package:pipes/ui/providers.dart';
 
 class HowToPlayView extends ConsumerWidget {
@@ -66,6 +66,7 @@ class HowToPlayView extends ConsumerWidget {
                 ),
                 children: [
                   _guideStep(
+                    context: context,
                     stepNumber: '1',
                     title: 'Goal',
                     description:
@@ -73,6 +74,7 @@ class HowToPlayView extends ConsumerWidget {
                   ),
                   SizedBox(height: tokens.spacing.xl),
                   _guideStep(
+                    context: context,
                     stepNumber: '2',
                     title: 'Water Source',
                     description:
@@ -80,6 +82,7 @@ class HowToPlayView extends ConsumerWidget {
                   ),
                   SizedBox(height: tokens.spacing.xl),
                   _guideStep(
+                    context: context,
                     stepNumber: '3',
                     title: 'Rotate Pipes',
                     description:
@@ -87,6 +90,7 @@ class HowToPlayView extends ConsumerWidget {
                   ),
                   SizedBox(height: tokens.spacing.xl),
                   _guideStep(
+                    context: context,
                     stepNumber: '4',
                     title: 'Completion',
                     description:
@@ -111,6 +115,7 @@ class HowToPlayView extends ConsumerWidget {
   }
 
   Widget _guideStep({
+    required BuildContext context,
     required String stepNumber,
     required String title,
     required String description,

@@ -6,48 +6,48 @@ import 'package:flutter/material.dart';
 
 /// Spacing scale (multiples of 4)
 class SpacingTokens {
-  const SpacingTokens._();
+  const SpacingTokens();
 
-  static const double xs = 4;
-  static const double sm = 8;
-  static const double md = 12;
-  static const double lg = 16;
-  static const double xl = 24;
-  static const double xxl = 32;
+  double get xs => 4;
+  double get sm => 8;
+  double get md => 12;
+  double get lg => 16;
+  double get xl => 24;
+  double get xxl => 32;
 }
 
 /// Border radius scale
 class RadiusTokens {
-  const RadiusTokens._();
+  const RadiusTokens();
 
-  static const double sm = 12;
-  static const double md = 20;
-  static const double lg = 28;
-  static const double pill = 9999;
+  double get sm => 12;
+  double get md => 20;
+  double get lg => 28;
+  double get pill => 9999;
 }
 
 /// Motion duration scale
 class MotionTokens {
-  const MotionTokens._();
+  const MotionTokens();
 
-  static const Duration fast = Duration(milliseconds: 120);
-  static const Duration base = Duration(milliseconds: 220);
-  static const Duration slow = Duration(milliseconds: 420);
+  Duration get fast => const Duration(milliseconds: 120);
+  Duration get base => const Duration(milliseconds: 220);
+  Duration get slow => const Duration(milliseconds: 420);
 }
 
 /// Motion curves
 class CurveTokens {
-  const CurveTokens._();
+  const CurveTokens();
 
-  static const Curve easeOutCubic = Curves.easeOutCubic;
-  static const Curve overshoot = Curves.elasticOut;
+  Curve get easeOutCubic => Curves.easeOutCubic;
+  Curve get overshoot => Curves.elasticOut;
 }
 
 /// Text style scale
 class TextTokens {
-  const TextTokens._();
+  const TextTokens();
 
-  static const TextStyle display = TextStyle(
+  TextStyle get display => const TextStyle(
     fontFamily: 'Outfit',
     fontSize: 32,
     fontWeight: FontWeight.w700,
@@ -55,7 +55,7 @@ class TextTokens {
     letterSpacing: -0.5,
   );
 
-  static const TextStyle title = TextStyle(
+  TextStyle get title => const TextStyle(
     fontFamily: 'Outfit',
     fontSize: 22,
     fontWeight: FontWeight.w600,
@@ -63,14 +63,14 @@ class TextTokens {
     letterSpacing: -0.2,
   );
 
-  static const TextStyle body = TextStyle(
+  TextStyle get body => const TextStyle(
     fontFamily: 'Outfit',
     fontSize: 15,
     fontWeight: FontWeight.w400,
     height: 1.5,
   );
 
-  static const TextStyle label = TextStyle(
+  TextStyle get label => const TextStyle(
     fontFamily: 'Outfit',
     fontSize: 13,
     fontWeight: FontWeight.w500,
@@ -78,7 +78,7 @@ class TextTokens {
     letterSpacing: 0.1,
   );
 
-  static const TextStyle button = TextStyle(
+  TextStyle get button => const TextStyle(
     fontFamily: 'Outfit',
     fontSize: 15,
     fontWeight: FontWeight.w600,
@@ -86,7 +86,7 @@ class TextTokens {
     letterSpacing: 0.2,
   );
 
-  static const TextStyle caption = TextStyle(
+  TextStyle get caption => const TextStyle(
     fontFamily: 'Outfit',
     fontSize: 11,
     fontWeight: FontWeight.w400,
@@ -210,11 +210,11 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
 
   static PipesTokens createDefault() {
     return PipesTokens(
-      spacing: const SpacingTokens._(),
-      radius: const RadiusTokens._(),
-      motion: const MotionTokens._(),
-      curves: const CurveTokens._(),
-      text: const TextTokens._(),
+      spacing: const SpacingTokens(),
+      radius: const RadiusTokens(),
+      motion: const MotionTokens(),
+      curves: const CurveTokens(),
+      text: const TextTokens(),
       palettes: _buildAllPalettes(),
       currentPaletteId: 'pastelSky',
       themeMode: ThemeMode.dark,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package/flutter/services.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/domain/models/app_settings.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
@@ -141,9 +141,10 @@ class SettingsView extends ConsumerWidget {
                     ),
                   ),
 
-                  _divider(),
+                  _divider(context),
 
                   _gameToggle(
+                    context,
                     label: 'Hints',
                     value: settings.isHintEnabled,
                     onChanged: (val) {
@@ -153,7 +154,7 @@ class SettingsView extends ConsumerWidget {
                     },
                   ),
 
-                  _divider(),
+                  _divider(context),
 
                   TangibleButton(
                     text: 'Reset Progress',
@@ -174,7 +175,7 @@ class SettingsView extends ConsumerWidget {
     );
   }
 
-  Widget _divider() {
+  Widget _divider(BuildContext context) {
     final palette = context.palette;
     final tokens = context.tokens;
     return Container(
@@ -184,7 +185,8 @@ class SettingsView extends ConsumerWidget {
     );
   }
 
-  Widget _gameToggle({
+  Widget _gameToggle(
+    BuildContext context, {
     required String label,
     required bool value,
     required ValueChanged<bool> onChanged,

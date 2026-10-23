@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
-import 'package:pipes/ui/core/widgets/tangible_button.dart'
+import 'package:pipes/ui/core/widgets/tangible_button.dart';
 import 'package:pipes/ui/core/url_launcher.dart';
 import 'package:pipes/ui/features/game/views/game_view.dart';
 import 'package:pipes/ui/features/how_to_play/views/how_to_play_view.dart';
