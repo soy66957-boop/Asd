@@ -35,3 +35,6 @@ Never claim something works without a green CI run. Show real output (run URL, a
 - CI `analyze` job enforces `flutter_lints` + these conventions via custom lints (to be added in Phase 2).
 - Code review checks for violations.
 - Any violation = request changes, no exceptions.
+
+## 8. No Local Flutter/Dart
+Never download, install, or run a local Flutter or Dart SDK. The official arm64 binaries cannot run on Android. CI on GitHub is the ONLY compiler and test runner. To see test failures, read the CI job log through the GitHub API.

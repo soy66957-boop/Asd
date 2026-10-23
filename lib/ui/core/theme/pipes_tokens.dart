@@ -332,10 +332,10 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     // background = hue, 40% sat, 7% light
     // surface = hue, 35%, 11%
     // glass = white @ 8% with 1px border of white @ 14%
-    // text primary #E8F1FF, text secondary #9FB3CF
+    // text primary #E8F1FF, text secondary #9FB3CF (ensure 4.5:1 on background)
     // accent: bright accent per spec (ensure 3:1 on background for UI)
     // success #34D399, danger #FB7185, star #FBBF24
-    // pipeIdle #5B6E8F, pipeFlow = accent, pipeGlow = accent @ 40%
+    // pipeIdle #5B6E8F (ensure 3:1 on boardSurface), pipeFlow = accent, pipeGlow = accent @ 40%
     // source = accent, boardSurface = surface, boardBorder = glass border
 
     final baseAccent = _getDarkAccent(id, hue);
@@ -344,11 +344,16 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     final glass = const Color(0x14FFFFFF); // white @ 8%
     final glassBorder = const Color(0x24FFFFFF); // white @ 14%
     const textPrimary = Color(0xFFE8F1FF);
-    const textSecondary = Color(0xFF9FB3CF);
+    const baseTextSecondary = Color(0xFF9FB3CF);
+    const basePipeIdle = Color(0xFF5B6E8F);
     const success = Color(0xFF34D399);
     const danger = Color(0xFFFB7185);
     const star = Color(0xFFFBBF24);
-    const pipeIdle = Color(0xFF5B6E8F);
+
+    // Ensure contrast for textSecondary on background (4.5:1)
+    final textSecondary = ensureContrast(baseTextSecondary, background, 4.5);
+    // Ensure contrast for pipeIdle on boardSurface (3:1)
+    final pipeIdle = ensureContrast(basePipeIdle, surface, 3.0);
 
     // Spec dark accents are bright enough for 3:1 on dark backgrounds
     final accent = baseAccent;
