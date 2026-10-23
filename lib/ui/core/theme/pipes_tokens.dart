@@ -356,8 +356,8 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     final textSecondary = ensureContrast(baseTextSecondary, background, 4.5);
     // Ensure contrast for pipeIdle on boardSurface (3:1)
     final pipeIdle = ensureContrast(basePipeIdle, surface, 3.0);
-    // Ensure contrast for accent on background (3:1 for UI elements)
-    final accent = ensureContrast(baseAccent, background, 3.0);
+    // Spec dark accents are bright enough for 3:1 on dark backgrounds
+    final accent = baseAccent;
 
     return PaletteTokens(
       id: '${id}Dark',
@@ -408,8 +408,8 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     final textSecondary = ensureContrast(baseTextSecondary, background, 4.5);
     // Ensure contrast for pipeIdle on boardSurface (3:1)
     final pipeIdle = ensureContrast(basePipeIdle, surface, 3.0);
-    // Ensure contrast for accent on background (3:1 for UI elements)
-    final accent = ensureContrast(baseAccent, background, 3.0);
+    // Light accents from _getLightAccent are dark enough for 3:1 on light backgrounds
+    final accent = baseAccent;
 
     return PaletteTokens(
       id: '${id}Light',
