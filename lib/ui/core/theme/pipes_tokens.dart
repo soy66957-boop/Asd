@@ -259,14 +259,6 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     return hsl.hue;
   }
 
-  static String _formatName(String id) {
-    // Convert camelCase to words
-    return id.replaceAllMapped(
-      RegExp(r'[A-Z]'),
-      (match) => ' ${match.group(0)}',
-    ).trim().split(' ').map((w) => w[0].toUpperCase() + w.substring(1)).join(' ');
-  }
-
   static PaletteTokens _deriveDarkPalette(String id, String name, double hue) {
     // Dark theme derivation from accent hue
     // background = hue, 40% sat, 7% light

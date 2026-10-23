@@ -521,7 +521,6 @@ class PipeGameBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.palette;
     return LayoutBuilder(
       builder: (context, constraints) {
         final boardSize = math.min(constraints.maxWidth, constraints.maxHeight);

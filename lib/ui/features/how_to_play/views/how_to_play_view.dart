@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/core/widgets/tangible_button.dart';
-import 'package:pipes/ui/providers.dart';
 
 class HowToPlayView extends ConsumerWidget {
   const HowToPlayView({super.key});
