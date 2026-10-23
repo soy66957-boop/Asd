@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/data/repositories/progress_repository.dart';
 import 'package:pipes/data/services/settings_service.dart';
@@ -272,12 +273,12 @@ class GameViewModel extends StateNotifier<GameViewModelState> {
     final newWaterCount = PipeRules.countWaterPipes(flow);
 
     if (isComplete) {
-      HapticFeedback.heavyImpact();
+      if (!kIsWeb) HapticFeedback.heavyImpact();
       _stopTimer();
     } else if (newWaterCount > oldWaterCount) {
-      HapticFeedback.mediumImpact();
+      if (!kIsWeb) HapticFeedback.mediumImpact();
     } else {
-      HapticFeedback.lightImpact();
+      if (!kIsWeb) HapticFeedback.lightImpact();
     }
 
     state = state.copyWith(
@@ -310,10 +311,10 @@ class GameViewModel extends StateNotifier<GameViewModelState> {
     final isComplete = PipeRules.isComplete(newBoard, level);
 
     if (isComplete) {
-      HapticFeedback.heavyImpact();
+      if (!kIsWeb) HapticFeedback.heavyImpact();
       _stopTimer();
     } else {
-      HapticFeedback.mediumImpact();
+      if (!kIsWeb) HapticFeedback.mediumImpact();
     }
 
     final encoded = targetRow * level.gridSize + targetCol;

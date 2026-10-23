@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
@@ -340,7 +341,7 @@ class _GameViewState extends ConsumerState<GameView>
     return GestureDetector(
       onTap: enabled
           ? () {
-              HapticFeedback.selectionClick();
+              if (!kIsWeb) HapticFeedback.selectionClick();
               onTap();
             }
           : null,
@@ -407,7 +408,7 @@ class _GameViewState extends ConsumerState<GameView>
   Future<void> _onLevelComplete(GameViewModelState state) async {
     _shakeController.forward(from: 0.0);
     _shockwaveController.forward(from: 0.0);
-    HapticFeedback.heavyImpact();
+    if (!kIsWeb) HapticFeedback.heavyImpact();
     await ref.read(gameViewModelProvider.notifier).completeLevel();
   }
 

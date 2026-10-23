@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/domain/models/app_settings.dart';
@@ -29,7 +30,7 @@ class SettingsView extends ConsumerWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      HapticFeedback.lightImpact();
+                      if (!kIsWeb) HapticFeedback.lightImpact();
                       Navigator.pop(context);
                     },
                     child: Container(
@@ -97,7 +98,7 @@ class SettingsView extends ConsumerWidget {
                         final isSelected = settings.theme == preset;
                         return GestureDetector(
                           onTap: () {
-                            HapticFeedback.selectionClick();
+                            if (!kIsWeb) HapticFeedback.selectionClick();
                             ref
                                 .read(settingsProvider.notifier)
                                 .setTheme(preset);
@@ -196,7 +197,7 @@ class SettingsView extends ConsumerWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        HapticFeedback.selectionClick();
+        if (!kIsWeb) HapticFeedback.selectionClick();
         onChanged(!value);
       },
       child: Padding(

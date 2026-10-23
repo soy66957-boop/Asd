@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
@@ -34,7 +35,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     final tokens = context.tokens;
     return GestureDetector(
       onTap: () {
-        HapticFeedback.selectionClick();
+        if (!kIsWeb) HapticFeedback.selectionClick();
         onTap();
       },
       child: Container(

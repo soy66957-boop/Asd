@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 
 class TangibleButton extends StatefulWidget {
@@ -49,7 +50,7 @@ class _TangibleButtonState extends State<TangibleButton> {
       onTapDown: (_) {
         if (isInteractive) {
           setState(() => _isPressed = true);
-          HapticFeedback.selectionClick();
+          if (!kIsWeb) HapticFeedback.selectionClick();
         }
       },
       onTapUp: (_) {
