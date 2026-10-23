@@ -49,7 +49,6 @@ app.*.map.json
 
 # Linux 
 /linux/
-/test/
 
 # Environment & local secrets
 .env*
