@@ -65,7 +65,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final settings = ref.watch(settingsProvider);
     final state = ref.watch(homeViewModelProvider);
     final palette = context.palette;
     final tokens = context.tokens;

@@ -62,7 +62,6 @@ class _GameViewState extends ConsumerState<GameView>
 
   @override
   Widget build(BuildContext context) {
-    final settings = ref.watch(settingsProvider);
     final state = ref.watch(gameViewModelProvider);
     final palette = context.palette;
     final tokens = context.tokens;

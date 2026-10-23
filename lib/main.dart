@@ -6,6 +6,7 @@ import 'package:pipes/data/services/settings_service.dart';
 import 'package:pipes/ui/core/theme/app_theme.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/providers.dart';
+import 'package:pipes/domain/models/app_settings.dart';
 import 'package:pipes/ui/features/home/views/home_view.dart';
 
 void main() async {

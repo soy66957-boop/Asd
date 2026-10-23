@@ -260,10 +260,11 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
   }
 
   static String _formatName(String id) {
-    return id
-        .split(/(?=[A-Z])/)
-        .map((w) => w[0].toUpperCase() + w.substring(1))
-        .join(' ');
+    // Convert camelCase to words
+    return id.replaceAllMapped(
+      RegExp(r'[A-Z]'),
+      (match) => ' ${match.group(0)}',
+    ).trim().split(' ').map((w) => w[0].toUpperCase() + w.substring(1)).join(' ');
   }
 
   static PaletteTokens _deriveDarkPalette(String id, String name, double hue) {

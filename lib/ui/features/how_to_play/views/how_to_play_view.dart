@@ -9,7 +9,6 @@ class HowToPlayView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settings = ref.watch(settingsProvider);
     final palette = context.palette;
     final tokens = context.tokens;
 
