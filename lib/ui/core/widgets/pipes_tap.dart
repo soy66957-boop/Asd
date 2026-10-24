@@ -77,7 +77,7 @@ class _PipesTapState extends State<PipesTap> with SingleTickerProviderStateMixin
     setState(() => _isPressed = true);
     _pressController.forward();
     PipesHaptics.tap();
-    widget.pipesAudio.play(AppSound.tap);
+    context.pipesAudio.play(AppSound.tap);
   }
 
   void _handleTapUp(TapUpDetails details) {
