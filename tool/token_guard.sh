@@ -13,6 +13,9 @@
 #   - BorderRadius.circular( N  hard-coded radius number
 #   - EdgeInsets ... N  hard-coded edge inset number
 #   - Duration(milliseconds  hard-coded duration
+#   - Icons.          outside lib/ui/core/icons/
+#   - HapticFeedback. outside lib/ui/core/audio/
+#   - ElevatedButton, OutlinedButton, TextButton, IconButton(, Card(, Switch( inside lib/ui/features
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -69,6 +72,38 @@ scan "EdgeInsets(number)" 'EdgeInsets.*[0-9]'
 
 # 7. Hard-coded duration
 scan "Duration(milliseconds" 'Duration\(milliseconds'
+
+# 8. Icons. outside lib/ui/core/icons/ (match Icons. with word boundary)
+icons_hits=$(grep -r -n -I -E -- '\bIcons\.' "$SCAN_DIR" 2>/dev/null \
+  | grep -v "$EXCLUDE_PATTERN" \
+  | grep -v "/lib/ui/core/icons/" || true)
+if [ -n "$icons_hits" ]; then
+  while IFS= read -r line; do
+    ALL_HITS+="token_guard [Icons.]: $line"$'\n'
+  done <<< "$icons_hits"
+fi
+
+# 9. HapticFeedback. outside lib/ui/core/audio/
+haptic_hits=$(grep -r -n -I -E -- 'HapticFeedback\.' "$SCAN_DIR" 2>/dev/null \
+  | grep -v "$EXCLUDE_PATTERN" \
+  | grep -v "/lib/ui/core/audio/" || true)
+if [ -n "$haptic_hits" ]; then
+  while IFS= read -r line; do
+    ALL_HITS+="token_guard [HapticFeedback.]: $line"$'\n'
+  done <<< "$haptic_hits"
+fi
+
+# 10. Widget constructors inside lib/ui/features (match exact Flutter widgets)
+FEATURES_DIR="$SCAN_DIR/features"
+if [ -d "$FEATURES_DIR" ]; then
+  # Match "ElevatedButton(" but not "PipesElevatedButton(" etc.
+  widget_hits=$(grep -r -n -I -E -- '\b(ElevatedButton|OutlinedButton|TextButton|IconButton|Card|Switch)\(' "$FEATURES_DIR" 2>/dev/null || true)
+  if [ -n "$widget_hits" ]; then
+    while IFS= read -r line; do
+      ALL_HITS+="token_guard [Widget]: $line"$'\n'
+    done <<< "$widget_hits"
+  fi
+fi
 
 if [ -n "$ALL_HITS" ]; then
   printf '%s' "$ALL_HITS"

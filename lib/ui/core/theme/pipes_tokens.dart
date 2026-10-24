@@ -100,30 +100,385 @@ class ButtonComponentTokens {
   const ButtonComponentTokens({
     required this.primaryBackground,
     required this.primaryForeground,
+    required this.primaryGlowColor,
+    required this.primaryGlowBlur,
     required this.secondaryBackground,
     required this.secondaryForeground,
+    required this.secondaryBorder,
+    required this.ghostForeground,
+    required this.dangerBorder,
+    required this.dangerForeground,
+    required this.disabledBorder,
+    required this.disabledForeground,
+    required this.focusRingColor,
+    required this.focusRingWidth,
+    required this.loadingSpinnerColor,
+    required this.height,
+    required this.radius,
+    required this.pressedScale,
+    required this.glowOpacityDefault,
+    required this.glowOpacityPressed,
+    required this.selectedBorder,
+    required this.selectedGlowOpacity,
+    required this.errorBorder,
   });
 
+  // Primary
   final Color primaryBackground;
   final Color primaryForeground;
+  final Color primaryGlowColor;
+  final double primaryGlowBlur;
+  // Secondary
   final Color secondaryBackground;
   final Color secondaryForeground;
+  final Color secondaryBorder;
+  // Ghost
+  final Color ghostForeground;
+  // Danger
+  final Color dangerBorder;
+  final Color dangerForeground;
+  // States
+  final Color disabledBorder;
+  final Color disabledForeground;
+  final Color focusRingColor;
+  final double focusRingWidth;
+  final Color loadingSpinnerColor;
+  // Geometry
+  final double height;
+  final double radius;
+  final double pressedScale;
+  // Glow
+  final double glowOpacityDefault;
+  final double glowOpacityPressed;
+  // Selected
+  final Color selectedBorder;
+  final double selectedGlowOpacity;
+  // Error
+  final Color errorBorder;
+}
+
+@immutable
+class IconButtonComponentTokens {
+  const IconButtonComponentTokens({
+    required this.size,
+    required this.hitSize,
+    required this.iconSize,
+    required this.background,
+    required this.border,
+    required this.iconColor,
+    required this.hoverBackground,
+    required this.focusedBackground,
+    required this.pressedBackground,
+    required this.disabledBackground,
+    required this.disabledBorder,
+    required this.disabledIconColor,
+    required this.focusRingColor,
+    required this.focusRingWidth,
+    required this.radius,
+  });
+
+  final double size;
+  final double hitSize;
+  final double iconSize;
+  final Color background;
+  final Color border;
+  final Color iconColor;
+  final Color hoverBackground;
+  final Color focusedBackground;
+  final Color pressedBackground;
+  final Color disabledBackground;
+  final Color disabledBorder;
+  final Color disabledIconColor;
+  final Color focusRingColor;
+  final double focusRingWidth;
+  final double radius;
+}
+
+@immutable
+class SurfaceComponentTokens {
+  const SurfaceComponentTokens({
+    required this.background,
+    required this.border,
+    required this.radius,
+    required this.glowColor,
+    required this.glowBlur,
+    required this.aliveGlowOpacity,
+  });
+
+  final Color background;
+  final Color border;
+  final double radius;
+  final Color glowColor;
+  final double glowBlur;
+  final double aliveGlowOpacity;
+}
+
+@immutable
+class PillComponentTokens {
+  const PillComponentTokens({
+    required this.height,
+    required this.horizontalPadding,
+    required this.border,
+    required this.borderWidth,
+    required this.textColor,
+    required this.radius,
+  });
+
+  final double height;
+  final double horizontalPadding;
+  final Color border;
+  final double borderWidth;
+  final Color textColor;
+  final double radius;
+}
+
+@immutable
+class ToggleComponentTokens {
+  const ToggleComponentTokens({
+    required this.trackWidth,
+    required this.trackHeight,
+    required this.thumbSize,
+    required this.offTrackColor,
+    required this.offThumbColor,
+    required this.onTrackColor,
+    required this.onThumbColor,
+    required this.onGlowColor,
+    required this.onGlowBlur,
+    required this.disabledTrackColor,
+    required this.disabledThumbColor,
+    required this.hitSize,
+    required this.animationDuration,
+  });
+
+  final double trackWidth;
+  final double trackHeight;
+  final double thumbSize;
+  final Color offTrackColor;
+  final Color offThumbColor;
+  final Color onTrackColor;
+  final Color onThumbColor;
+  final Color onGlowColor;
+  final double onGlowBlur;
+  final Color disabledTrackColor;
+  final Color disabledThumbColor;
+  final double hitSize;
+  final Duration animationDuration;
+}
+
+@immutable
+class SwatchComponentTokens {
+  const SwatchComponentTokens({
+    required this.size,
+    required this.background,
+    required this.ringWidth,
+    required this.ringColor,
+    required this.centerDotSize,
+    required this.selectedRingWidth,
+    required this.selectedGlowColor,
+    required this.selectedGlowBlur,
+    required this.radius,
+  });
+
+  final double size;
+  final Color background;
+  final double ringWidth;
+  final Color ringColor;
+  final double centerDotSize;
+  final double selectedRingWidth;
+  final Color selectedGlowColor;
+  final double selectedGlowBlur;
+  final double radius;
+}
+
+@immutable
+class LevelTileComponentTokens {
+  const LevelTileComponentTokens({
+    required this.size,
+    required this.radius,
+    required this.lockedBorder,
+    required this.lockedIconColor,
+    required this.unlockedTextColor,
+    required this.currentBorder,
+    required this.currentTextColor,
+    required this.currentGlowColor,
+    required this.currentGlowBlur,
+    required this.completedTextColor,
+    required this.completedDotColor,
+    required this.completedDotSize,
+    required this.borderWidth,
+    required this.currentBorderWidth,
+  });
+
+  final double size;
+  final double radius;
+  final Color lockedBorder;
+  final Color lockedIconColor;
+  final Color unlockedTextColor;
+  final Color currentBorder;
+  final Color currentTextColor;
+  final Color currentGlowColor;
+  final double currentGlowBlur;
+  final Color completedTextColor;
+  final Color completedDotColor;
+  final double completedDotSize;
+  final double borderWidth;
+  final double currentBorderWidth;
+}
+
+@immutable
+class HeaderComponentTokens {
+  const HeaderComponentTokens({
+    required this.height,
+    required this.slotWidth,
+    required this.centerTextStyle,
+    required this.leadingTrailingTextStyle,
+  });
+
+  final double height;
+  final double slotWidth;
+  final TextStyle centerTextStyle;
+  final TextStyle leadingTrailingTextStyle;
 }
 
 @immutable
 class ComponentTokens {
-  const ComponentTokens({required this.button});
+  const ComponentTokens({
+    required this.button,
+    required this.iconButton,
+    required this.surface,
+    required this.pill,
+    required this.toggle,
+    required this.swatch,
+    required this.levelTile,
+    required this.header,
+  });
 
   factory ComponentTokens.fromPalette(PaletteTokens palette) => ComponentTokens(
         button: ButtonComponentTokens(
+          // Primary
           primaryBackground: palette.accent,
           primaryForeground: palette.onAccent,
+          primaryGlowColor: palette.glowColor,
+          primaryGlowBlur: PaletteTokens.glowBlur,
+          // Secondary
           secondaryBackground: palette.surface,
           secondaryForeground: palette.textPrimary,
+          secondaryBorder: palette.glassBorder,
+          // Ghost
+          ghostForeground: palette.accent,
+          // Danger
+          dangerBorder: palette.danger.withValues(alpha: 0.5),
+          dangerForeground: palette.danger,
+          // States
+          disabledBorder: palette.glassBorder.withValues(alpha: 0.5),
+          disabledForeground: palette.textSecondary.withValues(alpha: 0.5),
+          focusRingColor: palette.accent,
+          focusRingWidth: 2.0,
+          loadingSpinnerColor: palette.onAccent,
+          // Geometry
+          height: 48.0,
+          radius: 9999.0, // pill
+          pressedScale: 0.97,
+          // Glow
+          glowOpacityDefault: 0.40,
+          glowOpacityPressed: 0.60,
+          // Selected
+          selectedBorder: palette.accent,
+          selectedGlowOpacity: 0.30,
+          // Error
+          errorBorder: palette.danger,
+        ),
+        iconButton: IconButtonComponentTokens(
+          size: 44.0,
+          hitSize: 48.0,
+          iconSize: 20.0,
+          background: palette.surface,
+          border: palette.glassBorder,
+          iconColor: palette.textPrimary,
+          hoverBackground: palette.glass,
+          focusedBackground: palette.glass,
+          pressedBackground: palette.glass.withValues(alpha: 0.2),
+          disabledBackground: palette.surface.withValues(alpha: 0.5),
+          disabledBorder: palette.glassBorder.withValues(alpha: 0.5),
+          disabledIconColor: palette.textSecondary.withValues(alpha: 0.5),
+          focusRingColor: palette.accent,
+          focusRingWidth: 2.0,
+          radius: 9999.0,
+        ),
+        surface: SurfaceComponentTokens(
+          background: palette.surface,
+          border: palette.glassBorder,
+          radius: 20.0,
+          glowColor: palette.glowColor,
+          glowBlur: PaletteTokens.glowBlur,
+          aliveGlowOpacity: 0.40,
+        ),
+        pill: PillComponentTokens(
+          height: 28.0,
+          horizontalPadding: 12.0,
+          border: palette.glassBorder,
+          borderWidth: 1.5,
+          textColor: palette.textPrimary,
+          radius: 9999.0,
+        ),
+        toggle: ToggleComponentTokens(
+          trackWidth: 48.0,
+          trackHeight: 28.0,
+          thumbSize: 24.0,
+          offTrackColor: palette.glassBorder,
+          offThumbColor: palette.textSecondary,
+          onTrackColor: palette.accent.withValues(alpha: 0.2),
+          onThumbColor: palette.accent,
+          onGlowColor: palette.glowColor,
+          onGlowBlur: PaletteTokens.glowBlur,
+          disabledTrackColor: palette.glassBorder.withValues(alpha: 0.5),
+          disabledThumbColor: palette.textSecondary.withValues(alpha: 0.5),
+          hitSize: 48.0,
+          animationDuration: Duration(milliseconds: 120),
+        ),
+        swatch: SwatchComponentTokens(
+          size: 44.0,
+          background: palette.surface,
+          ringWidth: 2.0,
+          ringColor: palette.glassBorder,
+          centerDotSize: 8.0,
+          selectedRingWidth: 3.0,
+          selectedGlowColor: palette.glowColor,
+          selectedGlowBlur: PaletteTokens.glowBlur,
+          radius: 9999.0,
+        ),
+        levelTile: LevelTileComponentTokens(
+          size: 56.0,
+          radius: 16.0,
+          lockedBorder: palette.glassBorder,
+          lockedIconColor: palette.textSecondary.withValues(alpha: 0.6),
+          unlockedTextColor: palette.textPrimary,
+          currentBorder: palette.accent,
+          currentTextColor: palette.textPrimary,
+          currentGlowColor: palette.glowColor,
+          currentGlowBlur: PaletteTokens.glowBlur,
+          completedTextColor: palette.textPrimary,
+          completedDotColor: palette.accent,
+          completedDotSize: 8.0,
+          borderWidth: 1.5,
+          currentBorderWidth: 2.5,
+        ),
+        header: HeaderComponentTokens(
+          height: 56.0,
+          slotWidth: 48.0,
+          centerTextStyle: const TextStyle(),
+          leadingTrailingTextStyle: const TextStyle(),
         ),
       );
 
   final ButtonComponentTokens button;
+  final IconButtonComponentTokens iconButton;
+  final SurfaceComponentTokens surface;
+  final PillComponentTokens pill;
+  final ToggleComponentTokens toggle;
+  final SwatchComponentTokens swatch;
+  final LevelTileComponentTokens levelTile;
+  final HeaderComponentTokens header;
 }
 
 // ============================================================================

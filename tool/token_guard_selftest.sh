@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # tool/token_guard_selftest.sh
 #
-# Proves the token guard can fail on a planted error, then passes when clean.
+# Proves the token guard can fail on planted errors, then passes when clean.
 # Temporarily plants the fixture violation into lib/ui (outside theme), runs the
 # guard (expects exit 1), removes the plant, runs the guard again (expects exit 0).
 set -euo pipefail

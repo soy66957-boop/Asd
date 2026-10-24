@@ -3,10 +3,13 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/services.dart';
+import 'package:pipes/ui/core/audio/pipes_haptics.dart';
+import 'package:pipes/ui/core/icons/pipes_icons.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/core/widgets/pipe_widget.dart';
-import 'package:pipes/ui/core/widgets/tangible_button.dart';
+import 'package:pipes/ui/core/widgets/pipes_button.dart';
+import 'package:pipes/ui/core/widgets/pipes_header.dart';
+import 'package:pipes/ui/core/widgets/pipes_icon_button.dart';
 import 'package:pipes/ui/features/game/view_models/game_view_model.dart';
 import 'package:pipes/ui/providers.dart';
 
@@ -80,41 +83,32 @@ class _GameViewState extends ConsumerState<GameView>
           children: [
             Column(
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: tokens.spacing.md,
-                    vertical: tokens.spacing.sm,
+                PipesHeader(
+                  leading: PipesIconButton(
+                    icon: PipesIcons.back,
+                    onTap: () => Navigator.pop(context),
+                    semanticLabel: 'Back to menu',
+                    iconSize: 18,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _circleButton(
-                        icon: Icons.arrow_back_ios_new_rounded,
-                        iconSize: 18,
-                        onTap: () => Navigator.pop(context),
-                      ),
-                      Text(
-                        state.isRandomMode
-                            ? (state.randomDifficulty ??
-                                  widget.randomDifficulty)
-                            : 'Level ${widget.levelNumber}',
-                        style: tokens.text.title.copyWith(
-                          color: palette.textPrimary,
-                        ),
-                      ),
-                      _circleButton(
-                        icon: Icons.refresh_rounded,
-                        iconSize: 20,
-                        onTap: () => ref
-                            .read(gameViewModelProvider.notifier)
-                            .resetLevel(),
-                      ),
-                    ],
+                  center: Text(
+                    state.isRandomMode
+                        ? (state.randomDifficulty ?? widget.randomDifficulty)
+                        : 'Level ${widget.levelNumber}',
+                    style: tokens.text.title.copyWith(
+                      color: palette.textPrimary,
+                    ),
+                  ),
+                  trailing: PipesIconButton(
+                    icon: PipesIcons.refresh,
+                    onTap: () => ref
+                        .read(gameViewModelProvider.notifier)
+                        .resetLevel(),
+                    semanticLabel: 'Restart level',
+                    iconSize: 20,
                   ),
                 ),
                 Expanded(
-                  child:
-                      (state.isLoading ||
+                  child: (state.isLoading ||
                           (!state.isRandomMode &&
                               (state.level == null ||
                                   state.level!.levelNumber !=
@@ -133,11 +127,12 @@ class _GameViewState extends ConsumerState<GameView>
                                 ),
                               ),
                               SizedBox(height: tokens.spacing.lg),
-                              ElevatedButton(
+                              PipesButton(
+                                text: 'Retry',
+                                variant: PipesButtonVariant.primary,
                                 onPressed: () => ref
                                     .read(gameViewModelProvider.notifier)
                                     .resetLevel(),
-                                child: const Text('Retry'),
                               ),
                             ],
                           ),
@@ -176,12 +171,12 @@ class _GameViewState extends ConsumerState<GameView>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _stat('Moves', '${state.moveCount}', Icons.trending_up_rounded),
+              _stat('Moves', '${state.moveCount}', PipesIcons.moves),
               _verticalDivider(),
               _stat(
                 'Time',
                 _formatTime(state.elapsedSeconds),
-                Icons.timer_outlined,
+                PipesIcons.timer,
               ),
             ],
           ),
@@ -270,49 +265,36 @@ class _GameViewState extends ConsumerState<GameView>
         else ...[
           if (settings.isHintEnabled) ...[
             SizedBox(height: tokens.spacing.md),
-            GestureDetector(
-              onTap: !state.isComplete
-                  ? () => ref.read(gameViewModelProvider.notifier).revealHint()
-                  : null,
-              child: Opacity(
-                opacity: !state.isComplete ? 1.0 : 0.35,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: tokens.spacing.xl,
-                    vertical: tokens.spacing.md,
-                  ),
-                  decoration: BoxDecoration(
-                    color: palette.surface,
-                    borderRadius: BorderRadius.circular(tokens.radius.md),
-                    border: Border.all(
-                      color: palette.glassBorder,
-                      width: 1.5,
+            PipesSurface(
+              alive: false,
+              padding: EdgeInsets.symmetric(
+                horizontal: tokens.spacing.xl,
+                vertical: tokens.spacing.md,
+              ),
+              child: PipesTap(
+                onTap: !state.isComplete
+                    ? () => ref.read(gameViewModelProvider.notifier).revealHint()
+                    : null,
+                state: !state.isComplete ? PipesTapState.default_ : PipesTapState.disabled,
+                semanticLabel: 'Hint',
+                pressScale: 0.98,
+                minHitSize: 48.0,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      PipesIcons.hint,
+                      color: palette.star,
+                      size: 18,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: palette.textPrimary.withValues(alpha: 0.08),
-                        offset: const Offset(0, 3),
-                        blurRadius: 4,
+                    SizedBox(width: tokens.spacing.sm),
+                    Text(
+                      'Hint',
+                      style: tokens.text.label.copyWith(
+                        color: palette.textPrimary,
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.lightbulb_rounded,
-                        color: palette.star,
-                        size: 18,
-                      ),
-                      SizedBox(width: tokens.spacing.sm),
-                      Text(
-                        'Hint',
-                        style: tokens.text.label.copyWith(
-                          color: palette.textPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -327,43 +309,6 @@ class _GameViewState extends ConsumerState<GameView>
           SizedBox(height: tokens.spacing.xl),
         ],
       ],
-    );
-  }
-
-  Widget _circleButton({
-    required IconData icon,
-    required VoidCallback onTap,
-    double iconSize = 20,
-    bool enabled = true,
-  }) {
-    final palette = context.palette;
-    final tokens = context.tokens;
-    return GestureDetector(
-      onTap: enabled
-          ? () {
-              if (!kIsWeb) HapticFeedback.selectionClick();
-              onTap();
-            }
-          : null,
-      child: Opacity(
-        opacity: enabled ? 1.0 : 0.35,
-        child: Container(
-          padding: EdgeInsets.all(tokens.spacing.md),
-          decoration: BoxDecoration(
-            color: palette.surface,
-            shape: BoxShape.circle,
-            border: Border.all(color: palette.glassBorder, width: 1.5),
-            boxShadow: [
-              BoxShadow(
-                color: palette.textPrimary.withValues(alpha: 0.08),
-                offset: const Offset(0, 3),
-                blurRadius: 4,
-              ),
-            ],
-          ),
-          child: Icon(icon, size: iconSize, color: palette.textPrimary),
-        ),
-      ),
     );
   }
 
@@ -407,7 +352,7 @@ class _GameViewState extends ConsumerState<GameView>
   Future<void> _onLevelComplete(GameViewModelState state) async {
     _shakeController.forward(from: 0.0);
     _shockwaveController.forward(from: 0.0);
-    if (!kIsWeb) HapticFeedback.heavyImpact();
+    PipesHaptics.win();
     await ref.read(gameViewModelProvider.notifier).completeLevel();
   }
 
@@ -431,12 +376,10 @@ class _GameViewState extends ConsumerState<GameView>
             ),
           ),
           SizedBox(height: tokens.spacing.md),
-          TangibleButton(
+          PipesButton(
             text: state.isRandomMode ? 'Play Again' : 'Next Level',
             height: 42,
-            backgroundColor: palette.accent,
-            textColor: palette.textPrimary,
-            borderColor: palette.glassBorder,
+            variant: PipesButtonVariant.primary,
             onPressed: () {
               final notifier = ref.read(gameViewModelProvider.notifier);
               if (state.isRandomMode) {
@@ -453,13 +396,10 @@ class _GameViewState extends ConsumerState<GameView>
             },
           ),
           SizedBox(height: tokens.spacing.md),
-          TangibleButton(
+          PipesButton(
             text: 'Home',
-            isSecondary: true,
             height: 42,
-            backgroundColor: palette.surface,
-            textColor: palette.textPrimary,
-            borderColor: palette.glassBorder,
+            variant: PipesButtonVariant.secondary,
             onPressed: () => Navigator.pop(context),
           ),
         ],
@@ -546,37 +486,32 @@ class _ConfettiExplosionState extends State<ConfettiExplosion>
       palette.pipeIdle,
       palette.pipeIdle,
       palette.surface,
-      palette.textSecondary,
-      palette.pipeIdle,
+      palette.accent,
     ];
-
-    for (int i = 0; i < 80; i++) {
-      final double angle = _random.nextDouble() * 2 * math.pi;
-      final double speed = 150 + _random.nextDouble() * 250;
-      _particles.add(
-        ConfettiParticle(
-          x: 0.5,
-          y: 0.4,
-          vx: math.cos(angle) * speed,
-          vy: math.sin(angle) * speed - 150,
-          size: 6 + _random.nextDouble() * 8,
-          rotation: _random.nextDouble() * 2 * math.pi,
-          rotationSpeed: (_random.nextDouble() - 0.5) * 10,
-          color: colors[_random.nextInt(colors.length)],
-          isCircle: _random.nextBool(),
-        ),
-      );
+    for (int i = 0; i < 40; i++) {
+      final angle = _random.nextDouble() * 2 * math.pi;
+      final speed = 100 + _random.nextDouble() * 200;
+      _particles.add(ConfettiParticle(
+        x: 0,
+        y: 0,
+        vx: math.cos(angle) * speed,
+        vy: math.sin(angle) * speed - 200,
+        size: 6 + _random.nextDouble() * 6,
+        rotation: _random.nextDouble() * 2 * math.pi,
+        rotationSpeed: (_random.nextDouble() - 0.5) * 4,
+        color: colors[_random.nextInt(colors.length)],
+        isCircle: _random.nextBool(),
+      ));
     }
     _controller.forward(from: 0.0);
   }
 
   void _tick() {
-    if (!mounted) return;
-    setState(() {
-      for (final p in _particles) {
-        p.update(0.016);
-      }
-    });
+    final dt = 1.0 / 60.0;
+    for (final p in _particles) {
+      p.update(dt);
+    }
+    if (mounted) setState(() {});
   }
 
   @override
@@ -587,34 +522,31 @@ class _ConfettiExplosionState extends State<ConfettiExplosion>
 
   @override
   Widget build(BuildContext context) {
-    if (!_controller.isAnimating) return const SizedBox.shrink();
-    return IgnorePointer(
-      child: CustomPaint(
-        size: Size.infinite,
-        painter: ConfettiPainter(particles: _particles),
+    if (_particles.isEmpty) return const SizedBox.shrink();
+    final size = MediaQuery.sizeOf(context);
+    return CustomPaint(
+      size: size,
+      painter: _ConfettiPainter(
+        particles: _particles,
+        center: Offset(size.width / 2, size.height / 2),
       ),
     );
   }
 }
 
-class ConfettiPainter extends CustomPainter {
+class _ConfettiPainter extends CustomPainter {
   final List<ConfettiParticle> particles;
-  ConfettiPainter({required this.particles});
+  final Offset center;
+
+  _ConfettiPainter({required this.particles, required this.center});
 
   @override
   void paint(Canvas canvas, Size size) {
     for (final p in particles) {
-      final double px = p.x * size.width;
-      final double py = p.y * size.height;
-
-      if (px < 0 || px > size.width || py > size.height) continue;
-
       canvas.save();
-      canvas.translate(px, py);
+      canvas.translate(center.dx + p.x, center.dy + p.y);
       canvas.rotate(p.rotation);
-
-      final Paint paint = Paint()..color = p.color;
-
+      final paint = Paint()..color = p.color;
       if (p.isCircle) {
         canvas.drawCircle(Offset.zero, p.size / 2, paint);
       } else {
@@ -632,7 +564,7 @@ class ConfettiPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant ConfettiPainter oldDelegate) => true;
+  bool shouldRepaint(covariant _ConfettiPainter oldDelegate) => true;
 }
 
 class VictoryShockwavePainter extends CustomPainter {

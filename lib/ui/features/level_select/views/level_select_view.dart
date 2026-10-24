@@ -1,7 +1,12 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pipes/ui/core/icons/pipes_icons.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
+import 'package:pipes/ui/core/widgets/pipes_header.dart';
+import 'package:pipes/ui/core/widgets/pipes_icon_button.dart';
+import 'package:pipes/ui/core/widgets/pipes_level_tile.dart';
 import 'package:pipes/ui/features/game/views/game_view.dart';
 import 'package:pipes/ui/providers.dart';
 
@@ -33,52 +38,20 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: tokens.spacing.md,
-                vertical: tokens.spacing.sm,
+            PipesHeader(
+              leading: PipesIconButton(
+                icon: PipesIcons.back,
+                onTap: () => Navigator.pop(context),
+                semanticLabel: 'Back to menu',
+                iconSize: 18,
               ),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      padding: EdgeInsets.all(tokens.spacing.md),
-                      decoration: BoxDecoration(
-                        color: palette.surface,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: palette.glassBorder,
-                          width: 1.5,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: palette.textPrimary.withValues(alpha: 0.08),
-                            offset: const Offset(0, 3),
-                            blurRadius: 4,
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        size: 18,
-                        color: palette.textPrimary,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        'Levels',
-                        style: tokens.text.title.copyWith(
-                          color: palette.textPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: tokens.spacing.xl),
-                ],
+              center: Text(
+                'Levels',
+                style: tokens.text.title.copyWith(
+                  color: palette.textPrimary,
+                ),
               ),
+              trailing: const SizedBox.shrink(),
             ),
             Expanded(
               child: GridView.builder(
@@ -101,12 +74,33 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
                   final isCurrent = levelNumber == unlockedLevel;
                   final isLocked = levelNumber > unlockedLevel;
 
-                  return _buildLevelCard(
-                    context,
+                  PipesLevelTileState tileState;
+                  if (isLocked) {
+                    tileState = PipesLevelTileState.locked;
+                  } else if (isCurrent) {
+                    tileState = PipesLevelTileState.current;
+                  } else if (isCompleted) {
+                    tileState = PipesLevelTileState.completed;
+                  } else {
+                    tileState = PipesLevelTileState.unlocked;
+                  }
+
+                  return PipesLevelTile(
                     levelNumber: levelNumber,
-                    isCompleted: isCompleted,
-                    isCurrent: isCurrent,
-                    isLocked: isLocked,
+                    state: tileState,
+                    onTap: isLocked
+                        ? null
+                        : () async {
+                            ref.read(levelGeneratorProvider).pregenerateAround(levelNumber, range: 1);
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => GameView(levelNumber: levelNumber),
+                              ),
+                            );
+                            ref.read(homeViewModelProvider.notifier).loadProgress();
+                          },
+                    semanticLabel: 'Level $levelNumber, ${_stateName(tileState)}',
                   );
                 },
               ),
@@ -117,100 +111,12 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
     );
   }
 
-  Widget _buildLevelCard(
-    BuildContext context, {
-    required int levelNumber,
-    required bool isCompleted,
-    required bool isCurrent,
-    required bool isLocked,
-  }) {
-    final palette = context.palette;
-    final tokens = context.tokens;
-
-    Color cardBg = palette.surface;
-    Color textColor = palette.textPrimary;
-    Color borderColor = palette.glassBorder;
-    Widget content;
-    bool isClickable = !isLocked;
-
-    if (isCompleted) {
-      cardBg = palette.success;
-      textColor = palette.onAccent;
-      borderColor = palette.success;
-      content = Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.check_circle_rounded,
-            size: 20,
-            color: palette.onAccent,
-          ),
-          SizedBox(height: tokens.spacing.xs),
-        ],
-      );
-    } else if (isCurrent) {
-      cardBg = palette.accent;
-      textColor = palette.textPrimary;
-      borderColor = palette.accent;
-      content = const SizedBox.shrink();
-    } else {
-      cardBg = palette.surface.withValues(alpha: 0.5);
-      textColor = palette.textSecondary;
-      borderColor = palette.glassBorder.withValues(alpha: 0.4);
-      content = const SizedBox.shrink();
-    }
-
-    return GestureDetector(
-      onTap: isClickable
-          ? () async {
-              ref.read(levelGeneratorProvider).pregenerateAround(levelNumber, range: 1);
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => GameView(levelNumber: levelNumber),
-                ),
-              );
-              ref.read(homeViewModelProvider.notifier).loadProgress();
-            }
-          : null,
-      child: AnimatedContainer(
-        duration: tokens.motion.feedback,
-        decoration: BoxDecoration(
-          color: cardBg,
-          borderRadius: BorderRadius.circular(tokens.radius.md),
-          border: Border.all(
-            color: borderColor,
-            width: isCurrent ? 2.5 : 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: palette.textPrimary.withValues(alpha: 0.06),
-              offset: const Offset(0, 3),
-              blurRadius: 4,
-            ),
-          ],
-        ),
-        alignment: Alignment.center,
-        child: isLocked
-            ? Icon(
-                Icons.lock_rounded,
-                size: 20,
-                color: palette.textSecondary.withValues(alpha: 0.6),
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '$levelNumber',
-                    style: tokens.text.body.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
-                  ),
-                  if (isCompleted) content,
-                ],
-              ),
-      ),
-    );
+  String _stateName(PipesLevelTileState s) {
+    return switch (s) {
+      PipesLevelTileState.locked => 'locked',
+      PipesLevelTileState.unlocked => 'unlocked',
+      PipesLevelTileState.current => 'current',
+      PipesLevelTileState.completed => 'completed',
+    };
   }
 }

@@ -1,3 +1,33 @@
 // Token guard violation fixture (not compiled Dart).
-// Contains one violation: a hard-coded ARGB color literal that the guard must flag.
+// Contains violations that the guard must flag:
+// 1. Color(0x - hard-coded ARGB color literal
+// 2. Colors. - Colors.* usage except Colors.transparent
+// 3. TextStyle( - inline text style
+// 4. fontSize: - hard-coded font size
+// 5. BorderRadius.circular(number) - hard-coded radius number
+// 6. EdgeInsets(number) - hard-coded edge inset number
+// 7. Duration(milliseconds - hard-coded duration
+// 8. Icons. - Icons. outside lib/ui/core/icons/
+// 9. HapticFeedback. - HapticFeedback. outside lib/ui/core/audio/
+// 10. ElevatedButton( - ElevatedButton in lib/ui/features
+// 11. OutlinedButton( - OutlinedButton in lib/ui/features
+// 12. TextButton( - TextButton in lib/ui/features
+// 13. IconButton( - IconButton in lib/ui/features
+// 14. Card( - Card in lib/ui/features
+// 15. Switch( - Switch in lib/ui/features
+
 final badColor = const Color(0xFF5B6E8F);
+final badColors = Colors.red;
+final badTextStyle = TextStyle(fontSize: 14);
+final badFontSize = 16.0;
+final badRadius = BorderRadius.circular(8);
+final badEdgeInsets = EdgeInsets.all(16);
+final badDuration = Duration(milliseconds: 300);
+final badIcon = Icons.star;
+final badHaptic = HapticFeedback.selectionClick();
+final badElevatedButton = ElevatedButton(onPressed: () {}, child: Text('x'));
+final badOutlinedButton = OutlinedButton(onPressed: () {}, child: Text('x'));
+final badTextButton = TextButton(onPressed: () {}, child: Text('x'));
+final badIconButton = IconButton(onPressed: () {}, icon: Icon(Icons.star));
+final badCard = Card(child: Text('x'));
+final badSwitch = Switch(value: false, onChanged: (_) {});

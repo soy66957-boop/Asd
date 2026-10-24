@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/data/repositories/progress_repository.dart';
@@ -8,6 +7,7 @@ import 'package:pipes/data/services/settings_service.dart';
 import 'package:pipes/domain/models/game_level.dart';
 import 'package:pipes/domain/use_cases/level_generator.dart';
 import 'package:pipes/domain/use_cases/pipe_rules.dart';
+import 'package:pipes/ui/core/audio/pipes_haptics.dart';
 
 @immutable
 class GameViewModelState {
@@ -273,12 +273,12 @@ class GameViewModel extends StateNotifier<GameViewModelState> {
     final newWaterCount = PipeRules.countWaterPipes(flow);
 
     if (isComplete) {
-      if (!kIsWeb) HapticFeedback.heavyImpact();
+      PipesHaptics.win();
       _stopTimer();
     } else if (newWaterCount > oldWaterCount) {
-      if (!kIsWeb) HapticFeedback.mediumImpact();
+      PipesHaptics.connect();
     } else {
-      if (!kIsWeb) HapticFeedback.lightImpact();
+      PipesHaptics.rotate();
     }
 
     state = state.copyWith(
@@ -311,10 +311,10 @@ class GameViewModel extends StateNotifier<GameViewModelState> {
     final isComplete = PipeRules.isComplete(newBoard, level);
 
     if (isComplete) {
-      if (!kIsWeb) HapticFeedback.heavyImpact();
+      PipesHaptics.win();
       _stopTimer();
     } else {
-      if (!kIsWeb) HapticFeedback.mediumImpact();
+      PipesHaptics.connect();
     }
 
     final encoded = targetRow * level.gridSize + targetCol;

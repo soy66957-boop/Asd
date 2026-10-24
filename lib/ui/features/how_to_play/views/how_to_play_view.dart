@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pipes/ui/core/icons/pipes_icons.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
-import 'package:pipes/ui/core/widgets/tangible_button.dart';
+import 'package:pipes/ui/core/widgets/pipes_button.dart';
+import 'package:pipes/ui/core/widgets/pipes_header.dart';
+import 'package:pipes/ui/core/widgets/pipes_icon_button.dart';
 
 class HowToPlayView extends ConsumerWidget {
   const HowToPlayView({super.key});
@@ -16,45 +19,20 @@ class HowToPlayView extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: tokens.spacing.md,
-                vertical: tokens.spacing.md,
+            PipesHeader(
+              leading: PipesIconButton(
+                icon: PipesIcons.back,
+                onTap: () => Navigator.pop(context),
+                semanticLabel: 'Back to menu',
+                iconSize: 18,
               ),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      padding: EdgeInsets.all(tokens.spacing.md),
-                      decoration: BoxDecoration(
-                        color: palette.surface,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: palette.glassBorder,
-                          width: 1.5,
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        size: 18,
-                        color: palette.textPrimary,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        'How to Play',
-                        style: tokens.text.title.copyWith(
-                          color: palette.textPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: tokens.spacing.xl),
-                ],
+              center: Text(
+                'How to Play',
+                style: tokens.text.title.copyWith(
+                  color: palette.textPrimary,
+                ),
               ),
+              trailing: const SizedBox.shrink(),
             ),
             Expanded(
               child: ListView(
@@ -100,7 +78,7 @@ class HowToPlayView extends ConsumerWidget {
             ),
             Padding(
               padding: EdgeInsets.all(tokens.spacing.xl),
-              child: TangibleButton(
+              child: PipesButton(
                 text: 'Got it',
                 height: 44,
                 onPressed: () => Navigator.pop(context),

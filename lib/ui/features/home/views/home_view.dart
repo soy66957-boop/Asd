@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/services.dart';
+import 'package:pipes/ui/core/icons/pipes_icons.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
-import 'package:pipes/ui/core/widgets/tangible_button.dart';
+import 'package:pipes/ui/core/widgets/pipes_button.dart';
+import 'package:pipes/ui/core/widgets/pipes_header.dart';
+import 'package:pipes/ui/core/widgets/pipes_icon_button.dart';
+import 'package:pipes/ui/core/widgets/pipes_pill.dart';
 import 'package:pipes/ui/core/url_launcher.dart';
 import 'package:pipes/ui/features/game/views/game_view.dart';
 import 'package:pipes/ui/features/how_to_play/views/how_to_play_view.dart';
@@ -25,45 +28,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
     Future.microtask(() => ref.read(homeViewModelProvider.notifier).loadProgress());
   }
 
-  Widget _circleButton({
-    required IconData icon,
-    required VoidCallback onTap,
-    double iconSize = 20,
-    Color? iconColor,
-  }) {
-    final palette = context.palette;
-    final tokens = context.tokens;
-    return GestureDetector(
-      onTap: () {
-        if (!kIsWeb) HapticFeedback.selectionClick();
-        onTap();
-      },
-      child: Container(
-        padding: EdgeInsets.all(tokens.spacing.md),
-        decoration: BoxDecoration(
-          color: palette.surface,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: palette.glassBorder,
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: palette.textPrimary.withValues(alpha: 0.08),
-              offset: const Offset(0, 3),
-              blurRadius: 4,
-            ),
-          ],
-        ),
-        child: Icon(
-          icon,
-          size: iconSize,
-          color: iconColor ?? palette.textPrimary,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(homeViewModelProvider);
@@ -80,39 +44,26 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _circleButton(
-                    icon: Icons.star_rounded,
-                    iconColor: palette.star,
-                    onTap: () => openUrl('https://github.com/sidhant947/Pipes'),
+              // Header with star button, centered title, and level pill
+              PipesHeader(
+                leading: PipesIconButton(
+                  icon: PipesIcons.star,
+                  onTap: () => openUrl('https://github.com/sidhant947/Pipes'),
+                  semanticLabel: 'Open source repository',
+                  iconSize: 20,
+                ),
+                center: Text(
+                  'Pipes',
+                  style: tokens.text.display.copyWith(
+                    color: palette.textPrimary,
                   ),
-                  if (state.progress != null)
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: tokens.spacing.xl,
-                        vertical: tokens.spacing.sm,
-                      ),
-                      decoration: BoxDecoration(
-                        color: palette.surface,
-                        borderRadius: BorderRadius.circular(tokens.radius.pill),
-                        border: Border.all(
-                          color: palette.glassBorder,
-                          width: 1.0,
-                        ),
-                      ),
-                      child: Text(
-                        'Level ${state.progress!.currentLevel}',
-                        style: tokens.text.label.copyWith(
-                          color: palette.textPrimary,
-                        ),
-                      ),
-                    )
-                  else
-                    const SizedBox.shrink(),
-                  // Heart button removed (was donation link)
-                ],
+                ),
+                trailing: state.progress != null
+                    ? PipesPill(
+                        text: 'Level ${state.progress!.currentLevel}',
+                        variant: PipesPillVariant.standard,
+                      )
+                    : const SizedBox.shrink(),
               ),
               const Spacer(flex: 3),
               Image.asset(
@@ -121,8 +72,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 height: 120,
               ),
               const Spacer(flex: 4),
-              TangibleButton(
+              PipesButton(
                 text: 'Play',
+                variant: PipesButtonVariant.primary,
                 onPressed: state.isLoading
                     ? null
                     : () async {
@@ -136,11 +88,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
                         );
                         ref.read(homeViewModelProvider.notifier).loadProgress();
                       },
+                isLoading: state.isLoading,
               ),
               SizedBox(height: tokens.spacing.lg),
-              TangibleButton(
+              PipesButton(
                 text: 'Levels',
-                isSecondary: true,
+                variant: PipesButtonVariant.secondary,
                 onPressed: () async {
                   await Navigator.push(
                     context,
@@ -152,15 +105,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 },
               ),
               SizedBox(height: tokens.spacing.lg),
-              TangibleButton(
+              PipesButton(
                 text: 'Random',
-                isSecondary: true,
+                variant: PipesButtonVariant.secondary,
                 onPressed: () => _showDifficultyDialog(context),
               ),
               SizedBox(height: tokens.spacing.lg),
-              TangibleButton(
+              PipesButton(
                 text: 'How to Play',
-                isSecondary: true,
+                variant: PipesButtonVariant.secondary,
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -169,9 +122,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 ),
               ),
               SizedBox(height: tokens.spacing.lg),
-              TangibleButton(
+              PipesButton(
                 text: 'Settings',
-                isSecondary: true,
+                variant: PipesButtonVariant.secondary,
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -242,10 +195,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
               for (final stage in stages)
                 Padding(
                   padding: EdgeInsets.only(bottom: tokens.spacing.md),
-                  child: TangibleButton(
+                  child: PipesButton(
                     text: stage,
+                    variant: PipesButtonVariant.secondary,
                     height: 44,
-                    isSecondary: true,
                     onPressed: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -262,14 +215,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   ),
                 ),
               SizedBox(height: tokens.spacing.sm),
-              TextButton(
+              PipesButton(
+                text: 'Cancel',
+                variant: PipesButtonVariant.ghost,
                 onPressed: () => Navigator.pop(context),
-                child: Text(
-                  'Cancel',
-                  style: tokens.text.label.copyWith(
-                    color: palette.textSecondary,
-                  ),
-                ),
               ),
             ],
           ),

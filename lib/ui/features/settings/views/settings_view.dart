@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/domain/models/app_settings.dart';
+import 'package:pipes/ui/core/icons/pipes_icons.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
-import 'package:pipes/ui/core/widgets/tangible_button.dart';
+import 'package:pipes/ui/core/widgets/pipes_button.dart';
+import 'package:pipes/ui/core/widgets/pipes_header.dart';
+import 'package:pipes/ui/core/widgets/pipes_icon_button.dart';
+import 'package:pipes/ui/core/widgets/pipes_swatch.dart';
+import 'package:pipes/ui/core/widgets/pipes_toggle.dart';
 import 'package:pipes/ui/providers.dart';
 
 class SettingsView extends ConsumerWidget {
@@ -21,56 +24,20 @@ class SettingsView extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: tokens.spacing.lg,
-                vertical: tokens.spacing.md,
+            PipesHeader(
+              leading: PipesIconButton(
+                icon: PipesIcons.close,
+                onTap: () => Navigator.pop(context),
+                semanticLabel: 'Close settings',
+                iconSize: 20,
               ),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      if (!kIsWeb) HapticFeedback.lightImpact();
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: palette.surface,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: palette.glassBorder,
-                          width: 1.5,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: palette.textPrimary.withValues(alpha: 0.08),
-                            offset: const Offset(0, 3),
-                            blurRadius: 4,
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.close_rounded,
-                        size: 20,
-                        color: palette.textPrimary,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        'Settings',
-                        style: tokens.text.title.copyWith(
-                          color: palette.textPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: tokens.spacing.xl),
-                ],
+              center: Text(
+                'Settings',
+                style: tokens.text.title.copyWith(
+                  color: palette.textPrimary,
+                ),
               ),
+              trailing: const SizedBox.shrink(),
             ),
             Expanded(
               child: ListView(
@@ -96,47 +63,17 @@ class SettingsView extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         final preset = AppThemePreset.values[index];
                         final isSelected = settings.theme == preset;
-                        return GestureDetector(
+                        // Need to get PaletteTokens for this preset
+                        final paletteTokens = _getPaletteTokens(context, preset);
+                        return PipesSwatch(
+                          palette: paletteTokens,
+                          isSelected: isSelected,
                           onTap: () {
-                            if (!kIsWeb) HapticFeedback.selectionClick();
                             ref
                                 .read(settingsProvider.notifier)
                                 .setTheme(preset);
                           },
-                          child: AnimatedContainer(
-                            duration: tokens.motion.feedback,
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: preset.bg,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: isSelected
-                                    ? preset.accent
-                                    : preset.border,
-                                width: isSelected ? 2.5 : 1.0,
-                              ),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: preset.accent.withValues(alpha: 0.35),
-                                        blurRadius: 8,
-                                        spreadRadius: 1,
-                                      ),
-                                    ]
-                                  : null,
-                            ),
-                            child: Center(
-                              child: Container(
-                                width: 14,
-                                height: 14,
-                                decoration: BoxDecoration(
-                                  color: preset.accent,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                            ),
-                          ),
+                          semanticLabel: preset.displayName,
                         );
                       },
                     ),
@@ -144,26 +81,23 @@ class SettingsView extends ConsumerWidget {
 
                   _divider(context),
 
-                  _gameToggle(
-                    context,
-                    label: 'Hints',
+                  PipesToggle(
                     value: settings.isHintEnabled,
                     onChanged: (val) {
                       ref
                           .read(settingsProvider.notifier)
                           .toggleHintEnabled(val);
                     },
+                    semanticLabel: 'Hints',
+                    enabled: true,
                   ),
 
                   _divider(context),
 
-                  TangibleButton(
+                  PipesButton(
                     text: 'Reset Progress',
-                    isSecondary: true,
+                    variant: PipesButtonVariant.danger,
                     height: 48,
-                    backgroundColor: palette.surface,
-                    textColor: palette.danger,
-                    borderColor: palette.danger.withValues(alpha: 0.33),
                     onPressed: () => _confirmReset(context, ref),
                   ),
                   SizedBox(height: tokens.spacing.lg),
@@ -186,73 +120,9 @@ class SettingsView extends ConsumerWidget {
     );
   }
 
-  Widget _gameToggle(
-    BuildContext context, {
-    required String label,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
-    final palette = context.palette;
+  PaletteTokens _getPaletteTokens(BuildContext context, AppThemePreset preset) {
     final tokens = context.tokens;
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        if (!kIsWeb) HapticFeedback.selectionClick();
-        onChanged(!value);
-      },
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: tokens.spacing.sm),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: tokens.text.label.copyWith(
-                color: palette.textPrimary,
-              ),
-            ),
-            AnimatedContainer(
-              duration: tokens.motion.state,
-              width: 48,
-              height: 28,
-              padding: EdgeInsets.all(tokens.spacing.xs),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(tokens.radius.pill),
-                color: value
-                    ? palette.accent
-                    : palette.textPrimary.withValues(alpha: 0.12),
-                border: Border.all(
-                  color: value ? palette.accent : palette.glassBorder,
-                  width: 1.0,
-                ),
-              ),
-              child: AnimatedAlign(
-                duration: tokens.motion.state,
-                curve: tokens.curves.easeOutCubic,
-                alignment: value
-                    ? Alignment.centerRight
-                    : Alignment.centerLeft,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: palette.onAccent,
-                    boxShadow: [
-                      BoxShadow(
-                        color: palette.background.withValues(alpha: 0.18),
-                        offset: const Offset(0, 1.5),
-                        blurRadius: 3,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return tokens.palettes['${preset.id}${preset.isDark ? 'Dark' : 'Light}']!;
   }
 
   void _confirmReset(BuildContext context, WidgetRef ref) {
@@ -295,20 +165,18 @@ class SettingsView extends ConsumerWidget {
               Row(
                 children: [
                   Expanded(
-                    child: TangibleButton(
+                    child: PipesButton(
                       text: 'Cancel',
-                      isSecondary: true,
+                      variant: PipesButtonVariant.secondary,
                       height: 44,
                       onPressed: () => Navigator.pop(dialogContext),
                     ),
                   ),
                   SizedBox(width: tokens.spacing.md),
                   Expanded(
-                    child: TangibleButton(
+                    child: PipesButton(
                       text: 'Reset',
-                      backgroundColor: palette.danger,
-                      textColor: palette.onAccent,
-                      borderColor: palette.danger,
+                      variant: PipesButtonVariant.danger,
                       height: 44,
                       onPressed: () async {
                         await ref
