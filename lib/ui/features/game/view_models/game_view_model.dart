@@ -328,7 +328,7 @@ class GameViewModel extends StateNotifier<GameViewModelState> {
     );
 
     _hintTimer?.cancel();
-    _hintTimer = Timer(const Duration(milliseconds: 1600), () {
+    _hintTimer = Timer(Duration(seconds: 1, milliseconds: 600), () {
       if (mounted) state = state.copyWith(clearHint: true);
     });
 

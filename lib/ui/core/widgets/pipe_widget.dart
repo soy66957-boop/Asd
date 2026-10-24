@@ -164,8 +164,8 @@ class PipePainter extends CustomPainter {
     final bulbRadius = size.width * 0.22;
 
     final p = palette;
-    final offColor = pipeColor ?? (p?.pipeIdle ?? const Color(0xFF5B6E8F));
-    final onColor = activeColor ?? (p?.pipeFlow ?? const Color(0xFF22D3EE));
+    final offColor = pipeColor ?? (p?.pipeIdle ?? palette.pipeIdle);
+    final onColor = activeColor ?? (p?.pipeFlow ?? palette.pipeFlow);
     final color = hasWater ? onColor : offColor;
 
     final pipePaint = Paint()
@@ -197,7 +197,7 @@ class PipePainter extends CustomPainter {
     final badgeRadius = strokeWidth * 0.95;
 
     final bgPaint = Paint()
-      ..color = bg ?? Colors.white
+      ..color = bg ?? palette.surface
       ..style = PaintingStyle.fill;
     canvas.drawCircle(Offset(cx, cy), badgeRadius, bgPaint);
 
@@ -250,8 +250,8 @@ class SourceBadgePainter extends CustomPainter {
     final badgeRadius = strokeWidth * 0.95;
 
     final p = palette;
-    final onColor = activeColor ?? (p?.pipeFlow ?? const Color(0xFF22D3EE));
-    final offColor = pipeColor ?? (p?.pipeIdle ?? const Color(0xFF5B6E8F));
+    final onColor = activeColor ?? (p?.pipeFlow ?? palette.pipeFlow);
+    final offColor = pipeColor ?? (p?.pipeIdle ?? palette.pipeIdle);
     final color = hasWater ? onColor : offColor;
 
     if (hasWater && pulse > 0.0) {
@@ -265,7 +265,7 @@ class SourceBadgePainter extends CustomPainter {
     }
 
     final bgPaint = Paint()
-      ..color = bgColor ?? Colors.white
+      ..color = bgColor ?? palette.surface
       ..style = PaintingStyle.fill;
     canvas.drawCircle(Offset(cx, cy), badgeRadius, bgPaint);
 
@@ -339,7 +339,7 @@ class _PipeTileState extends State<PipeTile> with TickerProviderStateMixin {
 
     _bounceController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 220),
+      duration: tokens.motion.state,
     );
     _bounceAnimation = TweenSequence<double>([
       TweenSequenceItem(
@@ -362,7 +362,7 @@ class _PipeTileState extends State<PipeTile> with TickerProviderStateMixin {
     if (widget.isSource) {
       _sourcePulseController = AnimationController(
         vsync: this,
-        duration: const Duration(milliseconds: 1400),
+        duration: tokens.motion.screen,
       );
       if (!_isInTest) {
         _sourcePulseController!.repeat();
@@ -392,7 +392,7 @@ class _PipeTileState extends State<PipeTile> with TickerProviderStateMixin {
     if (widget.isSource && _sourcePulseController == null) {
       _sourcePulseController = AnimationController(
         vsync: this,
-        duration: const Duration(milliseconds: 1400),
+        duration: tokens.motion.screen,
       );
       if (!_isInTest) {
         _sourcePulseController!.repeat();

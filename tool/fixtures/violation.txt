@@ -1,0 +1,3 @@
+// Token guard violation fixture (not compiled Dart).
+// Contains one violation: a hard-coded ARGB color literal that the guard must flag.
+final badColor = const Color(0xFF5B6E8F);

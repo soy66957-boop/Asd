@@ -125,8 +125,7 @@ class HowToPlayView extends ConsumerWidget {
       children: [
         Text(
           '$stepNumber.',
-          style: tokens.text.label.copyWith(
-            fontSize: 15,
+          style: tokens.text.body.copyWith(
             fontWeight: FontWeight.w600,
             color: palette.textPrimary,
           ),

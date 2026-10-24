@@ -135,7 +135,7 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
 
     if (isCompleted) {
       cardBg = palette.success;
-      textColor = Colors.white;
+      textColor = palette.onAccent;
       borderColor = palette.success;
       content = Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -143,7 +143,7 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
           Icon(
             Icons.check_circle_rounded,
             size: 20,
-            color: Colors.white,
+            color: palette.onAccent,
           ),
           SizedBox(height: tokens.spacing.xs),
         ],
@@ -203,7 +203,6 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
                   Text(
                     '$levelNumber',
                     style: tokens.text.body.copyWith(
-                      fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: textColor,
                     ),

@@ -36,11 +36,11 @@ class _GameViewState extends ConsumerState<GameView>
     super.initState();
     _shakeController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 260),
+      duration: tokens.motion.feedback,
     );
     _shockwaveController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: tokens.motion.state,
     );
     Future.microtask(() {
       if (!mounted) return;
@@ -127,7 +127,7 @@ class _GameViewState extends ConsumerState<GameView>
                             children: [
                               Text(
                                 state.error!,
-                                style: TextStyle(
+                                style: tokens.text.label.copyWith(
                                   color: palette.danger,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -384,7 +384,6 @@ class _GameViewState extends ConsumerState<GameView>
         Text(
           value,
           style: tokens.text.body.copyWith(
-            fontSize: 14,
             fontWeight: FontWeight.w600,
             color: palette.textPrimary,
           ),
@@ -540,14 +539,14 @@ class _ConfettiExplosionState extends State<ConfettiExplosion>
   void _burst() {
     _particles.clear();
     final List<Color> colors = [
-      Colors.white,
-      Colors.white70,
-      Colors.white54,
-      Colors.white30,
-      const Color(0xFF888888),
-      const Color(0xFFCCCCCC),
-      const Color(0xFF555555),
-      const Color(0xFFAAAAAA),
+      palette.textPrimary,
+      palette.textSecondary,
+      palette.textSecondary,
+      palette.pipeIdle,
+      palette.pipeIdle,
+      palette.surface,
+      palette.textSecondary,
+      palette.pipeIdle,
     ];
 
     for (int i = 0; i < 80; i++) {

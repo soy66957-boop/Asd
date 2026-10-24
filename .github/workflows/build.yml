@@ -33,6 +33,12 @@ jobs:
       - name: Get Dependencies
         run: flutter pub get
 
+      - name: Run token guard
+        run: bash tool/token_guard.sh
+
+      - name: Run token guard self-test
+        run: bash tool/token_guard_selftest.sh
+
       - name: Analyze
         run: flutter analyze --no-fatal-infos
 

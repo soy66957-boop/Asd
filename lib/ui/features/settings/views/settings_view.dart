@@ -237,10 +237,10 @@ class SettingsView extends ConsumerWidget {
                   height: 20,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white,
+                    color: palette.onAccent,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.18),
+                        color: palette.background.withValues(alpha: 0.18),
                         offset: const Offset(0, 1.5),
                         blurRadius: 3,
                       ),
@@ -260,7 +260,7 @@ class SettingsView extends ConsumerWidget {
     final tokens = context.tokens;
     showDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.75),
+      barrierColor: palette.background.withValues(alpha: 0.75),
       builder: (dialogContext) => Dialog(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -307,7 +307,7 @@ class SettingsView extends ConsumerWidget {
                     child: TangibleButton(
                       text: 'Reset',
                       backgroundColor: palette.danger,
-                      textColor: Colors.white,
+                      textColor: palette.onAccent,
                       borderColor: palette.danger,
                       height: 44,
                       onPressed: () async {
