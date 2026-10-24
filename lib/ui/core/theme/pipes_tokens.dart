@@ -148,6 +148,7 @@ class RadiusTokens {
 
   double get sm => 12;
   double get md => 20;
+  double get lg => 28;
   double get pill => 9999;
 }
 
@@ -301,7 +302,7 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     final palettes = _buildAllPalettes(primitives);
     final defaultPalette = palettes['pastelSkyDark']!;
     return PipesTokens(
-      primitives: primitives,
+      primitives: PrimitiveTokens(palettes: primitives),
       components: ComponentTokens.fromPalette(defaultPalette),
       spacing: const SpacingTokens(),
       radius: const RadiusTokens(),
