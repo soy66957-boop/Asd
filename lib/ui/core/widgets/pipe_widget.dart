@@ -61,7 +61,7 @@ class PipePainter extends CustomPainter {
     this.pipeColor,
     this.activeColor,
     this.bgColor,
-    this.palette,
+    required this.palette,
   });
 
   final int mask;
@@ -230,7 +230,7 @@ class SourceBadgePainter extends CustomPainter {
     this.pipeColor,
     this.activeColor,
     this.bgColor,
-    this.palette,
+    required this.palette,
     this.pulse = 0.0,
   });
 
