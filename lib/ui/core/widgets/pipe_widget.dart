@@ -441,7 +441,7 @@ class _PipeTileState extends State<PipeTile> with TickerProviderStateMixin {
               ),
             AnimatedRotation(
               turns: _turns * 0.25,
-              duration: tokens.motion.base,
+              duration: tokens.motion.state,
               curve: tokens.curves.easeOutCubic,
               child: CustomPaint(
                 size: Size(widget.size, widget.size),

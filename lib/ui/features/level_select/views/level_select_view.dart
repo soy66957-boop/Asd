@@ -174,7 +174,7 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
             }
           : null,
       child: AnimatedContainer(
-        duration: tokens.motion.fast,
+        duration: tokens.motion.feedback,
         decoration: BoxDecoration(
           color: cardBg,
           borderRadius: BorderRadius.circular(tokens.radius.md),

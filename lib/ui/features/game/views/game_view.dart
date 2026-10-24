@@ -257,7 +257,7 @@ class _GameViewState extends ConsumerState<GameView>
         if (state.isComplete)
           TweenAnimationBuilder<double>(
             tween: Tween<double>(begin: 0.0, end: 1.0),
-            duration: tokens.motion.base,
+            duration: tokens.motion.state,
             curve: Curves.easeOutBack,
             builder: (context, value, child) {
               return Transform.translate(

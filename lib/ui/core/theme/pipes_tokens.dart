@@ -1,8 +1,134 @@
 // PipesTokens - Design tokens as ThemeExtension
-// All colors, spacing, radii, motion, typography defined here.
-// Screens read tokens via context.tokens extension.
+// Three layers: primitive (raw palette numbers) -> semantic (background, surface,
+// text, accent, glow, danger) -> component (button.primary.background, etc.).
+// Screens use only semantic and component tokens.
 
 import 'package:flutter/material.dart';
+
+// ============================================================================
+// PRIMITIVE LAYER — raw palette numbers
+// ============================================================================
+
+/// Raw numbers for one palette: its id, display name, hue, and base accent color.
+@immutable
+class PalettePrimitives {
+  const PalettePrimitives({
+    required this.id,
+    required this.name,
+    required this.hue,
+    required this.baseAccent,
+  });
+
+  final String id;
+  final String name;
+  final double hue;
+  final Color baseAccent;
+}
+
+/// Primitive tokens: raw palette numbers, keyed by palette id.
+@immutable
+class PrimitiveTokens {
+  const PrimitiveTokens({required this.palettes});
+
+  final Map<String, PalettePrimitives> palettes;
+
+  PalettePrimitives of(String id) => palettes[id]!;
+
+  double hueOf(String id) => palettes[id]!.hue;
+}
+
+// ============================================================================
+// SEMANTIC LAYER — background, surface, text, accent, glow, danger
+// ============================================================================
+
+@immutable
+class PaletteTokens {
+  const PaletteTokens({
+    required this.id,
+    required this.name,
+    required this.isDark,
+    required this.background,
+    required this.surface,
+    required this.glass,
+    required this.glassBorder,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.accent,
+    required this.onAccent,
+    required this.success,
+    required this.danger,
+    required this.star,
+    required this.pipeIdle,
+    required this.pipeFlow,
+    required this.glowColor,
+    required this.source,
+    required this.boardSurface,
+    required this.boardBorder,
+  });
+
+  /// Glow blur radius (design: blur 20, no spread).
+  static const double glowBlur = 20.0;
+
+  final String id;
+  final String name;
+  final bool isDark;
+  final Color background;
+  final Color surface;
+  final Color glass;
+  final Color glassBorder;
+  final Color textPrimary;
+  final Color textSecondary;
+  final Color accent;
+  final Color onAccent;
+  final Color success;
+  final Color danger;
+  final Color star;
+  final Color pipeIdle;
+  final Color pipeFlow;
+  final Color glowColor;
+  final Color source;
+  final Color boardSurface;
+  final Color boardBorder;
+}
+
+// ============================================================================
+// COMPONENT LAYER — component-scoped tokens
+// ============================================================================
+
+@immutable
+class ButtonComponentTokens {
+  const ButtonComponentTokens({
+    required this.primaryBackground,
+    required this.primaryForeground,
+    required this.secondaryBackground,
+    required this.secondaryForeground,
+  });
+
+  final Color primaryBackground;
+  final Color primaryForeground;
+  final Color secondaryBackground;
+  final Color secondaryForeground;
+}
+
+@immutable
+class ComponentTokens {
+  const ComponentTokens({required this.button});
+
+  factory ComponentTokens.fromPalette(PaletteTokens palette) => ComponentTokens(
+        button: ButtonComponentTokens(
+          primaryBackground: palette.accent,
+          primaryForeground: palette.onAccent,
+          secondaryBackground: palette.surface,
+          secondaryForeground: palette.textPrimary,
+        ),
+      );
+
+  final ButtonComponentTokens button;
+}
+
+// ============================================================================
+// SCALE TOKENS — spacing, radius, motion, curves, text
+// ============================================================================
 
 /// Spacing scale (multiples of 4)
 class SpacingTokens {
@@ -22,17 +148,16 @@ class RadiusTokens {
 
   double get sm => 12;
   double get md => 20;
-  double get lg => 28;
   double get pill => 9999;
 }
 
-/// Motion duration scale
+/// Motion duration scale (design: feedback 120ms, state 220ms, screen 420ms)
 class MotionTokens {
   const MotionTokens();
 
-  Duration get fast => const Duration(milliseconds: 120);
-  Duration get base => const Duration(milliseconds: 220);
-  Duration get slow => const Duration(milliseconds: 420);
+  Duration get feedback => const Duration(milliseconds: 120);
+  Duration get state => const Duration(milliseconds: 220);
+  Duration get screen => const Duration(milliseconds: 420);
 }
 
 /// Motion curves
@@ -94,59 +219,16 @@ class TextTokens {
   );
 }
 
-/// Semantic color tokens for a single palette variant (dark or light)
-@immutable
-class PaletteTokens {
-  const PaletteTokens({
-    required this.id,
-    required this.name,
-    required this.isDark,
-    required this.background,
-    required this.surface,
-    required this.glass,
-    required this.glassBorder,
-    required this.textPrimary,
-    required this.textSecondary,
-    required this.accent,
-    required this.success,
-    required this.danger,
-    required this.star,
-    // Game-specific tokens
-    required this.pipeIdle,
-    required this.pipeFlow,
-    required this.pipeGlow,
-    required this.source,
-    required this.boardSurface,
-    required this.boardBorder,
-  });
-
-  final String id;
-  final String name;
-  final bool isDark;
-  final Color background;
-  final Color surface;
-  final Color glass;
-  final Color glassBorder;
-  final Color textPrimary;
-  final Color textSecondary;
-  final Color accent;
-  final Color success;
-  final Color danger;
-  final Color star;
-
-  // Game tokens
-  final Color pipeIdle;
-  final Color pipeFlow;
-  final Color pipeGlow;
-  final Color source;
-  final Color boardSurface;
-  final Color boardBorder;
-}
+// ============================================================================
+// PALETTE DERIVATION (design color rules)
+// ============================================================================
 
 /// All design tokens as a ThemeExtension
 @immutable
 class PipesTokens extends ThemeExtension<PipesTokens> {
   const PipesTokens({
+    required this.primitives,
+    required this.components,
     required this.spacing,
     required this.radius,
     required this.motion,
@@ -157,6 +239,8 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     required this.themeMode,
   });
 
+  final PrimitiveTokens primitives;
+  final ComponentTokens components;
   final SpacingTokens spacing;
   final RadiusTokens radius;
   final MotionTokens motion;
@@ -178,6 +262,8 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
 
   @override
   PipesTokens copyWith({
+    PrimitiveTokens? primitives,
+    ComponentTokens? components,
     SpacingTokens? spacing,
     RadiusTokens? radius,
     MotionTokens? motion,
@@ -188,6 +274,8 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     ThemeMode? themeMode,
   }) {
     return PipesTokens(
+      primitives: primitives ?? this.primitives,
+      components: components ?? this.components,
       spacing: spacing ?? this.spacing,
       radius: radius ?? this.radius,
       motion: motion ?? this.motion,
@@ -209,22 +297,25 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
   }
 
   static PipesTokens createDefault() {
+    final primitives = _buildPrimitives();
+    final palettes = _buildAllPalettes(primitives);
+    final defaultPalette = palettes['pastelSkyDark']!;
     return PipesTokens(
+      primitives: primitives,
+      components: ComponentTokens.fromPalette(defaultPalette),
       spacing: const SpacingTokens(),
       radius: const RadiusTokens(),
       motion: const MotionTokens(),
       curves: const CurveTokens(),
       text: const TextTokens(),
-      palettes: _buildAllPalettes(),
+      palettes: palettes,
       currentPaletteId: 'pastelSky',
       themeMode: ThemeMode.dark,
     );
   }
 
-  static Map<String, PaletteTokens> _buildAllPalettes() {
-    final palettes = <String, PaletteTokens>{};
-
-    // Original palette definitions with their accent hues extracted
+  static Map<String, PalettePrimitives> _buildPrimitives() {
+    // Original palette definitions with their accent hues extracted.
     // Each entry: id -> {displayName, accentColor}
     final originalPalettes = {
       'pastelMint': {'name': 'Mint & Sage', 'accent': const Color(0xFF388E3C)},
@@ -238,11 +329,31 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
       'obsidian': {'name': 'Obsidian Dark', 'accent': const Color(0xFF81C784)},
     };
 
+    final primitives = <String, PalettePrimitives>{};
     for (final entry in originalPalettes.entries) {
       final id = entry.key;
       final name = entry.value['name'] as String;
-      final accentColor = entry.value['accent'] as Color;
-      final hue = _extractHue(accentColor);
+      final baseAccent = entry.value['accent'] as Color;
+      final hue = _extractHue(baseAccent);
+      primitives[id] = PalettePrimitives(
+        id: id,
+        name: name,
+        hue: hue,
+        baseAccent: baseAccent,
+      );
+    }
+    return primitives;
+  }
+
+  static Map<String, PaletteTokens> _buildAllPalettes(
+    Map<String, PalettePrimitives> primitives,
+  ) {
+    final palettes = <String, PaletteTokens>{};
+
+    for (final entry in primitives.entries) {
+      final id = entry.key;
+      final name = entry.value.name;
+      final hue = entry.value.hue;
 
       // Dark variant for each palette
       palettes['${id}Dark'] = _deriveDarkPalette(id, name, hue);
@@ -252,11 +363,6 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     }
 
     return palettes;
-  }
-
-  static double _extractHue(Color color) {
-    final hsl = HSLColor.fromColor(color);
-    return hsl.hue;
   }
 
   /// Computes WCAG contrast ratio between two colors using Flutter's built-in luminance.
@@ -269,8 +375,6 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
   }
 
   /// Adjusts foreground color lightness in HSL space until contrast ratio against background meets minimum.
-  /// Preserves hue and saturation. Steps toward white (dark mode) or black (light mode) in ~2% increments.
-  /// Falls back to pure white or black only if no step passes.
   static Color ensureContrast(Color foreground, Color background, double minRatio) {
     if (contrastRatio(foreground, background) >= minRatio) return foreground;
 
@@ -278,7 +382,6 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     final isDarkBg = bgLum < 0.5;
     final hsl = HSLColor.fromColor(foreground);
 
-    // Step lightness toward white (dark bg) or black (light bg)
     final step = isDarkBg ? 0.02 : -0.02;
     double lightness = hsl.lightness;
 
@@ -289,39 +392,65 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
       if ((isDarkBg && lightness >= 1.0) || (!isDarkBg && lightness <= 0.0)) break;
     }
 
-    // Fallback: pure white on dark, pure black on light
     return isDarkBg ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
   }
 
-  static PaletteTokens _deriveDarkPalette(String id, String name, double hue) {
-    // Dark theme derivation from accent hue per spec
-    // background = hue, 40% sat, 7% light
-    // surface = hue, 35%, 11%
-    // glass = white @ 8% with 1px border of white @ 14%
-    // text primary #E8F1FF, text secondary #9FB3CF (ensure 4.5:1 on background)
-    // accent: bright accent per spec (ensure 3:1 on background for UI)
-    // success #34D399, danger #FB7185, star #FBBF24
-    // pipeIdle #5B6E8F (ensure 3:1 on boardSurface), pipeFlow = accent, pipeGlow = accent @ 40%
-    // source = accent, boardSurface = surface, boardBorder = glass border
+  static double _extractHue(Color color) => HSLColor.fromColor(color).hue;
 
-    final baseAccent = _getDarkAccent(id, hue);
-    final background = HSLColor.fromAHSL(1.0, hue, 0.40, 0.07).toColor();
-    final surface = HSLColor.fromAHSL(1.0, hue, 0.35, 0.11).toColor();
-    final glass = const Color(0x14FFFFFF); // white @ 8%
-    final glassBorder = const Color(0x24FFFFFF); // white @ 14%
-    const textPrimary = Color(0xFFE8F1FF);
-    const baseTextSecondary = Color(0xFF9FB3CF);
+  /// Dark accent: palette's own hue at 95% sat, 58% light, then ensureContrast >= 3:1 on background.
+  static Color _accentForDark(double hue, Color background) {
+    final accent = HSLColor.fromAHSL(1.0, hue, 0.95, 0.58).toColor();
+    return ensureContrast(accent, background, 3.0);
+  }
+
+  /// Light accent: palette's hue darkened until white text on it is >= 4.5:1
+  /// and the accent on background is >= 3:1.
+  static Color _accentForLight(double hue, Color background) {
+    final hsl = HSLColor.fromAHSL(1.0, hue, 1.0, 0.5);
+    double lightness = 0.5;
+    for (int i = 0; i < 200; i++) {
+      final color = hsl.withLightness(lightness).toColor();
+      if (contrastRatio(const Color(0xFFFFFFFF), color) >= 4.5 &&
+          contrastRatio(color, background) >= 3.0) {
+        return color;
+      }
+      lightness = (lightness - 0.005).clamp(0.0, 1.0);
+      if (lightness <= 0.0) break;
+    }
+    return hsl.withLightness(0.0).toColor();
+  }
+
+  static PaletteTokens _deriveDarkPalette(String id, String name, double hue) {
+    // DESIGN.md COLOR, DARK (default)
+    // background = hue, 30% sat, 4% light
+    // surface = hue, 26% sat, 8% light
+    // hairline = white @ 10%
+    // text #EAF2FF; secondary text #93A4BF; idle pipe #5B6E8F
+    // neon accent = hue at 95% sat, 58% light, then ensureContrast >= 3:1 on background
+    // onAccent = #07090F or white, whichever contrasts more (>= 4.5:1)
+    final background = HSLColor.fromAHSL(1.0, hue, 0.30, 0.04).toColor();
+    final surface = HSLColor.fromAHSL(1.0, hue, 0.26, 0.08).toColor();
+    final glass = const Color(0x1AFFFFFF); // white @ 10%
+    final glassBorder = const Color(0x1AFFFFFF); // white @ 10%
+    const textPrimary = Color(0xFFEAF2FF);
+    const baseTextSecondary = Color(0xFF93A4BF);
     const basePipeIdle = Color(0xFF5B6E8F);
     const success = Color(0xFF34D399);
     const danger = Color(0xFFFB7185);
     const star = Color(0xFFFBBF24);
 
-    // Ensure contrast for textSecondary on background (4.5:1)
     final textSecondary = ensureContrast(baseTextSecondary, background, 4.5);
-    // Ensure contrast for pipeIdle on boardSurface (3:1)
     final pipeIdle = ensureContrast(basePipeIdle, surface, 3.0);
-    // Ensure contrast for accent on background (3:1 for UI elements)
-    final accent = ensureContrast(baseAccent, background, 3.0);
+    final accent = _accentForDark(hue, background);
+
+    final darkOnAccentCandidate = const Color(0xFF07090F);
+    final whiteOnAccentCandidate = const Color(0xFFFFFFFF);
+    final darkRatio = contrastRatio(darkOnAccentCandidate, accent);
+    final whiteRatio = contrastRatio(whiteOnAccentCandidate, accent);
+    final onAccentBase = darkRatio >= whiteRatio ? darkOnAccentCandidate : whiteOnAccentCandidate;
+    final onAccent = ensureContrast(onAccentBase, accent, 4.5);
+
+    final glowColor = accent.withValues(alpha: 0.40);
 
     return PaletteTokens(
       id: '${id}Dark',
@@ -334,12 +463,13 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
       textPrimary: textPrimary,
       textSecondary: textSecondary,
       accent: accent,
+      onAccent: onAccent,
       success: success,
       danger: danger,
       star: star,
       pipeIdle: pipeIdle,
       pipeFlow: accent,
-      pipeGlow: accent.withValues(alpha: 0.40),
+      glowColor: glowColor,
       source: accent,
       boardSurface: surface,
       boardBorder: glassBorder,
@@ -347,33 +477,34 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
   }
 
   static PaletteTokens _deriveLightPalette(String id, String name, double hue) {
-    // Light theme derivation per spec:
-    // background = hue, 60%, 96%
-    // surface = hue, 45%, 92%
-    // text primary #0F1B2D
-    // text secondary #475569 (ensure 4.5:1 on background)
-    // accent darkened until white text on it reaches 4.5:1
-    // pipeIdle #6B7C99 (ensure 3:1 on boardSurface)
-    // boardSurface = surface
-
-    final background = HSLColor.fromAHSL(1.0, hue, 0.60, 0.96).toColor();
-    final surface = HSLColor.fromAHSL(1.0, hue, 0.45, 0.92).toColor();
-    final glass = const Color(0x14000000); // black @ 8%
-    final glassBorder = const Color(0x24000000); // black @ 14%
+    // DESIGN.md COLOR, LIGHT
+    // background = hue, 40% sat, 97% light
+    // surface = white; hairline = black @ 10%
+    // text #0F1B2D; secondary text #475569; idle pipe #6B7C99
+    // accent = hue darkened until white text on it >= 4.5:1 and accent on background >= 3:1
+    final background = HSLColor.fromAHSL(1.0, hue, 0.40, 0.97).toColor();
+    final surface = const Color(0xFFFFFFFF);
+    final glass = const Color(0x1A000000); // black @ 10%
+    final glassBorder = const Color(0x1A000000); // black @ 10%
     const textPrimary = Color(0xFF0F1B2D);
     const baseTextSecondary = Color(0xFF475569);
     const basePipeIdle = Color(0xFF6B7C99);
-    final baseAccent = _getLightAccent(id, hue);
     const success = Color(0xFF059669);
     const danger = Color(0xFFDC2626);
     const star = Color(0xFFB45309);
 
-    // Ensure contrast for textSecondary on background (4.5:1)
     final textSecondary = ensureContrast(baseTextSecondary, background, 4.5);
-    // Ensure contrast for pipeIdle on boardSurface (3:1)
     final pipeIdle = ensureContrast(basePipeIdle, surface, 3.0);
-    // Ensure contrast for accent on background (3:1 for UI elements)
-    final accent = ensureContrast(baseAccent, background, 3.0);
+    final accent = _accentForLight(hue, background);
+
+    final darkOnAccentCandidate = const Color(0xFF07090F);
+    final whiteOnAccentCandidate = const Color(0xFFFFFFFF);
+    final darkRatio = contrastRatio(darkOnAccentCandidate, accent);
+    final whiteRatio = contrastRatio(whiteOnAccentCandidate, accent);
+    final onAccentBase = darkRatio >= whiteRatio ? darkOnAccentCandidate : whiteOnAccentCandidate;
+    final onAccent = ensureContrast(onAccentBase, accent, 4.5);
+
+    final glowColor = accent.withValues(alpha: 0.40);
 
     return PaletteTokens(
       id: '${id}Light',
@@ -386,74 +517,23 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
       textPrimary: textPrimary,
       textSecondary: textSecondary,
       accent: accent,
+      onAccent: onAccent,
       success: success,
       danger: danger,
       star: star,
       pipeIdle: pipeIdle,
       pipeFlow: accent,
-      pipeGlow: accent.withValues(alpha: 0.40),
+      glowColor: glowColor,
       source: accent,
       boardSurface: surface,
       boardBorder: glassBorder,
     );
-  }
-
-  static Color _getDarkAccent(String id, double hue) {
-    // Use the specified bright accents for dark mode
-    switch (id) {
-      case 'pastelMint':
-        return const Color(0xFF34D399); // green
-      case 'pastelPeach':
-        return const Color(0xFFFB923C); // orange
-      case 'pastelLavender':
-        return const Color(0xFFA78BFA); // purple
-      case 'pastelSky':
-        return const Color(0xFF22D3EE); // aqua (default for new installs)
-      case 'pastelRose':
-        return const Color(0xFFF472B6); // pink
-      case 'pastelButter':
-        return const Color(0xFFFACC15); // yellow
-      case 'pastelCoral':
-        return const Color(0xFFFF7A59); // deep orange
-      case 'pastelOcean':
-        return const Color(0xFF22D3EE); // aqua
-      case 'obsidian':
-        return const Color(0xFF34D399); // green
-      default:
-        return const Color(0xFF22D3EE); // aqua default
-    }
-  }
-
-  static Color _getLightAccent(String id, double hue) {
-    // Light accents - darkened versions that pass 4.5:1 with white text
-    switch (id) {
-      case 'pastelMint':
-        return const Color(0xFF166534); // dark green
-      case 'pastelPeach':
-        return const Color(0xFF9A3412); // dark orange
-      case 'pastelLavender':
-        return const Color(0xFF6B21A8); // dark purple
-      case 'pastelSky':
-        return const Color(0xFF0369A1); // dark blue
-      case 'pastelRose':
-        return const Color(0xFFBE185D); // dark pink
-      case 'pastelButter':
-        return const Color(0xFF854D0E); // dark yellow/amber
-      case 'pastelCoral':
-        return const Color(0xFF9A3412); // dark coral/orange
-      case 'pastelOcean':
-        return const Color(0xFF004D40); // dark teal
-      case 'obsidian':
-        return const Color(0xFF166534); // dark green
-      default:
-        return const Color(0xFF0369A1); // dark blue default
-    }
   }
 }
 
 /// BuildContext extension for easy token access
 extension TokensContext on BuildContext {
   PipesTokens get tokens => Theme.of(this).extension<PipesTokens>() ?? PipesTokens.createDefault();
-  
+
   PaletteTokens get palette => tokens.currentPalette;
 }

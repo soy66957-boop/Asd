@@ -85,6 +85,24 @@ void main() {
       );
     });
 
+    test('All dark palettes: textSecondary on surface >= 4.5:1', () {
+      expectAllPass(
+        'Dark palette textSecondary on surface',
+        tokens.palettes.values.where((p) => p.isDark),
+        (p) => PipesTokens.contrastRatio(p.textSecondary, p.surface),
+        4.5,
+      );
+    });
+
+    test('All light palettes: textSecondary on surface >= 4.5:1', () {
+      expectAllPass(
+        'Light palette textSecondary on surface',
+        tokens.palettes.values.where((p) => !p.isDark),
+        (p) => PipesTokens.contrastRatio(p.textSecondary, p.surface),
+        4.5,
+      );
+    });
+
     test('All palettes: pipeIdle on boardSurface >= 3:1', () {
       expectAllPass(
         'Palette pipeIdle on boardSurface',
@@ -118,6 +136,15 @@ void main() {
         tokens.palettes.values,
         (p) => PipesTokens.contrastRatio(p.accent, p.background),
         3.0,
+      );
+    });
+
+    test('All palettes: onAccent on accent >= 4.5:1', () {
+      expectAllPass(
+        'Palette onAccent on accent',
+        tokens.palettes.values,
+        (p) => PipesTokens.contrastRatio(p.onAccent, p.accent),
+        4.5,
       );
     });
   });

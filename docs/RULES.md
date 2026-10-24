@@ -38,3 +38,24 @@ Never claim something works without a green CI run. Show real output (run URL, a
 
 ## 8. No Local Flutter/Dart
 Never download, install, or run a local Flutter or Dart SDK. The official arm64 binaries cannot run on Android. CI on GitHub is the ONLY compiler and test runner. To see test failures, read the CI job log through the GitHub API.
+
+## 9. Skill Gate
+Before any task with a SKILLS line, check `docs/skills/`. If a needed skill is missing, install it first from `docs/skills/REGISTRY.md`, then do the task using that skill, and name it in the report.
+
+## 10. Design work
+Read `docs/DESIGN.md` first, then ONLY the skills for the current task. Never read more than 2 skill files in one step. `DESIGN.md` wins over any skill.
+
+## 11. Edit files only with the file-edit tools
+No scripts that do blind string replacement.
+
+## 12. Prove every check can fail
+Show a new test or guard failing on a planted error, then passing.
+
+## 13. Delivery Gate
+Every phase ends with the Delivery Gate in the antislop core skill's format: PASS/FAIL per item, each PASS with proof (CI run link, file:line, or a number). Add a Build block for the CI jobs.
+
+## 14. No screenshots
+Do not claim screenshots. Numbers in reports come from commands.
+
+## 15. Skills per phase
+P3 antislop + antislop-human. P4 antislop-ui + antislop-human. P5 animate + apple-design. P6 antislop-layoutmobile + antislop-copywriting. P7 antislop. P8 antislop-human + review-animations + antislop.

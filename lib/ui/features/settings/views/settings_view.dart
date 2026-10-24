@@ -104,7 +104,7 @@ class SettingsView extends ConsumerWidget {
                                 .setTheme(preset);
                           },
                           child: AnimatedContainer(
-                            duration: tokens.motion.fast,
+                            duration: tokens.motion.feedback,
                             width: 44,
                             height: 44,
                             decoration: BoxDecoration(
@@ -212,7 +212,7 @@ class SettingsView extends ConsumerWidget {
               ),
             ),
             AnimatedContainer(
-              duration: tokens.motion.base,
+              duration: tokens.motion.state,
               width: 48,
               height: 28,
               padding: EdgeInsets.all(tokens.spacing.xs),
@@ -227,7 +227,7 @@ class SettingsView extends ConsumerWidget {
                 ),
               ),
               child: AnimatedAlign(
-                duration: tokens.motion.base,
+                duration: tokens.motion.state,
                 curve: tokens.curves.easeOutCubic,
                 alignment: value
                     ? Alignment.centerRight

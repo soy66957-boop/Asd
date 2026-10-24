@@ -40,7 +40,10 @@ class _TangibleButtonState extends State<TangibleButton> {
     final Color buttonBg = widget.backgroundColor ??
         (widget.isSecondary ? palette.surface : palette.accent);
 
-    final Color textColor = widget.textColor ?? palette.textPrimary;
+    final Color defaultTextColor = widget.isSecondary
+        ? palette.textPrimary
+        : palette.onAccent;
+    final Color textColor = widget.textColor ?? defaultTextColor;
     final Color borderColor = widget.borderColor ?? palette.glassBorder;
 
     final double shadowDepth = isPressedNow ? 1.0 : 4.0;
@@ -63,7 +66,7 @@ class _TangibleButtonState extends State<TangibleButton> {
         if (isInteractive) setState(() => _isPressed = false);
       },
       child: AnimatedContainer(
-        duration: tokens.motion.fast,
+        duration: tokens.motion.feedback,
         curve: tokens.curves.easeOutCubic,
         transform: Matrix4.translationValues(0, translateY, 0),
         height: widget.height,
