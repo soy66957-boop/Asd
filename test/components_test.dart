@@ -14,7 +14,6 @@ void main() {
       required PipesButtonVariant variant,
       VoidCallback? onPressed,
       bool isLoading = false,
-      bool enabled = true,
       String? semanticLabel,
     }) {
       return MaterialApp(
@@ -48,12 +47,11 @@ void main() {
       expect(callCount, equals(2));
     });
 
-    testWidgets('onPressed never fires when disabled', (tester) async {
+    testWidgets('onPressed never fires when onPressed is null', (tester) async {
       int callCount = 0;
       await tester.pumpWidget(createTestWidget(
         variant: PipesButtonVariant.primary,
-        onPressed: () => callCount++,
-        enabled: false,
+        onPressed: null,
       ));
 
       await tester.tap(find.byType(PipesButton));
@@ -79,15 +77,15 @@ void main() {
     testWidgets('every variant and state builds without error', (tester) async {
       for (final variant in PipesButtonVariant.values) {
         for (final state in [
-          {'enabled': true, 'loading': false, 'selected': false},
-          {'enabled': false, 'loading': false, 'selected': false},
-          {'enabled': true, 'loading': true, 'selected': false},
-          {'enabled': true, 'loading': false, 'selected': true},
+          {'onPressed': () {}, 'isLoading': false, 'isSelected': false},
+          {'onPressed': null, 'isLoading': false, 'isSelected': false},
+          {'onPressed': () {}, 'isLoading': true, 'isSelected': false},
+          {'onPressed': () {}, 'isLoading': false, 'isSelected': true},
         ]) {
           await tester.pumpWidget(createTestWidget(
             variant: variant,
-            onPressed: state['enabled'] as bool ? () {} : null,
-            isLoading: state['loading'] as bool,
+            onPressed: state['onPressed'] as VoidCallback?,
+            isLoading: state['isLoading'] as bool,
           ));
           await tester.pump();
           expect(find.byType(PipesButton), findsOneWidget);
