@@ -13,3 +13,7 @@
 | 2025-10-23 | 6. Cleanup Part A | Removed all donation/support UI (Ko-fi badge, Backer dialog, heart button, win dialog Ko-fi link, Liberapay section), deleted .github/FUNDING.yml and .github/workflows/test.yml, kept url_launcher for star button. CI green (run #39899579252). Web: https://soy66957-boop.github.io/Asd/ |
 
 *Update this file after every step.*
+
+| 2026-10-24 | Step 3 | Skill Gate installed; docs/DESIGN.md created; rules 9-15 appended to docs/RULES.md; antislop + antislop-human skills installed under docs/skills/ with REGISTRY.md and SOURCES.md |
+| 2026-10-24 | Step 4 | Tokens restructured into primitive/semantic/component layers; DESIGN.md color rules applied to all 9 palettes (dark & light); glowColor (accent @ 40%) + glowBlur (20) added; motion renamed feedback/state/screen = 120/220/420ms; contrast tests added (text pairs on background & surface, onAccent on accent); Play button label uses onAccent; CI green (run #40085246813) |
+| 2026-10-24 | Step 5 | tool/token_guard.sh created scanning lib/ui (excl. theme); tool/fixtures/violation.txt + tool/token_guard_selftest.sh (PASS: fails on plant, passes clean); guard wired into analyze job before tests; lib/ui guard hits before=30 after=0; CI green (run #40088022282) |
