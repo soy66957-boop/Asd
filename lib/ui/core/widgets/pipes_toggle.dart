@@ -1,12 +1,13 @@
 // PipesToggle - Toggle switch with accent thumb and glow.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/ui/core/audio/pipes_audio.dart';
 import 'package:pipes/ui/core/audio/pipes_haptics.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/core/widgets/pipes_tap.dart';
 
-class PipesToggle extends StatefulWidget {
+class PipesToggle extends ConsumerStatefulWidget {
   const PipesToggle({
     super.key,
     required this.value,
@@ -21,10 +22,11 @@ class PipesToggle extends StatefulWidget {
   final bool enabled;
 
   @override
-  State<PipesToggle> createState() => _PipesToggleState();
+  ConsumerState<PipesToggle> createState() => _PipesToggleState();
 }
 
-class _PipesToggleState extends State<PipesToggle> with SingleTickerProviderStateMixin {
+class _PipesToggleState extends ConsumerState<PipesToggle>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _thumbAnimation;
 
@@ -32,7 +34,7 @@ class _PipesToggleState extends State<PipesToggle> with SingleTickerProviderStat
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: context.tokens.components.toggle.animationDuration,
+      duration: const Duration(milliseconds: 120),
       vsync: this,
     );
     _thumbAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -63,7 +65,7 @@ class _PipesToggleState extends State<PipesToggle> with SingleTickerProviderStat
     if (!widget.enabled) return;
     widget.onChanged(!widget.value);
     PipesHaptics.tap();
-    context.pipesAudio.play(AppSound.tap);
+    ref.read(pipesAudioProvider).play(AppSound.tap);
   }
 
   @override
