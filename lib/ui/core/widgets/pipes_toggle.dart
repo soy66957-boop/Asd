@@ -89,7 +89,9 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
         pressScale: 1.0,
         minHitSize: c.hitSize,
         child: AnimatedBuilder(
-          animation: disableAnimations ? _thumbAnimation : Listenable.merge([_controller]),
+          animation: disableAnimations
+              ? _thumbAnimation
+              : Listenable.merge([_controller]) as Listenable,
           builder: (context, child) {
             final t = disableAnimations ? (widget.value ? 1.0 : 0.0) : _thumbAnimation.value;
 
