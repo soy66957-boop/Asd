@@ -36,11 +36,11 @@ class _GameViewState extends ConsumerState<GameView>
     super.initState();
     _shakeController = AnimationController(
       vsync: this,
-      duration: tokens.motion.feedback,
+      duration: context.tokens.motion.feedback,
     );
     _shockwaveController = AnimationController(
       vsync: this,
-      duration: tokens.motion.state,
+      duration: context.tokens.motion.state,
     );
     Future.microtask(() {
       if (!mounted) return;
@@ -537,6 +537,7 @@ class _ConfettiExplosionState extends State<ConfettiExplosion>
   }
 
   void _burst() {
+    final palette = context.palette;
     _particles.clear();
     final List<Color> colors = [
       palette.textPrimary,
