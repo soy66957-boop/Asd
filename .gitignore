@@ -53,3 +53,9 @@ app.*.map.json
 # Environment & local secrets
 .env*
 !.env.example
+
+# Agent / harness temp (never commit)
+.codegraph/
+.skill-clone-tmp/
+.harness/
+Pipes/
