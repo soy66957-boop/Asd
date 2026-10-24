@@ -209,5 +209,5 @@ class _PipesTapState extends State<PipesTap> with SingleTickerProviderStateMixin
 
 /// Extension for easy access to pipesAudio from BuildContext.
 extension PipesAudioContext on BuildContext {
-  PipesAudio get pipesAudio => ProviderScope.of(this).read(pipesAudioProvider);
+  PipesAudio get pipesAudio => read(pipesAudioProvider);
 }
