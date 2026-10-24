@@ -110,8 +110,6 @@ class ButtonComponentTokens {
     required this.dangerForeground,
     required this.disabledBorder,
     required this.disabledForeground,
-    required this.focusRingColor,
-    required this.focusRingWidth,
     required this.loadingSpinnerColor,
     required this.height,
     required this.radius,
@@ -140,8 +138,6 @@ class ButtonComponentTokens {
   // States
   final Color disabledBorder;
   final Color disabledForeground;
-  final Color focusRingColor;
-  final double focusRingWidth;
   final Color loadingSpinnerColor;
   // Geometry
   final double height;
@@ -172,8 +168,6 @@ class IconButtonComponentTokens {
     required this.disabledBackground,
     required this.disabledBorder,
     required this.disabledIconColor,
-    required this.focusRingColor,
-    required this.focusRingWidth,
     required this.radius,
   });
 
@@ -189,8 +183,6 @@ class IconButtonComponentTokens {
   final Color disabledBackground;
   final Color disabledBorder;
   final Color disabledIconColor;
-  final Color focusRingColor;
-  final double focusRingWidth;
   final double radius;
 }
 
@@ -330,14 +322,10 @@ class HeaderComponentTokens {
   const HeaderComponentTokens({
     required this.height,
     required this.slotWidth,
-    required this.centerTextStyle,
-    required this.leadingTrailingTextStyle,
   });
 
   final double height;
   final double slotWidth;
-  final TextStyle centerTextStyle;
-  final TextStyle leadingTrailingTextStyle;
 }
 
 @immutable
@@ -372,8 +360,6 @@ class ComponentTokens {
           // States
           disabledBorder: palette.glassBorder.withValues(alpha: 0.5),
           disabledForeground: palette.textSecondary.withValues(alpha: 0.5),
-          focusRingColor: palette.accent,
-          focusRingWidth: 2.0,
           loadingSpinnerColor: palette.onAccent,
           // Geometry
           height: 48.0,
@@ -401,8 +387,6 @@ class ComponentTokens {
           disabledBackground: palette.surface.withValues(alpha: 0.5),
           disabledBorder: palette.glassBorder.withValues(alpha: 0.5),
           disabledIconColor: palette.textSecondary.withValues(alpha: 0.5),
-          focusRingColor: palette.accent,
-          focusRingWidth: 2.0,
           radius: 9999.0,
         ),
         surface: SurfaceComponentTokens(
@@ -466,8 +450,6 @@ class ComponentTokens {
         header: HeaderComponentTokens(
           height: 56.0,
           slotWidth: 48.0,
-          centerTextStyle: const TextStyle(),
-          leadingTrailingTextStyle: const TextStyle(),
         ),
       );
 
