@@ -3,6 +3,8 @@ import 'package:pipes/ui/core/audio/pipes_audio.dart';
 import 'package:pipes/ui/core/audio/pipes_haptics.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('SilentAudio and PipesHaptics', () {
     test('SilentAudio.play does not throw', () async {
       final audio = const SilentAudio();
