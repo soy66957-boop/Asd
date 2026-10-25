@@ -1,3 +1,3 @@
 // Icons barrel export
 
-export 'pipes_icons.dart';
+export 'icons/pipes_icons.dart';
