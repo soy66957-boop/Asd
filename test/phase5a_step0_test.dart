@@ -21,7 +21,7 @@ import 'package:pipes/domain/models/app_settings.dart';
 import 'package:pipes/domain/use_cases/level_generator.dart';
 
 /// Test helper that captures pixels from an already-rendered RepaintBoundary at 390x844 logical px
-/// with devicePixelRatio 3.
+/// with devicePixelRatio 1 (for speed; logical coords match physical pixels).
 class PixelProbe {
   final WidgetTester tester;
   final GlobalKey boundaryKey;
@@ -31,20 +31,20 @@ class PixelProbe {
   PixelProbe(this.tester, this.boundaryKey)
       : originalViewSize = tester.view.physicalSize,
         originalPixelRatio = tester.view.devicePixelRatio {
-    // Set up 390x844 logical pixels at 3x device pixel ratio = 1170x2532 physical
-    tester.view.physicalSize = const Size(1170, 2532);
-    tester.view.devicePixelRatio = 3.0;
+    // Set up 390x844 logical pixels at 1x device pixel ratio = 390x844 physical
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1.0;
   }
 
   /// Returns the pixel color at [logicalPoint] from the already-rendered RepaintBoundary.
   Future<Color> probeColor(Offset logicalPoint) async {
     final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    final image = await boundary.toImage(pixelRatio: 3.0);
+    final image = await boundary.toImage(pixelRatio: 1.0);
     final byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
     final pixels = byteData!.buffer.asUint8List();
     final width = image.width;
-    final x = (logicalPoint.dx * 3).round().clamp(0, width - 1);
-    final y = (logicalPoint.dy * 3).round().clamp(0, image.height - 1);
+    final x = logicalPoint.dx.round().clamp(0, width - 1);
+    final y = logicalPoint.dy.round().clamp(0, image.height - 1);
     final index = (y * width + x) * 4;
     return Color.fromRGBO(pixels[index], pixels[index + 1], pixels[index + 2], pixels[index + 3] / 255.0);
   }
