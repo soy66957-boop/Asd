@@ -382,6 +382,10 @@ void main() {
               theme: ThemeData(
                 extensions: [PipesTokens.createDefault().copyWith(currentPaletteId: paletteId, themeMode: ThemeMode.dark)],
               ),
+              darkTheme: ThemeData(
+                extensions: [PipesTokens.createDefault().copyWith(currentPaletteId: paletteId, themeMode: ThemeMode.dark)],
+              ),
+              themeMode: ThemeMode.dark,
               home: Scaffold(
                 body: Builder(
                   builder: (context) => PipesButton(
@@ -428,6 +432,10 @@ void main() {
               theme: ThemeData(
                 extensions: [PipesTokens.createDefault().copyWith(currentPaletteId: paletteId, themeMode: ThemeMode.dark)],
               ),
+              darkTheme: ThemeData(
+                extensions: [PipesTokens.createDefault().copyWith(currentPaletteId: paletteId, themeMode: ThemeMode.dark)],
+              ),
+              themeMode: ThemeMode.dark,
               home: Scaffold(
                 body: Builder(
                   builder: (context) => PipesLevelTile(
