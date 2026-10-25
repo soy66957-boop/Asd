@@ -40,7 +40,37 @@ jobs:
         run: bash tool/token_guard_selftest.sh
 
       - name: Analyze
-        run: flutter analyze --no-fatal-infos
+        run: |
+          flutter analyze --no-fatal-infos 2>&1 | awk '
+          /^  (error|warning) • / {
+            # Parse: "  error • message • path:line:col • rule"
+            level = $1
+            # Find the message (between first • and second •)
+            msg_start = index($0, "•") + 2
+            msg_end = index(substr($0, msg_start), " • ")
+            if (msg_end > 0) {
+              msg_end = msg_start + msg_end - 1
+              message = substr($0, msg_start, msg_end - msg_start)
+              rest = substr($0, msg_end + 3)
+              # rest is "path:line:col • rule"
+              split(rest, parts, " • ")
+              location = parts[1]
+              rule = parts[2]
+              split(location, loc, ":")
+              file = loc[1]
+              line = loc[2]
+              col = loc[3]
+              if (level == "error") {
+                printf "::error file=%s,line=%s,col=%s::%s (%s)\n", file, line, col, message, rule
+              } else {
+                printf "::warning file=%s,line=%s,col=%s::%s (%s)\n", file, line, col, message, rule
+              }
+            }
+            print $0
+            next
+          }
+          { print }
+          '
 
       - name: Test
         run: |

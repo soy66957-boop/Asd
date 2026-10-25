@@ -106,7 +106,18 @@ if [ -d "$FEATURES_DIR" ]; then
 fi
 
 if [ -n "$ALL_HITS" ]; then
-  printf '%s' "$ALL_HITS"
+  # Print each hit as a GitHub annotation and also keep the plain line
+  while IFS= read -r line; do
+    # line format: "token_guard [Label]: path:line:content"
+    if [[ "$line" =~ ^token_guard\ \[([^]]+)\]:\ (.+):([0-9]+):(.+)$ ]]; then
+      label="${BASH_REMATCH[1]}"
+      file="${BASH_REMATCH[2]}"
+      lineno="${BASH_REMATCH[3]}"
+      text="${BASH_REMATCH[4]}"
+      echo "::error file=$file,line=$lineno::token_guard [$label]: $text"
+    fi
+    echo "$line"
+  done <<< "$ALL_HITS"
   hits=$(printf '%s' "$ALL_HITS" | grep -c . || true)
   echo "token_guard: $hits violation(s) found" >&2
   exit 1

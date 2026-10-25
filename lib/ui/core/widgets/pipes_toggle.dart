@@ -34,7 +34,7 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const MotionTokens().feedback,
+      duration: context.tokens.motion.feedback,
       vsync: this,
     );
     _thumbAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(

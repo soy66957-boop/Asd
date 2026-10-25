@@ -489,13 +489,15 @@ class RadiusTokens {
   double get pill => 9999;
 }
 
-/// Motion duration scale (design: feedback 120ms, state 220ms, screen 420ms)
+/// Motion duration scale (design: feedback 120ms, state 220ms, screen 420ms, celebration 3000ms, hintDisplay 1600ms)
 class MotionTokens {
   const MotionTokens();
 
   Duration get feedback => const Duration(milliseconds: 120);
   Duration get state => const Duration(milliseconds: 220);
   Duration get screen => const Duration(milliseconds: 420);
+  Duration get celebration => const Duration(milliseconds: 3000);
+  Duration get hintDisplay => const Duration(milliseconds: 1600);
 }
 
 /// Motion curves

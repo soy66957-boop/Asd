@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/data/repositories/progress_repository.dart';
-import 'package:pipes/data/services/settings_service.dart';
+import 'package:pipes/data/services/settings_service.dart'
 import 'package:pipes/domain/models/game_level.dart';
 import 'package:pipes/domain/use_cases/level_generator.dart';
 import 'package:pipes/domain/use_cases/pipe_rules.dart';
 import 'package:pipes/ui/core/audio/pipes_haptics.dart';
+
+/// Game logic timing constants (not UI animation durations).
+const Duration _gameTimerPeriod = Duration(seconds: 1);
+const Duration _defaultHintClearDelay = Duration(microseconds: 1600000);
 
 @immutable
 class GameViewModelState {
@@ -97,7 +101,7 @@ class GameViewModel extends StateNotifier<GameViewModelState> {
 
   void _startTimer() {
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+    _timer = Timer.periodic(_gameTimerPeriod, (_) {
       if (!mounted) {
         _stopTimer();
         return;
@@ -292,7 +296,7 @@ class GameViewModel extends StateNotifier<GameViewModelState> {
     _persistInProgress();
   }
 
-  void revealHint() {
+  void revealHint({Duration? hintClearDelay}) {
     final level = state.level;
     if (level == null || state.isComplete) return;
 
@@ -328,7 +332,7 @@ class GameViewModel extends StateNotifier<GameViewModelState> {
     );
 
     _hintTimer?.cancel();
-    _hintTimer = Timer(Duration(seconds: 1, milliseconds: 600), () {
+    _hintTimer = Timer(hintClearDelay ?? _defaultHintClearDelay, () {
       if (mounted) state = state.copyWith(clearHint: true);
     });
 

@@ -273,7 +273,9 @@ class _GameViewState extends ConsumerState<GameView>
               ),
               child: PipesTap(
                 onTap: !state.isComplete
-                    ? () => ref.read(gameViewModelProvider.notifier).revealHint()
+                    ? () => ref.read(gameViewModelProvider.notifier).revealHint(
+                          hintClearDelay: context.tokens.motion.hintDisplay,
+                        )
                     : null,
                 state: !state.isComplete ? PipesTapState.default_ : PipesTapState.disabled,
                 semanticLabel: 'Hint',
@@ -460,7 +462,7 @@ class _ConfettiExplosionState extends State<ConfettiExplosion>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: context.tokens.motion.celebration,
     )..addListener(_tick);
 
     if (widget.trigger) {
