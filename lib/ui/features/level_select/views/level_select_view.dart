@@ -57,7 +57,7 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
               child: GridView.builder(
                 padding: EdgeInsets.fromLTRB(
                   tokens.spacing.xl,
-                  tokens.spacing.xl,
+                  tokens.spacing.xl + 8, // Extra 8dp to clear header
                   tokens.spacing.xxl,
                   tokens.spacing.xxl,
                 ),
@@ -86,6 +86,7 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
                   }
 
                   return PipesLevelTile(
+                    key: ValueKey('level_tile_$levelNumber'),
                     levelNumber: levelNumber,
                     state: tileState,
                     onTap: isLocked

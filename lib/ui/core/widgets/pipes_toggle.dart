@@ -1,5 +1,5 @@
 // PipesToggle - Toggle switch with accent thumb and glow.
-// Track: 52x32dp visible. Thumb: 24dp centered. Hit area: 48x48dp centered (invisible padding).
+// Track: 48x32dp visible. Thumb: 24dp centered. Hit area: 48x48dp centered (invisible padding).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -89,8 +89,8 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
 
     final isInteractive = widget.enabled;
 
-    // Track dimensions (painted)
-    const double trackWidth = 52.0;
+    // Track dimensions (painted) - match hit width so track stays inside hit box
+    const double trackWidth = 48.0;
     const double trackHeight = 32.0;
     const double thumbSize = 24.0;
 
@@ -99,21 +99,21 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
     const double hitHeight = 48.0;
 
     // Track position within hit area box (centered)
-    // Horizontal: (48 - 52) / 2 = -2dp (track extends 2dp beyond hit area each side)
+    // Horizontal: (48 - 48) / 2 = 0dp (track flush with hit area horizontally)
     // Vertical: (48 - 32) / 2 = 8dp (track centered with 8dp margin each side)
-    const double trackLeft = (hitWidth - trackWidth) / 2; // -2.0
+    const double trackLeft = (hitWidth - trackWidth) / 2; // 0.0
     const double trackTop = (hitHeight - trackHeight) / 2; // 8.0
 
     // Colors
     final trackColor = widget.value ? c.onTrackColor : c.offTrackColor;
     final thumbColor = widget.value ? c.onThumbColor : c.offThumbColor;
 
-    // The track widget (painted at 52x32) - keyed for testing
+    // The track widget (painted at 48x32) - keyed for testing
     final trackWidget = AnimatedBuilder(
       animation: _thumbAnimation,
       builder: (context, child) {
         final progress = _thumbAnimation.value;
-        final thumbOffset = progress * (trackWidth - thumbSize);
+        final thumbOffset = progress * (trackWidth - thumbSize); // 0 to 24
         final glowOpacity = progress * 0.4;
 
         return Positioned(
@@ -187,7 +187,7 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
     );
 
     // Hit area box (48x48) with track positioned inside
-    // Track (52x32) is centered in hit box, extending 2dp beyond horizontally
+    // Track (48x32) is centered in hit box, flush horizontally
     return Semantics(
       label: widget.semanticLabel,
       checked: widget.value,

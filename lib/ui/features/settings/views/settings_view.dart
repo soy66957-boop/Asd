@@ -56,7 +56,7 @@ class SettingsView extends ConsumerWidget {
                   SizedBox(height: tokens.spacing.md),
                   // Theme swatches
                   SizedBox(
-                    height: 46,
+                    height: 92, // 44dp swatch + 2 * 24dp for glow
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: AppThemePreset.values.length,
