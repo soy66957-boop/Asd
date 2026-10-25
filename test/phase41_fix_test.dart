@@ -371,29 +371,23 @@ void main() {
       final failures = <String>[];
 
       for (final paletteId in basePaletteIds) {
-        // Create a test app with this specific palette
+        // Create a test app with this specific palette - no ProviderScope needed for pure widget test
         await tester.pumpWidget(
-          ProviderScope(
-            overrides: [
-              hiveServiceProvider.overrideWith((ref) => throw UnimplementedError()),
-              settingsServiceProvider.overrideWith((ref) => throw UnimplementedError()),
-            ],
-            child: MaterialApp(
-              theme: ThemeData(
-                extensions: [PipesTokens.createDefault().copyWith(currentPaletteId: paletteId, themeMode: ThemeMode.dark)],
-              ),
-              darkTheme: ThemeData(
-                extensions: [PipesTokens.createDefault().copyWith(currentPaletteId: paletteId, themeMode: ThemeMode.dark)],
-              ),
-              themeMode: ThemeMode.dark,
-              home: Scaffold(
-                body: Builder(
-                  builder: (context) => PipesButton(
-                    text: 'Play',
-                    variant: PipesButtonVariant.primary,
-                    onPressed: () {},
-                    height: 48,
-                  ),
+          MaterialApp(
+            theme: ThemeData(
+              extensions: [PipesTokens.createDefault().copyWith(currentPaletteId: paletteId, themeMode: ThemeMode.dark)],
+            ),
+            darkTheme: ThemeData(
+              extensions: [PipesTokens.createDefault().copyWith(currentPaletteId: paletteId, themeMode: ThemeMode.dark)],
+            ),
+            themeMode: ThemeMode.dark,
+            home: Scaffold(
+              body: Builder(
+                builder: (context) => PipesButton(
+                  text: 'Play',
+                  variant: PipesButtonVariant.primary,
+                  onPressed: () {},
+                  height: 48,
                 ),
               ),
             ),
@@ -423,26 +417,20 @@ void main() {
 
       for (final paletteId in basePaletteIds) {
         await tester.pumpWidget(
-          ProviderScope(
-            overrides: [
-              hiveServiceProvider.overrideWith((ref) => throw UnimplementedError()),
-              settingsServiceProvider.overrideWith((ref) => throw UnimplementedError()),
-            ],
-            child: MaterialApp(
-              theme: ThemeData(
-                extensions: [PipesTokens.createDefault().copyWith(currentPaletteId: paletteId, themeMode: ThemeMode.dark)],
-              ),
-              darkTheme: ThemeData(
-                extensions: [PipesTokens.createDefault().copyWith(currentPaletteId: paletteId, themeMode: ThemeMode.dark)],
-              ),
-              themeMode: ThemeMode.dark,
-              home: Scaffold(
-                body: Builder(
-                  builder: (context) => PipesLevelTile(
-                    levelNumber: 1,
-                    state: PipesLevelTileState.current,
-                    onTap: () {},
-                  ),
+          MaterialApp(
+            theme: ThemeData(
+              extensions: [PipesTokens.createDefault().copyWith(currentPaletteId: paletteId, themeMode: ThemeMode.dark)],
+            ),
+            darkTheme: ThemeData(
+              extensions: [PipesTokens.createDefault().copyWith(currentPaletteId: paletteId, themeMode: ThemeMode.dark)],
+            ),
+            themeMode: ThemeMode.dark,
+            home: Scaffold(
+              body: Builder(
+                builder: (context) => PipesLevelTile(
+                  levelNumber: 1,
+                  state: PipesLevelTileState.current,
+                  onTap: () {},
                 ),
               ),
             ),
