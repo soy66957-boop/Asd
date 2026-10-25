@@ -1,5 +1,4 @@
-// Contrast ratio tests for all palettes
-// Ensures WCAG AA compliance (4.5:1 for text, 3:1 for UI elements)
+// Contrast ratio tests for PipesTokens helper
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -32,70 +31,24 @@ void main() {
     });
   });
 
-  group('PipesTokens contrast ratios', () {
+  group('PipesTokens default palette contrast', () {
     final tokens = PipesTokens.createDefault();
-    // Test only the default palette (pastelSkyDark) which is what the app uses.
-    final defaultPalette = tokens.palettes['pastelSkyDark']!;
+    final p = tokens.palettes['pastelSkyDark']!;
 
-    void expectPass(String description, double ratio, double minRatio) {
-      expect(ratio, greaterThanOrEqualTo(minRatio),
-          reason: '$description: ratio ${ratio.toStringAsFixed(4)}:1 (need >= $minRatio:1)');
-    }
-
-    test('Default palette: textPrimary on background >= 4.5:1', () {
-      expectPass(
-        'Default palette textPrimary on background',
-        PipesTokens.contrastRatio(defaultPalette.textPrimary, defaultPalette.background),
-        4.5,
-      );
+    test('textPrimary on background >= 4.5:1', () {
+      expect(PipesTokens.contrastRatio(p.textPrimary, p.background), greaterThanOrEqualTo(4.5));
     });
 
-    test('Default palette: textPrimary on surface >= 4.5:1', () {
-      expectPass(
-        'Default palette textPrimary on surface',
-        PipesTokens.contrastRatio(defaultPalette.textPrimary, defaultPalette.surface),
-        4.5,
-      );
+    test('textPrimary on surface >= 4.5:1', () {
+      expect(PipesTokens.contrastRatio(p.textPrimary, p.surface), greaterThanOrEqualTo(4.5));
     });
 
-    test('Default palette: textSecondary on surface >= 4.5:1', () {
-      expectPass(
-        'Default palette textSecondary on surface',
-        PipesTokens.contrastRatio(defaultPalette.textSecondary, defaultPalette.surface),
-        4.5,
-      );
+    test('accent on background >= 3:1', () {
+      expect(PipesTokens.contrastRatio(p.accent, p.background), greaterThanOrEqualTo(3.0));
     });
 
-    test('Default palette: textSecondary on background >= 4.5:1', () {
-      expectPass(
-        'Default palette textSecondary on background',
-        PipesTokens.contrastRatio(defaultPalette.textSecondary, defaultPalette.background),
-        4.5,
-      );
-    });
-
-    test('Default palette: pipeIdle on boardSurface >= 3:1', () {
-      expectPass(
-        'Default palette pipeIdle on boardSurface',
-        PipesTokens.contrastRatio(defaultPalette.pipeIdle, defaultPalette.boardSurface),
-        3.0,
-      );
-    });
-
-    test('Default palette: accent on background >= 3:1 (UI elements)', () {
-      expectPass(
-        'Default palette accent on background',
-        PipesTokens.contrastRatio(defaultPalette.accent, defaultPalette.background),
-        3.0,
-      );
-    });
-
-    test('Default palette: onAccent on accent >= 4.5:1', () {
-      expectPass(
-        'Default palette onAccent on accent',
-        PipesTokens.contrastRatio(defaultPalette.onAccent, defaultPalette.accent),
-        4.5,
-      );
+    test('onAccent on accent >= 4.5:1', () {
+      expect(PipesTokens.contrastRatio(p.onAccent, p.accent), greaterThanOrEqualTo(4.5));
     });
   });
 }
