@@ -221,8 +221,10 @@ void main() {
       final textFinder = find.text('Pipes');
       expect(textFinder, findsOneWidget);
 
-      final textWidget = tester.widget<Text>(textFinder);
-      final textColor = textWidget.style?.color ?? Theme.of(tester.element(textFinder)).textTheme.titleLarge?.color;
+      // Get the actual text color from the resolved DefaultTextStyle
+      final textElement = tester.element(textFinder);
+      final defaultStyle = DefaultTextStyle.of(textElement).style;
+      final textColor = defaultStyle.color;
       final scaffoldColor = Theme.of(tester.element(find.byType(Scaffold))).scaffoldBackgroundColor;
 
       expect(textColor, isNotNull, reason: 'Text color should not be null');
@@ -260,10 +262,11 @@ void main() {
       expect(pillFinder, findsOneWidget);
 
       final pillBox = tester.renderObject<RenderBox>(pillFinder);
+      final scaffoldBox = tester.renderObject<RenderBox>(find.byType(Scaffold));
+      final scaffoldCenterX = scaffoldBox.localToGlobal(Offset.zero).dx + scaffoldBox.size.width / 2;
       final pillCenterX = pillBox.localToGlobal(Offset.zero).dx + pillBox.size.width / 2;
-      final screenCenterX = screenWidth / 2;
 
-      expect((pillCenterX - screenCenterX).abs(), lessThanOrEqualTo(2.0),
+      expect((pillCenterX - scaffoldCenterX).abs(), lessThanOrEqualTo(2.0),
           reason: 'Level pill center should be within 2px of screen center');
     });
   });
