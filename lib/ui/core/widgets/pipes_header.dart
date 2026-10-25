@@ -11,6 +11,7 @@ class PipesHeader extends StatelessWidget {
     this.trailing,
     this.height,
     this.slotWidth,
+    this.horizontalPadding = 16.0,
   });
 
   final Widget? leading;
@@ -18,6 +19,7 @@ class PipesHeader extends StatelessWidget {
   final Widget? trailing;
   final double? height;
   final double? slotWidth;
+  final double horizontalPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -27,27 +29,30 @@ class PipesHeader extends StatelessWidget {
     final effectiveHeight = height ?? c.height;
     final effectiveSlotWidth = slotWidth ?? c.slotWidth;
 
-    return SizedBox(
-      height: effectiveHeight,
-      child: Row(
-        children: [
-          // Leading slot - fixed width
-          SizedBox(
-            width: effectiveSlotWidth,
-            child: leading ?? const SizedBox.shrink(),
-          ),
-          // Center slot - expanded and centered
-          Expanded(
-            child: Center(
-              child: center ?? const SizedBox.shrink(),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+      child: SizedBox(
+        height: effectiveHeight,
+        child: Row(
+          children: [
+            // Leading slot - fixed width
+            SizedBox(
+              width: effectiveSlotWidth,
+              child: leading ?? const SizedBox.shrink(),
             ),
-          ),
-          // Trailing slot - fixed width (same as leading)
-          SizedBox(
-            width: effectiveSlotWidth,
-            child: trailing ?? const SizedBox.shrink(),
-          ),
-        ],
+            // Center slot - expanded and centered
+            Expanded(
+              child: Center(
+                child: center ?? const SizedBox.shrink(),
+              ),
+            ),
+            // Trailing slot - fixed width (same as leading)
+            SizedBox(
+              width: effectiveSlotWidth,
+              child: trailing ?? const SizedBox.shrink(),
+            ),
+          ],
+        ),
       ),
     );
   }

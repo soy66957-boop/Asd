@@ -41,23 +41,32 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ),
           child: Column(
             children: [
-              // Header with centered title and level pill
+              // Header: [empty leading | Level pill centered | empty trailing]
               PipesHeader(
                 leading: const SizedBox.shrink(),
-                center: Text(
-                  'Pipes',
-                  style: tokens.text.display.copyWith(
-                    color: palette.textPrimary,
-                  ),
-                ),
-                trailing: state.progress != null
+                center: state.progress != null
                     ? PipesPill(
                         text: 'Level ${state.progress!.currentLevel}',
                         variant: PipesPillVariant.standard,
                       )
                     : const SizedBox.shrink(),
+                trailing: const SizedBox.shrink(),
               ),
-              const Spacer(flex: 3),
+              // Body: Spacer(flex 2), title "Pipes", spacing, hero image, Spacer(flex 4), buttons
+              const Spacer(flex: 2),
+              Text(
+                'Pipes',
+                style: tokens.text.display.copyWith(
+                  color: palette.textPrimary,
+                ),
+              ),
+              SizedBox(height: tokens.spacing.md),
+              Image.asset(
+                'assets/icon.png',
+                width: 120,
+                height: 120,
+              ),
+              const Spacer(flex: 4),
               Image.asset(
                 'assets/icon.png',
                 width: 120,

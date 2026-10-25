@@ -46,6 +46,24 @@ class SettingsView extends ConsumerWidget {
                   vertical: tokens.spacing.md,
                 ),
                 children: [
+                  // Hints row
+                  Row(
+                    children: [
+                      Text(
+                        'Hints',
+                        style: tokens.text.label.copyWith(
+                          color: palette.textPrimary,
+                        ),
+                      ),
+                      const Spacer(),
+                      PipesToggle(
+                        value: settings.isHintEnabled,
+                        onChanged: (value) => ref.read(settingsProvider.notifier).toggleHintEnabled(value),
+                        semanticLabel: 'Hints',
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: tokens.spacing.lg),
                   Text(
                     'Theme',
                     style: tokens.text.label.copyWith(

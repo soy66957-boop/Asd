@@ -613,17 +613,27 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     String? currentPaletteId,
     ThemeMode? themeMode,
   }) {
+    final newPaletteId = currentPaletteId ?? this.currentPaletteId;
+    final newThemeMode = themeMode ?? this.themeMode;
+    final newPalettes = palettes ?? this.palettes;
+    
+    // Regenerate components if palette or theme mode changed
+    final effectiveComponents = (components ?? 
+        (newPaletteId != this.currentPaletteId || newThemeMode != this.themeMode)
+            ? ComponentTokens.fromPalette(newPalettes['$newPaletteId${newThemeMode == ThemeMode.dark ? 'Dark' : 'Light'}']!)
+            : this.components);
+
     return PipesTokens(
       primitives: primitives ?? this.primitives,
-      components: components ?? this.components,
+      components: effectiveComponents!,
       spacing: spacing ?? this.spacing,
       radius: radius ?? this.radius,
       motion: motion ?? this.motion,
       curves: curves ?? this.curves,
       text: text ?? this.text,
-      palettes: palettes ?? this.palettes,
-      currentPaletteId: currentPaletteId ?? this.currentPaletteId,
-      themeMode: themeMode ?? this.themeMode,
+      palettes: newPalettes,
+      currentPaletteId: newPaletteId,
+      themeMode: newThemeMode,
     );
   }
 
