@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pipes/ui/core/audio/pipes_audio.dart';
-import 'package:pipes/ui/core/audio/pipes_haptics.dart'
+import 'package:pipes/ui/core/audio/pipes_haptics.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/core/widgets/pipes_button.dart';
 import 'package:pipes/ui/core/widgets/pipes_header.dart';
