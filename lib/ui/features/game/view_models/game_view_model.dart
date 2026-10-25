@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/data/repositories/progress_repository.dart';
-import 'package:pipes/data/services/settings_service.dart'
+import 'package:pipes/data/services/settings_service.dart';
 import 'package:pipes/domain/models/game_level.dart';
 import 'package:pipes/domain/use_cases/level_generator.dart';
 import 'package:pipes/domain/use_cases/pipe_rules.dart';

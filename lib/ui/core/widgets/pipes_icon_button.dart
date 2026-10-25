@@ -14,8 +14,7 @@ class PipesIconButton extends StatelessWidget {
     this.hasError = false,
     this.size,
     this.iconSize,
-  }) : assert(semanticLabel != null && semanticLabel.isNotEmpty,
-            'PipesIconButton requires a non-empty semanticLabel for accessibility');
+  });
 
   final IconData icon;
   final VoidCallback? onTap;
@@ -27,6 +26,8 @@ class PipesIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(semanticLabel != null && semanticLabel!.isNotEmpty,
+        'PipesIconButton requires a non-empty semanticLabel for accessibility');
     final tokens = context.tokens;
     final palette = context.palette;
     final c = tokens.components.iconButton;

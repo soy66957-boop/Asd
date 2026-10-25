@@ -19,7 +19,7 @@ enum PipesTapState {
   error,
 }
 
-class PipesTap extends StatefulWidget {
+class PipesTap extends ConsumerStatefulWidget {
   const PipesTap({
     super.key,
     required this.child,
@@ -48,10 +48,10 @@ class PipesTap extends StatefulWidget {
   final double pressScale;
 
   @override
-  State<PipesTap> createState() => _PipesTapState();
+  ConsumerState<PipesTap> createState() => _PipesTapState();
 }
 
-class _PipesTapState extends State<PipesTap> with SingleTickerProviderStateMixin {
+class _PipesTapState extends ConsumerState<PipesTap> with SingleTickerProviderStateMixin {
   late AnimationController _pressController;
   bool _isHovered = false;
   bool _isFocused = false;
@@ -77,7 +77,7 @@ class _PipesTapState extends State<PipesTap> with SingleTickerProviderStateMixin
     setState(() => _isPressed = true);
     _pressController.forward();
     PipesHaptics.tap();
-    context.pipesAudio.play(AppSound.tap);
+    ref.read(pipesAudioProvider).play(AppSound.tap);
   }
 
   void _handleTapUp(TapUpDetails details) {
@@ -152,8 +152,8 @@ class _PipesTapState extends State<PipesTap> with SingleTickerProviderStateMixin
         ActivateIntent: CallbackAction<ActivateIntent>(
           onInvoke: (intent) {
             if (isInteractive) {
-              _handleTapDown(TapDownDetails());
-              _handleTapUp(TapUpDetails());
+              _handleTapDown(TapDownDetails(kind: PointerDeviceKind.touch));
+              _handleTapUp(TapUpDetails(kind: PointerDeviceKind.touch));
             }
             return null;
           },
@@ -205,9 +205,4 @@ class _PipesTapState extends State<PipesTap> with SingleTickerProviderStateMixin
     if (_isFocused) return PipesTapState.focused;
     return PipesTapState.default_;
   }
-}
-
-/// Extension for easy access to pipesAudio from BuildContext.
-extension PipesAudioContext on BuildContext {
-  PipesAudio get pipesAudio => this.read(pipesAudioProvider);
 }

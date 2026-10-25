@@ -10,6 +10,8 @@ import 'package:pipes/ui/core/widgets/pipe_widget.dart';
 import 'package:pipes/ui/core/widgets/pipes_button.dart';
 import 'package:pipes/ui/core/widgets/pipes_header.dart';
 import 'package:pipes/ui/core/widgets/pipes_icon_button.dart';
+import 'package:pipes/ui/core/widgets/pipes_surface.dart';
+import 'package:pipes/ui/core/widgets/pipes_tap.dart';
 import 'package:pipes/ui/features/game/view_models/game_view_model.dart';
 import 'package:pipes/ui/providers.dart';
 

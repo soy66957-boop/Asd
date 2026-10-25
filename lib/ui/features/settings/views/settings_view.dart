@@ -122,7 +122,8 @@ class SettingsView extends ConsumerWidget {
 
   PaletteTokens _getPaletteTokens(BuildContext context, AppThemePreset preset) {
     final tokens = context.tokens;
-    return tokens.palettes['${preset.id}${preset.isDark ? 'Dark' : 'Light}']!;
+    final key = '${preset.id}${preset.isDark ? 'Dark' : 'Light'}';
+    return tokens.palettes[key]!;
   }
 
   void _confirmReset(BuildContext context, WidgetRef ref) {
