@@ -779,7 +779,10 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     const danger = Color(0xFFFB7185);
     const star = Color(0xFFFBBF24);
 
-    final textSecondary = ensureContrast(baseTextSecondary, background, 4.5);
+    // Ensure textSecondary meets 4.5:1 on BOTH background and surface.
+    // Surface (8% light) is lighter than background (4% light), so contrast on surface is lower.
+    final textSecondaryOnSurface = ensureContrast(baseTextSecondary, surface, 4.5);
+    final textSecondary = ensureContrast(textSecondaryOnSurface, background, 4.5);
     final pipeIdle = ensureContrast(basePipeIdle, surface, 3.0);
     final accent = _accentForDark(hue, background);
 
