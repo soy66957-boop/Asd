@@ -225,10 +225,13 @@ void main() {
       final textColor = textWidget.style?.color ?? Theme.of(tester.element(textFinder)).textTheme.titleLarge?.color;
       final scaffoldColor = Theme.of(tester.element(find.byType(Scaffold))).scaffoldBackgroundColor;
 
-      // Compute contrast ratio (simplified - assumes opaque colors)
-      // For a real implementation, use a proper contrast calculation
-      expect(textColor, isNotNull);
-      expect(scaffoldColor, isNotNull);
+      expect(textColor, isNotNull, reason: 'Text color should not be null');
+      expect(scaffoldColor, isNotNull, reason: 'Scaffold background color should not be null');
+
+      // Compute WCAG contrast ratio
+      final ratio = PipesTokens.contrastRatio(textColor!, scaffoldColor!);
+      expect(ratio, greaterThanOrEqualTo(4.5),
+          reason: 'Contrast ratio ${ratio.toStringAsFixed(2)}:1 should be >= 4.5:1');
     });
   });
 
