@@ -35,10 +35,14 @@ class PipesHeader extends StatelessWidget {
         height: effectiveHeight,
         child: Row(
           children: [
-            // Leading slot - fixed width
-            SizedBox(
-              width: effectiveSlotWidth,
-              child: leading ?? const SizedBox.shrink(),
+            // Leading slot - flexible, max width = effectiveSlotWidth
+            Flexible(
+              flex: 0,
+              fit: FlexFit.loose,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: effectiveSlotWidth),
+                child: leading ?? const SizedBox.shrink(),
+              ),
             ),
             // Center slot - expanded and centered
             Expanded(
@@ -46,10 +50,14 @@ class PipesHeader extends StatelessWidget {
                 child: center ?? const SizedBox.shrink(),
               ),
             ),
-            // Trailing slot - fixed width (same as leading)
-            SizedBox(
-              width: effectiveSlotWidth,
-              child: trailing ?? const SizedBox.shrink(),
+            // Trailing slot - flexible, max width = effectiveSlotWidth (same as leading)
+            Flexible(
+              flex: 0,
+              fit: FlexFit.loose,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: effectiveSlotWidth),
+                child: trailing ?? const SizedBox.shrink(),
+              ),
             ),
           ],
         ),

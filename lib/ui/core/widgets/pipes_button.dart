@@ -75,9 +75,13 @@ class PipesButton extends StatelessWidget {
                 icon!,
                 SizedBox(width: tokens.spacing.xs),
               ],
-              Text(
-                text,
-                style: tokens.text.button.copyWith(color: textColor),
+              Flexible(
+                child: Text(
+                  text,
+                  style: tokens.text.button.copyWith(color: textColor),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
               if (icon != null && iconPosition == IconPosition.trailing) ...[
                 SizedBox(width: tokens.spacing.xs),

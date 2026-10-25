@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/core/widgets/pipes_button.dart';
-import 'package:pipes/ui/core/widgets/pipes_header.dart';
+import 'package:pipes/ui/core/widgets/pipes_header.dart'
 import 'package:pipes/ui/core/widgets/pipes_pill.dart';
 import 'package:pipes/ui/features/game/views/game_view.dart';
 import 'package:pipes/ui/features/how_to_play/views/how_to_play_view.dart';
@@ -45,14 +45,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: tokens.spacing.xl,
-            vertical: tokens.spacing.xl,
+            vertical: tokens.spacing.md,
           ),
           child: ConstrainedBox(
             constraints: BoxConstraints(
               minHeight: MediaQuery.of(context).size.height -
                   MediaQuery.of(context).padding.top -
                   MediaQuery.of(context).padding.bottom -
-                  2 * tokens.spacing.xl,
+                  2 * tokens.spacing.md,
             ),
             child: IntrinsicHeight(
               child: Column(
@@ -99,9 +99,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
                             );
                             ref.read(homeViewModelProvider.notifier).loadProgress();
                           },
-                    height: 48,
+                    height: 44,
                   ),
-                  SizedBox(height: tokens.spacing.lg),
+                  SizedBox(height: tokens.spacing.md),
                   PipesButton(
                     text: 'Levels',
                     variant: PipesButtonVariant.secondary,
@@ -150,7 +150,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       );
                     },
                   ),
-                  SizedBox(height: tokens.spacing.xl),
+                  SizedBox(height: tokens.spacing.md),
                 ],
               ),
             ),
