@@ -29,18 +29,30 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _thumbAnimation;
+  bool _controllerInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: context.tokens.motion.feedback,
-      vsync: this,
-    );
-    _thumbAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
-    );
-    if (widget.value) _controller.value = 1.0;
+    if (widget.value) {
+      // Will be set to 1.0 in didChangeDependencies after controller is created
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_controllerInitialized) {
+      _controller = AnimationController(
+        duration: context.tokens.motion.feedback,
+        vsync: this,
+      );
+      _thumbAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+      );
+      if (widget.value) _controller.value = 1.0;
+      _controllerInitialized = true;
+    }
   }
 
   @override

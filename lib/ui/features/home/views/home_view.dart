@@ -39,8 +39,17 @@ class _HomeViewState extends ConsumerState<HomeView> {
             horizontal: tokens.spacing.xl,
             vertical: tokens.spacing.xl,
           ),
-          child: Column(
-            children: [
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).padding.top -
+                    MediaQuery.of(context).padding.bottom -
+                    2 * tokens.spacing.xl,
+              ),
+              child: IntrinsicHeight(
+                child: Column(
+                  children: [
               // Header: [empty leading | Level pill centered | empty trailing]
               PipesHeader(
                 leading: const SizedBox.shrink(),
@@ -61,12 +70,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 ),
               ),
               SizedBox(height: tokens.spacing.md),
-              Image.asset(
-                'assets/icon.png',
-                width: 120,
-                height: 120,
-              ),
-              const Spacer(flex: 4),
               Image.asset(
                 'assets/icon.png',
                 width: 120,
@@ -138,6 +141,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ),
         ),
       ),
+    ),
+    ),
     );
   }
 
