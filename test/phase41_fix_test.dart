@@ -891,15 +891,14 @@ group('D4: Accent consistency across all 9 palettes', () {
     const screenWidth = 390.0;
 
     testWidgets('Level pill width <= text width + 32dp (16dp each side)', (tester) async {
-      // Render pill in Center without fixed-width parent to measure intrinsic width
+      // Render pill in Center without Scaffold to measure intrinsic width
+      // Scaffold body gives tight constraints causing Center to expand
       await tester.pumpWidget(
-        createTestApp(
-          Scaffold(
-            body: Center(
-              child: PipesPill(
-                text: 'Level 123',
-                variant: PipesPillVariant.standard,
-              ),
+        MaterialApp(
+          home: Center(
+            child: PipesPill(
+              text: 'Level 123',
+              variant: PipesPillVariant.standard,
             ),
           ),
         ),
@@ -963,13 +962,11 @@ group('D4: Accent consistency across all 9 palettes', () {
 
     testWidgets('Level pill single line, never truncated', (tester) async {
       await tester.pumpWidget(
-        createTestApp(
-          Scaffold(
-            body: Center(
-              child: PipesPill(
-                text: 'Level 9999',
-                variant: PipesPillVariant.standard,
-              ),
+        MaterialApp(
+          home: Center(
+            child: PipesPill(
+              text: 'Level 9999',
+              variant: PipesPillVariant.standard,
             ),
           ),
         ),

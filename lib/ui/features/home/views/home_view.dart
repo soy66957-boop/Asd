@@ -150,7 +150,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       );
                     },
                   ),
-                  SizedBox(height: tokens.spacing.md),
+                  SizedBox(height: tokens.spacing.xl),
                 ],
               ),
             ),

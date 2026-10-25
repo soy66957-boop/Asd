@@ -103,6 +103,7 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
     final thumbColor = widget.value ? c.onThumbColor : c.offThumbColor;
 
     // The track widget (painted at 52x32) - keyed for testing
+    // Use OverflowBox to allow track (52x32) to exceed hit area box (48x48)
     final trackWidget = AnimatedBuilder(
       animation: _thumbAnimation,
       builder: (context, child) {
@@ -110,76 +111,82 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
         final thumbOffset = progress * (trackWidth - thumbSize);
         final glowOpacity = progress * 0.4;
 
-        return Container(
+        return OverflowBox(
           key: const Key('pipes_toggle_track'),
-          width: trackWidth,
-          height: trackHeight,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(trackHeight / 2),
-            color: trackColor,
-            boxShadow: widget.value && !disableAnimations
-                ? [
-                    BoxShadow(
-                      color: c.onGlowColor.withValues(alpha: glowOpacity * 0.4),
-                      blurRadius: c.onGlowBlur,
-                      spreadRadius: 0,
-                      offset: Offset.zero,
-                    ),
-                  ]
-                : null,
-          ),
-          child: Stack(
-            children: [
-              // Glow ring behind thumb
-              Positioned(
-                left: thumbOffset + (thumbSize - trackHeight) / 2,
-                top: 0,
-                child: Container(
-                  width: trackHeight,
-                  height: trackHeight,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: thumbColor,
-                    boxShadow: [
+          minWidth: trackWidth,
+          maxWidth: trackWidth,
+          minHeight: trackHeight,
+          maxHeight: trackHeight,
+          alignment: Alignment.center,
+          child: Container(
+            width: trackWidth,
+            height: trackHeight,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(trackHeight / 2),
+              color: trackColor,
+              boxShadow: widget.value && !disableAnimations
+                  ? [
                       BoxShadow(
-                        color: c.onGlowColor.withValues(alpha: glowOpacity),
+                        color: c.onGlowColor.withValues(alpha: glowOpacity * 0.4),
                         blurRadius: c.onGlowBlur,
                         spreadRadius: 0,
+                        offset: Offset.zero,
                       ),
-                    ],
+                    ]
+                  : null,
+            ),
+            child: Stack(
+              children: [
+                // Glow ring behind thumb
+                Positioned(
+                  left: thumbOffset + (thumbSize - trackHeight) / 2,
+                  top: 0,
+                  child: Container(
+                    width: trackHeight,
+                    height: trackHeight,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: thumbColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: c.onGlowColor.withValues(alpha: glowOpacity),
+                          blurRadius: c.onGlowBlur,
+                          spreadRadius: 0,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              // Thumb
-              Positioned(
-                left: thumbOffset,
-                top: (trackHeight - thumbSize) / 2,
-                child: Container(
-                  width: thumbSize,
-                  height: thumbSize,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: thumbColor,
-                    boxShadow: [
-                      BoxShadow(
-                        color: palette.textPrimary.withValues(alpha: 0.2),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                // Thumb
+                Positioned(
+                  left: thumbOffset,
+                  top: (trackHeight - thumbSize) / 2,
+                  child: Container(
+                    width: thumbSize,
+                    height: thumbSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: thumbColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: palette.textPrimary.withValues(alpha: 0.2),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
     );
 
     // Wrap track in GestureDetector with 48x48 hit area (invisible padding)
-    // The hit area is centered on the track, so it extends:
-    // - Horizontally: (48 - 52) / 2 = -2dp each side (hit area is narrower than track)
-    // - Vertically: (48 - 32) / 2 = 8dp each side (hit area extends beyond track)
+    // The hit area is centered on the track. Track (52x32) overflows the hit box (48x48)
+    // horizontally by 2dp each side, and is centered vertically with 8dp margin.
     return Semantics(
       label: widget.semanticLabel,
       checked: widget.value,
