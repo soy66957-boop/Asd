@@ -98,12 +98,17 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
     const double hitWidth = 48.0;
     const double hitHeight = 48.0;
 
+    // Track position within hit area box (centered)
+    // Horizontal: (48 - 52) / 2 = -2dp (track extends 2dp beyond hit area each side)
+    // Vertical: (48 - 32) / 2 = 8dp (track centered with 8dp margin each side)
+    const double trackLeft = (hitWidth - trackWidth) / 2; // -2.0
+    const double trackTop = (hitHeight - trackHeight) / 2; // 8.0
+
     // Colors
     final trackColor = widget.value ? c.onTrackColor : c.offTrackColor;
     final thumbColor = widget.value ? c.onThumbColor : c.offThumbColor;
 
     // The track widget (painted at 52x32) - keyed for testing
-    // Use OverflowBox to allow track (52x32) to exceed hit area box (48x48)
     final trackWidget = AnimatedBuilder(
       animation: _thumbAnimation,
       builder: (context, child) {
@@ -111,13 +116,10 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
         final thumbOffset = progress * (trackWidth - thumbSize);
         final glowOpacity = progress * 0.4;
 
-        return OverflowBox(
+        return Positioned(
           key: const Key('pipes_toggle_track'),
-          minWidth: trackWidth,
-          maxWidth: trackWidth,
-          minHeight: trackHeight,
-          maxHeight: trackHeight,
-          alignment: Alignment.center,
+          left: trackLeft,
+          top: trackTop,
           child: Container(
             width: trackWidth,
             height: trackHeight,
@@ -184,9 +186,8 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
       },
     );
 
-    // Wrap track in GestureDetector with 48x48 hit area (invisible padding)
-    // The hit area is centered on the track. Track (52x32) overflows the hit box (48x48)
-    // horizontally by 2dp each side, and is centered vertically with 8dp margin.
+    // Hit area box (48x48) with track positioned inside
+    // Track (52x32) is centered in hit box, extending 2dp beyond horizontally
     return Semantics(
       label: widget.semanticLabel,
       checked: widget.value,
@@ -197,8 +198,8 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
         child: SizedBox(
           width: hitWidth,
           height: hitHeight,
-          child: Center(
-            child: trackWidget,
+          child: Stack(
+            children: [trackWidget],
           ),
         ),
       ),

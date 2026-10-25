@@ -40,17 +40,19 @@ class PipesPill extends StatelessWidget {
         textColor = palette.danger;
     }
 
-    return Container(
-      height: c.height,
-      padding: EdgeInsets.symmetric(horizontal: c.horizontalPadding),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(c.radius),
-        border: Border.all(color: borderColor, width: borderWidth),
-      ),
-      child: Text(
-        text,
-        style: (textStyle ?? tokens.text.label).copyWith(color: textColor),
+    return IntrinsicWidth(
+      child: Container(
+        height: c.height,
+        padding: EdgeInsets.symmetric(horizontal: c.horizontalPadding),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(c.radius),
+          border: Border.all(color: borderColor, width: borderWidth),
+        ),
+        child: Text(
+          text,
+          style: (textStyle ?? tokens.text.label).copyWith(color: textColor),
+        ),
       ),
     );
   }

@@ -162,9 +162,13 @@ void main() {
       // We need to test the actual HomeView structure
       // The header should have empty center (or just the level pill), NOT "Pipes"
       // The "Pipes" title should be in the body below the header
-      // Use a taller screen to avoid overflow
+      // Use a taller screen to avoid overflow - set devicePixelRatio=1.0 for true logical pixels
       tester.binding.window.physicalSizeTestValue = const Size(800, 1200);
-      addTearDown(() => tester.binding.window.clearPhysicalSizeTestValue());
+      tester.binding.window.devicePixelRatioTestValue = 1.0;
+      addTearDown(() {
+        tester.binding.window.clearPhysicalSizeTestValue();
+        tester.binding.window.clearDevicePixelRatioTestValue();
+      });
       
       await tester.pumpWidget(createTestApp(const HomeView()));
 
