@@ -2,6 +2,7 @@
 // Single source for tap feedback: scale, haptics, audio, semantics.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/ui/core/audio/pipes_audio.dart';
 import 'package:pipes/ui/core/audio/pipes_haptics.dart';

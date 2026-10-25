@@ -77,8 +77,7 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
 
     return Semantics(
       label: widget.semanticLabel,
-      toggleable: true,
-      checked: widget.value,
+      toggled: widget.value,
       enabled: widget.enabled,
       child: PipesTap(
         onTap: widget.enabled ? _handleTap : null,
