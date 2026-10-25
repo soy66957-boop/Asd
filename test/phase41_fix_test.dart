@@ -22,7 +22,9 @@ import 'package:pipes/ui/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/data/repositories/progress_repository.dart';
 import 'package:pipes/data/services/hive_service.dart';
+import 'package:pipes/data/services/settings_service.dart';
 import 'package:pipes/domain/models/user_progress.dart';
+import 'package:pipes/domain/models/app_settings.dart';
 import 'package:pipes/domain/use_cases/level_generator.dart';
 
 class _MockHiveService extends HiveService {
@@ -34,6 +36,15 @@ class _MockHiveService extends HiveService {
   Future<void> saveProgress(UserProgress progress) async {}
   @override
   Future<void> clearProgress() async {}
+}
+
+class _MockSettingsService extends SettingsService {
+  @override
+  Future<void> init() async {}
+  @override
+  AppSettings getSettings() => const AppSettings();
+  @override
+  Future<void> saveSettings(AppSettings settings) async {}
 }
 
 class _TestLevelGenerator extends LevelGenerator {}
@@ -50,8 +61,8 @@ class _TestingHomeViewModel extends HomeViewModel {
 Widget createTestApp(Widget child, {String? initialRoute}) {
   return ProviderScope(
     overrides: [
-      hiveServiceProvider.overrideWith((ref) => throw UnimplementedError()),
-      settingsServiceProvider.overrideWith((ref) => throw UnimplementedError()),
+      hiveServiceProvider.overrideWith((ref) => _MockHiveService()),
+      settingsServiceProvider.overrideWith((ref) => _MockSettingsService()),
       homeViewModelProvider.overrideWith((ref) => _TestingHomeViewModel()),
     ],
     child: MaterialApp(
@@ -151,6 +162,9 @@ void main() {
       // We need to test the actual HomeView structure
       // The header should have empty center (or just the level pill), NOT "Pipes"
       // The "Pipes" title should be in the body below the header
+      // Use a taller screen to avoid overflow
+      tester.binding.window.physicalSizeTestValue = const Size(800, 1200);
+      addTearDown(() => tester.binding.window.clearPhysicalSizeTestValue());
       
       await tester.pumpWidget(createTestApp(const HomeView()));
 
