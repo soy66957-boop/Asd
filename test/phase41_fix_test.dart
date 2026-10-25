@@ -13,22 +13,32 @@ import 'package:pipes/ui/core/widgets/pipes_swatch.dart';
 import 'package:pipes/ui/core/widgets/pipes_tap.dart';
 import 'package:pipes/ui/core/widgets/pipes_toggle.dart';
 import 'package:pipes/ui/features/home/views/home_view.dart';
+import 'package:pipes/ui/features/home/view_models/home_view_model.dart';
 import 'package:pipes/ui/features/level_select/views/level_select_view.dart'
     show LevelSelectView;
 import 'package:pipes/ui/features/settings/views/settings_view.dart'
     show SettingsView;
 import 'package:pipes/ui/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mockito/mockito.dart';
+
+// Mock classes
+class MockHomeViewModel extends Mock implements HomeViewModel {}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   // Helper to create a test app with providers
-  Widget createTestApp(Widget child, {String? initialRoute}) {
+  Widget createTestApp(Widget child, {String? initialRoute, HomeViewModel? homeViewModel}) {
+    final mockHVM = homeViewModel ?? MockHomeViewModel();
+    when(mockHVM.state).thenReturn(const HomeViewModelState());
+    when(mockHVM.loadProgress()).thenAnswer((_) async {});
+
     return ProviderScope(
       overrides: [
         hiveServiceProvider.overrideWith((ref) => throw UnimplementedError()),
         settingsServiceProvider.overrideWith((ref) => throw UnimplementedError()),
+        homeViewModelProvider.overrideWith((ref) => mockHVM),
       ],
       child: MaterialApp(
         home: child,
