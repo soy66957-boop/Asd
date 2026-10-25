@@ -5,14 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/core/widgets/pipes_header.dart';
-import 'package:pipes/ui/core/widgets/pipes_swatch.dart'
-    show SwatchComponentTokens;
-import 'package:pipes/ui/core/widgets/pipes_toggle.dart'
-    show ToggleComponentTokens;
-import 'package:pipes/ui/features/level_select/views/level_select_view.dart'
-    show LevelSelectView;
-import 'package:pipes/ui/features/settings/views/settings_view.dart'
-    show SettingsView;
+import 'package:pipes/ui/core/widgets/pipes_toggle.dart';
+import 'package:pipes/ui/core/widgets/pipes_swatch.dart';
+import 'package:pipes/ui/features/level_select/views/level_select_view.dart';
+import 'package:pipes/ui/features/settings/views/settings_view.dart';
 import 'package:pipes/ui/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/data/repositories/progress_repository.dart';
@@ -47,7 +43,7 @@ class _MockSettingsService extends SettingsService {
   @override
   Future<void> init() async {}
   @override
-  Future<AppSettings> getSettings() async => AppSettings();
+  AppSettings getSettings() => AppSettings();
   @override
   Future<void> saveSettings(AppSettings settings) async {}
 }
@@ -96,7 +92,6 @@ void main() {
       final textFinder = find.text('Pipes');
       expect(textFinder, findsOneWidget);
 
-      final textElement = tester.element(textFinder);
       final textBox = tester.renderObject<RenderBox>(textFinder);
       final textCenterX = textBox.localToGlobal(Offset.zero).dx + textBox.size.width / 2;
       final screenCenterX = screenWidth / 2;
@@ -324,9 +319,6 @@ void main() {
         if (ancestor.widget is ClipRRect) foundClipRRect = true;
         ancestor = ancestor.visitAncestorElements((e) => false) as Element?;
       }
-      
-      // Actually, let's use a different approach - check the widget tree
-      // The track should be inside a Stack inside a SizedBox (48x48), not a ClipRect/ClipRRect
       
       expect(foundClipRect, isFalse, reason: 'Should not have ClipRect ancestor');
       expect(foundClipRRect, isFalse, reason: 'Should not have ClipRRect ancestor');
