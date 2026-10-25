@@ -46,24 +46,7 @@ class SettingsView extends ConsumerWidget {
                   vertical: tokens.spacing.md,
                 ),
                 children: [
-                  // Hints row
-                  Row(
-                    children: [
-                      Text(
-                        'Hints',
-                        style: tokens.text.label.copyWith(
-                          color: palette.textPrimary,
-                        ),
-                      ),
-                      const Spacer(),
-                      PipesToggle(
-                        value: settings.isHintEnabled,
-                        onChanged: (value) => ref.read(settingsProvider.notifier).toggleHintEnabled(value),
-                        semanticLabel: 'Hints',
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: tokens.spacing.lg),
+                  // Theme label
                   Text(
                     'Theme',
                     style: tokens.text.label.copyWith(
@@ -71,6 +54,7 @@ class SettingsView extends ConsumerWidget {
                     ),
                   ),
                   SizedBox(height: tokens.spacing.md),
+                  // Theme swatches
                   SizedBox(
                     height: 46,
                     child: ListView.separated(
@@ -81,7 +65,6 @@ class SettingsView extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         final preset = AppThemePreset.values[index];
                         final isSelected = settings.theme == preset;
-                        // Need to get PaletteTokens for this preset
                         final paletteTokens = _getPaletteTokens(context, preset);
                         return PipesSwatch(
                           palette: paletteTokens,
@@ -99,19 +82,28 @@ class SettingsView extends ConsumerWidget {
 
                   _divider(context),
 
-                  PipesToggle(
-                    value: settings.isHintEnabled,
-                    onChanged: (val) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .toggleHintEnabled(val);
-                    },
-                    semanticLabel: 'Hints',
-                    enabled: true,
+                  // Hints row (single toggle, label left of toggle)
+                  Row(
+                    children: [
+                      Text(
+                        'Hints',
+                        style: tokens.text.label.copyWith(
+                          color: palette.textPrimary,
+                        ),
+                      ),
+                      const Spacer(),
+                      PipesToggle(
+                        value: settings.isHintEnabled,
+                        onChanged: (value) =>
+                            ref.read(settingsProvider.notifier).toggleHintEnabled(value),
+                        semanticLabel: 'Hints',
+                      ),
+                    ],
                   ),
 
                   _divider(context),
 
+                  // Reset Progress
                   PipesButton(
                     text: 'Reset Progress',
                     variant: PipesButtonVariant.danger,

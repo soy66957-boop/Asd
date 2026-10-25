@@ -25,6 +25,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
     Future.microtask(() => ref.read(homeViewModelProvider.notifier).loadProgress());
   }
 
+  void _showQuickPlayPicker(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogContext) => _QuickPlayDialog(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(homeViewModelProvider);
@@ -39,156 +47,183 @@ class _HomeViewState extends ConsumerState<HomeView> {
             horizontal: tokens.spacing.xl,
             vertical: tokens.spacing.xl,
           ),
-          child: SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height -
-                    MediaQuery.of(context).padding.top -
-                    MediaQuery.of(context).padding.bottom -
-                    2 * tokens.spacing.xl,
-              ),
-              child: IntrinsicHeight(
-                child: Column(
-                  children: [
-                    // Header: [empty leading | Level pill centered | empty trailing]
-                    PipesHeader(
-                      leading: const SizedBox.shrink(),
-                      center: state.progress != null
-                          ? PipesPill(
-                              text: 'Level ${state.progress!.currentLevel}',
-                              variant: PipesPillVariant.standard,
-                            )
-                          : const SizedBox.shrink(),
-                      trailing: const SizedBox.shrink(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top -
+                  MediaQuery.of(context).padding.bottom -
+                  2 * tokens.spacing.xl,
+            ),
+            child: IntrinsicHeight(
+              child: Column(
+                children: [
+                  // Header: [empty leading | Level pill centered | empty trailing]
+                  PipesHeader(
+                    leading: const SizedBox.shrink(),
+                    center: state.progress != null
+                        ? PipesPill(
+                            text: 'Level ${state.progress!.currentLevel}',
+                            variant: PipesPillVariant.standard,
+                          )
+                        : const SizedBox.shrink(),
+                    trailing: const SizedBox.shrink(),
+                  ),
+                  // Body: Spacer(flex 2), title "Pipes", spacing, hero image, Spacer(flex 4), buttons
+                  const Spacer(flex: 2),
+                  Text(
+                    'Pipes',
+                    style: tokens.text.display.copyWith(
+                      color: palette.textPrimary,
                     ),
-                    // Body: Spacer(flex 2), title "Pipes", spacing, hero image, Spacer(flex 4), buttons
-                    const Spacer(flex: 2),
-                    Text(
-                      'Pipes',
-                      style: tokens.text.display.copyWith(
-                        color: palette.textPrimary,
-                      ),
-                    ),
-                    SizedBox(height: tokens.spacing.md),
-                    Image.asset(
-                      'assets/icon.png',
-                      width: 120,
-                      height: 120,
-                    ),
-                    const Spacer(flex: 4),
-                    PipesButton(
-                      text: 'Play',
-                      variant: PipesButtonVariant.primary,
-                      onPressed: state.isLoading
-                          ? null
-                          : () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => GameView(
-                                    levelNumber: state.progress?.currentLevel ?? 1,
-                                  ),
-                                ),
-                              );
-                              ref.read(homeViewModelProvider.notifier).loadProgress();
-                            },
-                      height: 48,
-                    ),
-                    SizedBox(height: tokens.spacing.lg),
-                    PipesButton(
-                      text: 'Levels',
-                      variant: PipesButtonVariant.secondary,
-                      height: 44,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LevelSelectView(),
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: tokens.spacing.md),
-                    PipesButton(
-                      text: 'How to Play',
-                      variant: PipesButtonVariant.secondary,
-                      height: 44,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const HowToPlayView(),
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: tokens.spacing.md),
-                    PipesButton(
-                      text: 'Settings',
-                      variant: PipesButtonVariant.secondary,
-                      height: 44,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SettingsView(),
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: tokens.spacing.xl),
-                    // Quick Play section
-                    Text(
-                      'Quick Play',
-                      style: tokens.text.title.copyWith(
-                        color: palette.textPrimary,
-                      ),
-                    ),
-                    SizedBox(height: tokens.spacing.sm),
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        'Play a dynamically generated Pipes puzzle.',
-                        textAlign: TextAlign.center,
-                        style: tokens.text.caption.copyWith(
-                          color: palette.textSecondary,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: tokens.spacing.xl),
-                    for (final stage in stages)
-                      Padding(
-                        padding: EdgeInsets.only(bottom: tokens.spacing.md),
-                        child: PipesButton(
-                          text: stage,
-                          variant: PipesButtonVariant.secondary,
-                          height: 44,
-                          onPressed: () {
-                            Navigator.pop(context);
-                            Navigator.push(
+                  ),
+                  SizedBox(height: tokens.spacing.md),
+                  Image.asset(
+                    'assets/icon.png',
+                    width: 120,
+                    height: 120,
+                  ),
+                  const Spacer(flex: 4),
+                  PipesButton(
+                    text: 'Play',
+                    variant: PipesButtonVariant.primary,
+                    onPressed: state.isLoading
+                        ? null
+                        : () async {
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => GameView(
-                                  levelNumber: 0,
-                                  isRandom: true,
-                                  randomDifficulty: stage,
+                                  levelNumber: state.progress?.currentLevel ?? 1,
                                 ),
                               ),
                             );
+                            ref.read(homeViewModelProvider.notifier).loadProgress();
                           },
+                    height: 48,
+                  ),
+                  SizedBox(height: tokens.spacing.lg),
+                  PipesButton(
+                    text: 'Levels',
+                    variant: PipesButtonVariant.secondary,
+                    height: 44,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LevelSelectView(),
                         ),
-                      ),
-                    SizedBox(height: tokens.spacing.sm),
-                    PipesButton(
-                      text: 'Cancel',
-                      variant: PipesButtonVariant.ghost,
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: tokens.spacing.md),
+                  PipesButton(
+                    text: 'Random',
+                    variant: PipesButtonVariant.secondary,
+                    height: 44,
+                    onPressed: () => _showQuickPlayPicker(context),
+                  ),
+                  SizedBox(height: tokens.spacing.md),
+                  PipesButton(
+                    text: 'How to Play',
+                    variant: PipesButtonVariant.secondary,
+                    height: 44,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HowToPlayView(),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: tokens.spacing.md),
+                  PipesButton(
+                    text: 'Settings',
+                    variant: PipesButtonVariant.secondary,
+                    height: 44,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SettingsView(),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: tokens.spacing.xl),
+                ],
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickPlayDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+    final tokens = context.tokens;
+
+    return Dialog(
+      backgroundColor: palette.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(tokens.components.sheet.radius),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(tokens.spacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Quick Play',
+              style: tokens.text.title.copyWith(
+                color: palette.textPrimary,
+              ),
+            ),
+            SizedBox(height: tokens.spacing.sm),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                'Play a dynamically generated Pipes puzzle.',
+                textAlign: TextAlign.center,
+                style: tokens.text.caption.copyWith(
+                  color: palette.textSecondary,
+                ),
+              ),
+            ),
+            SizedBox(height: tokens.spacing.xl),
+            for (final stage in stages)
+              Padding(
+                padding: EdgeInsets.only(bottom: tokens.spacing.md),
+                child: PipesButton(
+                  text: stage,
+                  variant: PipesButtonVariant.secondary,
+                  height: 44,
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameView(
+                          levelNumber: 0,
+                          isRandom: true,
+                          randomDifficulty: stage,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            SizedBox(height: tokens.spacing.sm),
+            PipesButton(
+              text: 'Cancel',
+              variant: PipesButtonVariant.ghost,
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
         ),
       ),
     );

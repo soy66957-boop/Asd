@@ -399,15 +399,15 @@ class ComponentTokens {
         ),
         pill: PillComponentTokens(
           height: 28.0,
-          horizontalPadding: 12.0,
+          horizontalPadding: 16.0,
           border: palette.glassBorder,
           borderWidth: 1.5,
           textColor: palette.textPrimary,
           radius: 9999.0,
         ),
         toggle: ToggleComponentTokens(
-          trackWidth: 48.0,
-          trackHeight: 28.0,
+          trackWidth: 52.0,
+          trackHeight: 32.0,
           thumbSize: 24.0,
           offTrackColor: palette.glassBorder,
           offThumbColor: palette.textSecondary,
@@ -449,7 +449,7 @@ class ComponentTokens {
         ),
         header: HeaderComponentTokens(
           height: 56.0,
-          slotWidth: 48.0,
+          slotWidth: 56.0,
         ),
       );
 
