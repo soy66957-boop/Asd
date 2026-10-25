@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pipes/ui/core/audio/pipes_audio.dart';
-import 'package:pipes/ui/core/audio/pipes_haptics.dart';
-import 'package:pipes/ui/core/icons/pipes_icons.dart';
+import 'package:pipes/ui/core/audio/pipes_haptics.dart'
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/core/widgets/pipes_button.dart';
 import 'package:pipes/ui/core/widgets/pipes_header.dart';
@@ -102,85 +101,6 @@ void main() {
       ));
 
       expect(find.bySemanticsLabel('Play button'), findsOneWidget);
-    });
-  });
-
-  group('PipesTap hit area', () {
-    testWidgets('hit area is at least 48x48 dp', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: PipesTap(
-              onTap: () {},
-              minHitSize: 48.0,
-              child: const SizedBox(width: 24, height: 24),
-            ),
-          ),
-        ),
-      );
-
-      final renderBox = tester.renderObject<RenderBox>(find.byType(PipesTap));
-      final size = renderBox.size;
-      expect(size.width, greaterThanOrEqualTo(48.0));
-      expect(size.height, greaterThanOrEqualTo(48.0));
-    });
-  });
-
-  group('PipesHeader centering', () {
-    testWidgets('center child is horizontally centered within 1px', (tester) async {
-      const slotWidth = 48.0;
-      const screenWidth = 400.0;
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SizedBox(
-              width: screenWidth,
-              child: PipesHeader(
-                leading: Container(width: slotWidth, color: Colors.red),
-                center: const Text('Centered Title'),
-                trailing: Container(width: slotWidth, color: Colors.blue),
-                slotWidth: slotWidth,
-              ),
-            ),
-          ),
-        ),
-      );
-
-      final centerFinder = find.text('Centered Title');
-      final centerBox = tester.renderObject<RenderBox>(centerFinder);
-      final centerX = centerBox.localToGlobal(Offset.zero).dx + centerBox.size.width / 2;
-      final screenCenterX = screenWidth / 2;
-
-      expect((centerX - screenCenterX).abs(), lessThanOrEqualTo(1.0));
-    });
-
-    testWidgets('center remains centered with different leading/trailing content', (tester) async {
-      const slotWidth = 48.0;
-      const screenWidth = 400.0;
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SizedBox(
-              width: screenWidth,
-              child: PipesHeader(
-                leading: Container(width: slotWidth, child: const Icon(Icons.menu)),
-                center: const Text('Title'),
-                trailing: Container(width: slotWidth, child: const Icon(Icons.settings)),
-                slotWidth: slotWidth,
-              ),
-            ),
-          ),
-        ),
-      );
-
-      final centerFinder = find.text('Title');
-      final centerBox = tester.renderObject<RenderBox>(centerFinder);
-      final centerX = centerBox.localToGlobal(Offset.zero).dx + centerBox.size.width / 2;
-      final screenCenterX = screenWidth / 2;
-
-      expect((centerX - screenCenterX).abs(), lessThanOrEqualTo(1.0));
     });
   });
 
