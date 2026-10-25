@@ -772,17 +772,25 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     final surface = HSLColor.fromAHSL(1.0, hue, 0.26, 0.08).toColor();
     final glass = const Color(0x1AFFFFFF); // white @ 10%
     final glassBorder = const Color(0x1AFFFFFF); // white @ 10%
-    const textPrimary = Color(0xFFEAF2FF);
+    const baseTextPrimary = Color(0xFFEAF2FF);
     const baseTextSecondary = Color(0xFF93A4BF);
+
+    // Ensure textPrimary meets 4.5:1 on background (fixed color may not suffice for all hues).
+    final textPrimary = ensureContrast(baseTextPrimary, background, 4.5);
     const basePipeIdle = Color(0xFF5B6E8F);
     const success = Color(0xFF34D399);
     const danger = Color(0xFFFB7185);
     const star = Color(0xFFFBBF24);
 
     // Ensure textSecondary meets 4.5:1 on BOTH background and surface.
-    // Surface (8% light) is lighter than background (4% light), so contrast on surface is lower.
-    final textSecondaryOnSurface = ensureContrast(baseTextSecondary, surface, 4.5);
-    final textSecondary = ensureContrast(textSecondaryOnSurface, background, 4.5);
+    // Compute luminance of both backgrounds; for dark theme, the one with HIGHER luminance
+    // requires a LIGHTER foreground (more stringent). Ensure on that one first.
+    final bgLum = background.computeLuminance();
+    final surfaceLum = surface.computeLuminance();
+    final primaryBg = bgLum > surfaceLum ? background : surface;
+    final secondaryBg = bgLum > surfaceLum ? surface : background;
+    final textSecondaryOnPrimary = ensureContrast(baseTextSecondary, primaryBg, 4.5);
+    final textSecondary = ensureContrast(textSecondaryOnPrimary, secondaryBg, 4.5);
     final pipeIdle = ensureContrast(basePipeIdle, surface, 3.0);
     final accent = _accentForDark(hue, background);
 
@@ -829,15 +837,24 @@ class PipesTokens extends ThemeExtension<PipesTokens> {
     final surface = const Color(0xFFFFFFFF);
     final glass = const Color(0x1A000000); // black @ 10%
     final glassBorder = const Color(0x1A000000); // black @ 10%
-    const textPrimary = Color(0xFF0F1B2D);
+    const baseTextPrimary = Color(0xFF0F1B2D);
     const baseTextSecondary = Color(0xFF475569);
+
+    // Ensure textPrimary meets 4.5:1 on background (fixed color may not suffice for all hues).
+    final textPrimary = ensureContrast(baseTextPrimary, background, 4.5);
     const basePipeIdle = Color(0xFF6B7C99);
     const success = Color(0xFF059669);
     const danger = Color(0xFFDC2626);
     const star = Color(0xFFB45309);
 
-    // Ensure textSecondary meets 4.5:1 on surface (white) which has higher luminance than background (97% light).
-    final textSecondary = ensureContrast(baseTextSecondary, surface, 4.5);
+    // Ensure textSecondary meets 4.5:1 on BOTH background and surface.
+    // For light theme, the background with LOWER luminance requires a DARKER foreground (more stringent).
+    final bgLum = background.computeLuminance();
+    final surfaceLum = surface.computeLuminance();
+    final primaryBg = bgLum < surfaceLum ? background : surface;
+    final secondaryBg = bgLum < surfaceLum ? surface : background;
+    final textSecondaryOnPrimary = ensureContrast(baseTextSecondary, primaryBg, 4.5);
+    final textSecondary = ensureContrast(textSecondaryOnPrimary, secondaryBg, 4.5);
     final pipeIdle = ensureContrast(basePipeIdle, surface, 3.0);
     final accent = _accentForLight(hue, background);
 
