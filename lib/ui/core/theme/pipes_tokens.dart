@@ -399,7 +399,8 @@ class ComponentTokens {
         ),
         pill: PillComponentTokens(
           height: 28.0,
-          horizontalPadding: 16.0,
+          // horizontalPadding = 16dp (content) - 1.5dp (border) = 14.5dp so total rendered width = text + 32dp
+          horizontalPadding: 14.5,
           border: palette.glassBorder,
           borderWidth: 1.5,
           textColor: palette.textPrimary,
