@@ -373,7 +373,7 @@ group('D4: Accent consistency across all 9 palettes', () {
     
     for (final paletteId in basePaletteIds) {
       // Get the dark variant of the palette
-      final darkPaletteId = '$paletteIdDark';
+      final darkPaletteId = '${paletteId}Dark';
       final palette = tokens.palettes[darkPaletteId]!;
       final components = ComponentTokens.fromPalette(palette);
       
