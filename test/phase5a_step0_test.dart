@@ -21,14 +21,15 @@ import 'package:pipes/domain/models/user_progress.dart';
 import 'package:pipes/domain/models/app_settings.dart';
 import 'package:pipes/domain/use_cases/level_generator.dart';
 
-/// Test helper that pumps a widget inside a RepaintBoundary at 390x844 logical px
-/// with devicePixelRatio 3, renders to an image, and exposes pixel color at a logical point.
+/// Test helper that captures pixels from an already-rendered RepaintBoundary at 390x844 logical px
+/// with devicePixelRatio 3.
 class PixelProbe {
   final WidgetTester tester;
+  final GlobalKey boundaryKey;
   final Size originalViewSize;
   final double originalPixelRatio;
 
-  PixelProbe(this.tester)
+  PixelProbe(this.tester, this.boundaryKey)
       : originalViewSize = tester.view.physicalSize,
         originalPixelRatio = tester.view.devicePixelRatio {
     // Set up 390x844 logical pixels at 3x device pixel ratio = 1170x2532 physical
@@ -36,25 +37,8 @@ class PixelProbe {
     tester.view.devicePixelRatio = 3.0;
   }
 
-  /// Pumps [widget] inside a RepaintBoundary, renders to image, and returns the pixel color at [logicalPoint].
-  Future<Color> probeColor(Widget widget, Offset logicalPoint) async {
-    final boundaryKey = GlobalKey();
-    await tester.pumpWidget(
-      RepaintBoundary(
-        key: boundaryKey,
-        child: MaterialApp(
-          home: Scaffold(
-            body: SizedBox(
-              width: 390,
-              height: 844,
-              child: widget,
-            ),
-          ),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-
+  /// Returns the pixel color at [logicalPoint] from the already-rendered RepaintBoundary.
+  Future<Color> probeColor(Offset logicalPoint) async {
     final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     final image = await boundary.toImage(pixelRatio: 3.0);
     final byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
@@ -416,32 +400,34 @@ void main() {
 
   group('Step 5b: Pixel-probe tests for G1 (level grid clipping) and G2 (toggle thumb clipping)', () {
     testWidgets('G2: toggle ON - thumb right edge pixels are thumb color (not clipped)', (tester) async {
-      final probe = PixelProbe(tester);
-      try {
-        // Build a toggle in ON state
-        await tester.pumpWidget(
-          RepaintBoundary(
-            key: const Key('g2_probe'),
-            child: MaterialApp(
-              home: Scaffold(
-                body: SizedBox(
-                  width: 390,
-                  height: 844,
-                  child: Center(
-                    child: PipesToggle(
-                      key: const Key('g2_toggle'),
-                      value: true,
-                      onChanged: (_) {},
-                      semanticLabel: 'G2 probe toggle',
-                    ),
+      const probeKey = Key('g2_probe');
+      
+      // Build a toggle in ON state inside a RepaintBoundary
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: probeKey,
+          child: MaterialApp(
+            home: Scaffold(
+              body: SizedBox(
+                width: 390,
+                height: 844,
+                child: Center(
+                  child: PipesToggle(
+                    key: const Key('g2_toggle'),
+                    value: true,
+                    onChanged: (_) {},
+                    semanticLabel: 'G2 probe toggle',
                   ),
                 ),
               ),
             ),
           ),
-        );
-        await tester.pumpAndSettle();
+        ),
+      );
+      await tester.pumpAndSettle();
 
+      final probe = PixelProbe(tester, probeKey);
+      try {
         // Find the toggle's render box to get thumb rect
         final toggleFinder = find.byKey(const Key('g2_toggle'));
         final toggleBox = tester.renderObject<RenderBox>(toggleFinder);
@@ -466,74 +452,9 @@ void main() {
         final topEdgePoint = Offset(thumbRect.center.dx, thumbRect.top + 2);
         final outsideRightPoint = Offset(thumbRect.right + 2, thumbRect.center.dy);
 
-        final rightColor = await probe.probeColor(
-          RepaintBoundary(
-            key: const Key('g2_probe_inner'),
-            child: MaterialApp(
-              home: Scaffold(
-                body: SizedBox(
-                  width: 390,
-                  height: 844,
-                  child: Center(
-                    child: PipesToggle(
-                      key: const Key('g2_toggle_inner'),
-                      value: true,
-                      onChanged: (_) {},
-                      semanticLabel: 'G2 probe toggle',
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          rightEdgePoint,
-        );
-
-        final topColor = await probe.probeColor(
-          RepaintBoundary(
-            key: const Key('g2_probe_inner2'),
-            child: MaterialApp(
-              home: Scaffold(
-                body: SizedBox(
-                  width: 390,
-                  height: 844,
-                  child: Center(
-                    child: PipesToggle(
-                      key: const Key('g2_toggle_inner2'),
-                      value: true,
-                      onChanged: (_) {},
-                      semanticLabel: 'G2 probe toggle',
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          topEdgePoint,
-        );
-
-        final outsideColor = await probe.probeColor(
-          RepaintBoundary(
-            key: const Key('g2_probe_inner3'),
-            child: MaterialApp(
-              home: Scaffold(
-                body: SizedBox(
-                  width: 390,
-                  height: 844,
-                  child: Center(
-                    child: PipesToggle(
-                      key: const Key('g2_toggle_inner3'),
-                      value: true,
-                      onChanged: (_) {},
-                      semanticLabel: 'G2 probe toggle',
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          outsideRightPoint,
-        );
+        final rightColor = await probe.probeColor(rightEdgePoint);
+        final topColor = await probe.probeColor(topEdgePoint);
+        final outsideColor = await probe.probeColor(outsideRightPoint);
 
         final tokens = PipesTokens.createDefault();
         final thumbColor = tokens.currentPalette.onAccent; // thumb color when ON
@@ -578,32 +499,34 @@ void main() {
     });
 
     testWidgets('G1: first level grid row not clipped at top', (tester) async {
-      final probe = PixelProbe(tester);
-      try {
-        // Build the real LevelSelectView
-        await tester.pumpWidget(
-          RepaintBoundary(
-            key: const Key('g1_probe'),
-            child: ProviderScope(
-              overrides: [
-                hiveServiceProvider.overrideWithValue(_MockHiveService()),
-                settingsServiceProvider.overrideWithValue(_MockSettingsService()),
-                levelGeneratorProvider.overrideWithValue(LevelGenerator()),
-              ],
-              child: MaterialApp(
-                home: Scaffold(
-                  body: SizedBox(
-                    width: 390,
-                    height: 844,
-                    child: const LevelSelectView(),
-                  ),
+      const probeKey = Key('g1_probe');
+      
+      // Build the real LevelSelectView inside a RepaintBoundary
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: probeKey,
+          child: ProviderScope(
+            overrides: [
+              hiveServiceProvider.overrideWithValue(_MockHiveService()),
+              settingsServiceProvider.overrideWithValue(_MockSettingsService()),
+              levelGeneratorProvider.overrideWithValue(LevelGenerator()),
+            ],
+            child: MaterialApp(
+              home: Scaffold(
+                body: SizedBox(
+                  width: 390,
+                  height: 844,
+                  child: const LevelSelectView(),
                 ),
               ),
             ),
           ),
-        );
-        await tester.pumpAndSettle();
+        ),
+      );
+      await tester.pumpAndSettle();
 
+      final probe = PixelProbe(tester, probeKey);
+      try {
         // Find the first level tile (level 1)
         final firstTileFinder = find.byKey(const ValueKey('level_tile_1'));
         expect(firstTileFinder, findsOneWidget);
@@ -619,28 +542,7 @@ void main() {
 
         // Sample point 2px below first tile's top edge
         final samplePoint = Offset(firstTileRect.center.dx, firstTileRect.top + 2);
-        final sampleColor = await probe.probeColor(
-          RepaintBoundary(
-            key: const Key('g1_probe_inner'),
-            child: ProviderScope(
-              overrides: [
-                hiveServiceProvider.overrideWithValue(_MockHiveService()),
-                settingsServiceProvider.overrideWithValue(_MockSettingsService()),
-                levelGeneratorProvider.overrideWithValue(LevelGenerator()),
-              ],
-              child: MaterialApp(
-                home: Scaffold(
-                  body: SizedBox(
-                    width: 390,
-                    height: 844,
-                    child: const LevelSelectView(),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          samplePoint,
-        );
+        final sampleColor = await probe.probeColor(samplePoint);
 
         // The sample should be the tile's hairline/border color or fill color, NOT the screen background
         final tokens = PipesTokens.createDefault();
