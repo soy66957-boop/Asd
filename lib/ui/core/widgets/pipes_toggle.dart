@@ -98,51 +98,41 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
     const double hitWidth = 48.0;
     const double hitHeight = 48.0;
 
-    // Calculate thumb position
-    final thumbOffset = AnimatedBuilder(
-      animation: _thumbAnimation,
-      builder: (context, child) {
-        final progress = _thumbAnimation.value;
-        final maxOffset = trackWidth - thumbSize;
-        return progress * maxOffset;
-      },
-    );
-
     // Colors
     final trackColor = widget.value ? c.onTrackColor : c.offTrackColor;
     final thumbColor = widget.value ? c.onThumbColor : c.offThumbColor;
-    final glowOpacity = widget.value ? 1.0 : 0.0;
 
     // The track widget (painted at 52x32) - keyed for testing
-    final trackWidget = Container(
-      key: const Key('pipes_toggle_track'),
-      width: trackWidth,
-      height: trackHeight,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(trackHeight / 2),
-        color: trackColor,
-        boxShadow: widget.value && !disableAnimations
-            ? [
-                BoxShadow(
-                  color: c.onGlowColor.withValues(alpha: glowOpacity * 0.4),
-                  blurRadius: c.onGlowBlur,
-                  spreadRadius: 0,
-                  offset: Offset.zero,
-                ),
-              ]
-            : null,
-      ),
-      child: Stack(
-        children: [
-          // Glow ring behind thumb
-          AnimatedBuilder(
-            animation: _thumbAnimation,
-            builder: (context, child) {
-              final progress = _thumbAnimation.value;
-              final glowOpacityAnimated = progress * 0.4;
-              final thumbOffsetAnimated = progress * (trackWidth - thumbSize);
-              return Positioned(
-                left: thumbOffsetAnimated + (thumbSize - trackHeight) / 2,
+    final trackWidget = AnimatedBuilder(
+      animation: _thumbAnimation,
+      builder: (context, child) {
+        final progress = _thumbAnimation.value;
+        final thumbOffset = progress * (trackWidth - thumbSize);
+        final glowOpacity = progress * 0.4;
+
+        return Container(
+          key: const Key('pipes_toggle_track'),
+          width: trackWidth,
+          height: trackHeight,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(trackHeight / 2),
+            color: trackColor,
+            boxShadow: widget.value && !disableAnimations
+                ? [
+                    BoxShadow(
+                      color: c.onGlowColor.withValues(alpha: glowOpacity * 0.4),
+                      blurRadius: c.onGlowBlur,
+                      spreadRadius: 0,
+                      offset: Offset.zero,
+                    ),
+                  ]
+                : null,
+          ),
+          child: Stack(
+            children: [
+              // Glow ring behind thumb
+              Positioned(
+                left: thumbOffset + (thumbSize - trackHeight) / 2,
                 top: 0,
                 child: Container(
                   width: trackHeight,
@@ -152,24 +142,17 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
                     color: thumbColor,
                     boxShadow: [
                       BoxShadow(
-                        color: c.onGlowColor.withValues(alpha: glowOpacityAnimated),
+                        color: c.onGlowColor.withValues(alpha: glowOpacity),
                         blurRadius: c.onGlowBlur,
                         spreadRadius: 0,
                       ),
                     ],
                   ),
                 ),
-              );
-            },
-          ),
-          // Thumb
-          AnimatedBuilder(
-            animation: _thumbAnimation,
-            builder: (context, child) {
-              final progress = _thumbAnimation.value;
-              final thumbOffsetAnimated = progress * (trackWidth - thumbSize);
-              return Positioned(
-                left: thumbOffsetAnimated,
+              ),
+              // Thumb
+              Positioned(
+                left: thumbOffset,
                 top: (trackHeight - thumbSize) / 2,
                 child: Container(
                   width: thumbSize,
@@ -186,11 +169,11 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
                     ],
                   ),
                 ),
-              );
-            },
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
 
     // Wrap track in GestureDetector with 48x48 hit area (invisible padding)
@@ -199,7 +182,6 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
     // - Vertically: (48 - 32) / 2 = 8dp each side (hit area extends beyond track)
     return Semantics(
       label: widget.semanticLabel,
-      toggable: true,
       checked: widget.value,
       enabled: widget.enabled,
       child: GestureDetector(
