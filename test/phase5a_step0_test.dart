@@ -4,6 +4,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/core/widgets/pipes_header.dart';
@@ -19,6 +20,57 @@ import 'package:pipes/data/services/settings_service.dart';
 import 'package:pipes/domain/models/user_progress.dart';
 import 'package:pipes/domain/models/app_settings.dart';
 import 'package:pipes/domain/use_cases/level_generator.dart';
+
+/// Test helper that pumps a widget inside a RepaintBoundary at 390x844 logical px
+/// with devicePixelRatio 3, renders to an image, and exposes pixel color at a logical point.
+class PixelProbe {
+  final WidgetTester tester;
+  final Size originalViewSize;
+  final double originalPixelRatio;
+
+  PixelProbe(this.tester)
+      : originalViewSize = tester.view.physicalSize,
+        originalPixelRatio = tester.view.devicePixelRatio {
+    // Set up 390x844 logical pixels at 3x device pixel ratio = 1170x2532 physical
+    tester.view.physicalSize = const Size(1170, 2532);
+    tester.view.devicePixelRatio = 3.0;
+  }
+
+  /// Pumps [widget] inside a RepaintBoundary, renders to image, and returns the pixel color at [logicalPoint].
+  Future<Color> probeColor(Widget widget, Offset logicalPoint) async {
+    final boundaryKey = GlobalKey();
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: boundaryKey,
+        child: MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 390,
+              height: 844,
+              child: widget,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    final image = await boundary.toImage(pixelRatio: 3.0);
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+    final pixels = byteData!.buffer.asUint8List();
+    final width = image.width;
+    final x = (logicalPoint.dx * 3).round().clamp(0, width - 1);
+    final y = (logicalPoint.dy * 3).round().clamp(0, image.height - 1);
+    final index = (y * width + x) * 4;
+    return Color.fromRGBO(pixels[index], pixels[index + 1], pixels[index + 2], pixels[index + 3] / 255.0);
+  }
+
+  void dispose() {
+    tester.view.physicalSize = originalViewSize;
+    tester.view.devicePixelRatio = originalPixelRatio;
+  }
+}
 
 class _MockHiveService extends HiveService {
   @override
@@ -363,84 +415,6 @@ void main() {
   });
 
   group('Step 5b: Pixel-probe tests for G1 (level grid clipping) and G2 (toggle thumb clipping)', () {
-    /// Test helper that pumps a widget inside a RepaintBoundary at 390x844 logical px
-    /// with devicePixelRatio 3, renders to an image, and exposes pixel color at a logical point.
-    class PixelProbe {
-      final WidgetTester tester;
-      final Size originalViewSize;
-      final double originalPixelRatio;
-
-      PixelProbe(this.tester)
-          : originalViewSize = tester.view.physicalSize,
-            originalPixelRatio = tester.view.devicePixelRatio {
-        // Set up 390x844 logical pixels at 3x device pixel ratio = 1170x2532 physical
-        tester.view.physicalSize = const Size(1170, 2532);
-        tester.view.devicePixelRatio = 3.0;
-      }
-
-      /// Pumps [widget] inside a RepaintBoundary, renders to image, and returns the pixel color at [logicalPoint].
-      Future<Color> probeColor(Widget widget, Offset logicalPoint) async {
-        final boundaryKey = GlobalKey();
-        await tester.pumpWidget(
-          RepaintBoundary(
-            key: boundaryKey,
-            child: MaterialApp(
-              home: Scaffold(
-                body: SizedBox(
-                  width: 390,
-                  height: 844,
-                  child: widget,
-                ),
-              ),
-            ),
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        final boundary = boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-        final image = await boundary.toImage(pixelRatio: 3.0);
-        final byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
-        final pixels = byteData!.buffer.asUint8List();
-        final width = image.width;
-        final x = (logicalPoint.dx * 3).round().clamp(0, width - 1);
-        final y = (logicalPoint.dy * 3).round().clamp(0, image.height - 1);
-        final index = (y * width + x) * 4;
-        return Color.fromRGBO(pixels[index], pixels[index + 1], pixels[index + 2], pixels[index + 3] / 255.0);
-      }
-
-      void dispose() {
-        tester.view.physicalSize = originalViewSize;
-        tester.view.devicePixelRatio = originalPixelRatio;
-      }
-    }
-
-    /// Runs a probe at multiple configurations (textScaleFactor, screen size)
-    Future<void> runProbeAtConfigs({
-      required String name,
-      required Future<void> Function(double textScaleFactor, Size screenSize) probe,
-    }) async {
-      final configs = [
-        (textScaleFactor: 1.0, screenSize: const Size(390, 844)),
-        (textScaleFactor: 1.3, screenSize: const Size(390, 844)),
-        (textScaleFactor: 1.0, screenSize: const Size(360, 640)),
-      ];
-
-      for (final config in configs) {
-        await tester.runAsync(() async {
-          await tester.pumpWidget(
-            MediaQuery(
-              data: MediaQueryData(
-                size: config.screenSize,
-                devicePixelRatio: 3.0,
-                textScaler: TextScaler.linear(config.textScaleFactor),
-              ),
-              child: const MaterialApp(home: Scaffold(body: SizedBox())),
-            ),
-          );
-        });
-      }
-    }
-
     testWidgets('G2: toggle ON - thumb right edge pixels are thumb color (not clipped)', (tester) async {
       final probe = PixelProbe(tester);
       try {
