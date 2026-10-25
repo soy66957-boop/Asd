@@ -93,6 +93,7 @@ class SettingsView extends ConsumerWidget {
                       ),
                       const Spacer(),
                       PipesToggle(
+                        key: const Key('hints_toggle'),
                         value: settings.isHintEnabled,
                         onChanged: (value) =>
                             ref.read(settingsProvider.notifier).toggleHintEnabled(value),

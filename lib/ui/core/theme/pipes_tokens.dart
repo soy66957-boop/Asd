@@ -238,7 +238,8 @@ class ToggleComponentTokens {
     required this.onGlowBlur,
     required this.disabledTrackColor,
     required this.disabledThumbColor,
-    required this.hitSize,
+    required this.hitWidth,
+    required this.hitHeight,
     required this.animationDuration,
   });
 
@@ -253,7 +254,8 @@ class ToggleComponentTokens {
   final double onGlowBlur;
   final Color disabledTrackColor;
   final Color disabledThumbColor;
-  final double hitSize;
+  final double hitWidth;
+  final double hitHeight;
   final Duration animationDuration;
 }
 
@@ -418,7 +420,8 @@ class ComponentTokens {
           onGlowBlur: PaletteTokens.glowBlur,
           disabledTrackColor: palette.glassBorder.withValues(alpha: 0.5),
           disabledThumbColor: palette.textSecondary.withValues(alpha: 0.5),
-          hitSize: 48.0,
+          hitWidth: 56.0,
+          hitHeight: 48.0,
           animationDuration: Duration(milliseconds: 120),
         ),
         swatch: SwatchComponentTokens(

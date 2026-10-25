@@ -89,20 +89,20 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
 
     final isInteractive = widget.enabled;
 
-    // Track dimensions (painted) - match hit width so track stays inside hit box
-    const double trackWidth = 48.0;
-    const double trackHeight = 32.0;
-    const double thumbSize = 24.0;
+    // Track dimensions (painted) - from tokens
+    final double trackWidth = c.trackWidth;
+    final double trackHeight = c.trackHeight;
+    final double thumbSize = c.thumbSize;
 
     // Hit area dimensions (invisible, centered on track)
-    const double hitWidth = 48.0;
-    const double hitHeight = 48.0;
+    final double hitWidth = c.hitWidth;
+    final double hitHeight = c.hitHeight;
 
     // Track position within hit area box (centered)
-    // Horizontal: (48 - 48) / 2 = 0dp (track flush with hit area horizontally)
-    // Vertical: (48 - 32) / 2 = 8dp (track centered with 8dp margin each side)
-    const double trackLeft = (hitWidth - trackWidth) / 2; // 0.0
-    const double trackTop = (hitHeight - trackHeight) / 2; // 8.0
+    // Horizontal: (56 - 52) / 2 = 2dp margin each side
+    // Vertical: (48 - 32) / 2 = 8dp margin each side
+    final double trackLeft = (hitWidth - trackWidth) / 2;
+    final double trackTop = (hitHeight - trackHeight) / 2;
 
     // Colors
     final trackColor = widget.value ? c.onTrackColor : c.offTrackColor;

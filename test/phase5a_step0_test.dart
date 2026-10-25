@@ -261,12 +261,12 @@ void main() {
 
       final toggleBox = tester.renderObject<RenderBox>(toggleFinder);
       
-      // The toggle should be 48x48 hit area
-      expect(toggleBox.size.width, equals(48.0));
+      // The toggle should be 56x48 hit area (updated from 48x48 per fix)
+      expect(toggleBox.size.width, equals(56.0));
       expect(toggleBox.size.height, equals(48.0));
     });
 
-    testWidgets('toggle track rect lies inside its 48dp hit box', (tester) async {
+    testWidgets('toggle track rect lies inside its 56x48 hit box', (tester) async {
       await tester.pumpWidget(
         buildTestApp(
           Center(
@@ -285,8 +285,8 @@ void main() {
 
       final toggleBox = tester.renderObject<RenderBox>(toggleFinder);
       
-      // The toggle hit area should be 48x48
-      expect(toggleBox.size.width, equals(48.0));
+      // The toggle hit area should be 56x48
+      expect(toggleBox.size.width, equals(56.0));
       expect(toggleBox.size.height, equals(48.0));
     });
 
