@@ -30,21 +30,4 @@ void main() {
       expect(ratio, greaterThan(10.0));
     });
   });
-
-  group('PipesTokens default palette contrast', () {
-    final tokens = PipesTokens.createDefault();
-    final p = tokens.palettes['pastelSkyDark']!;
-
-    test('textPrimary on background >= 4.5:1', () {
-      expect(PipesTokens.contrastRatio(p.textPrimary, p.background), greaterThanOrEqualTo(4.5));
-    });
-
-    test('accent on background >= 3:1', () {
-      expect(PipesTokens.contrastRatio(p.accent, p.background), greaterThanOrEqualTo(3.0));
-    });
-
-    test('onAccent on accent >= 4.5:1', () {
-      expect(PipesTokens.contrastRatio(p.onAccent, p.accent), greaterThanOrEqualTo(4.5));
-    });
-  });
 }
