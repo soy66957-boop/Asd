@@ -57,19 +57,31 @@ class _PipesTapState extends ConsumerState<PipesTap> with SingleTickerProviderSt
   bool _isHovered = false;
   bool _isFocused = false;
   bool _isPressed = false;
+  bool _controllerInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    _pressController = AnimationController(
-      duration: context.tokens.motion.feedback,
-      vsync: this,
-    );
+    // controller will be initialized in didChangeDependencies to avoid accessing inherited widgets too early
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_controllerInitialized) {
+      _pressController = AnimationController(
+        duration: context.tokens.motion.feedback,
+        vsync: this,
+      );
+      _controllerInitialized = true;
+    }
   }
 
   @override
   void dispose() {
-    _pressController.dispose();
+    if (_controllerInitialized) {
+      _pressController.dispose();
+    }
     super.dispose();
   }
 
