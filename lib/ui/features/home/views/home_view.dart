@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pipes/ui/core/icons/pipes_icons.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/core/widgets/pipes_button.dart';
 import 'package:pipes/ui/core/widgets/pipes_header.dart';
-import 'package:pipes/ui/core/widgets/pipes_icon_button.dart';
 import 'package:pipes/ui/core/widgets/pipes_pill.dart';
-import 'package:pipes/ui/core/url_launcher.dart';
 import 'package:pipes/ui/features/game/views/game_view.dart';
 import 'package:pipes/ui/features/how_to_play/views/how_to_play_view.dart';
 import 'package:pipes/ui/features/level_select/views/level_select_view.dart';
@@ -44,14 +41,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ),
           child: Column(
             children: [
-              // Header with star button, centered title, and level pill
+              // Header with centered title and level pill
               PipesHeader(
-                leading: PipesIconButton(
-                  icon: PipesIcons.star,
-                  onTap: () => openUrl('https://github.com/sidhant947/Pipes'),
-                  semanticLabel: 'Open source repository',
-                  iconSize: 20,
-                ),
+                leading: const SizedBox.shrink(),
                 center: Text(
                   'Pipes',
                   style: tokens.text.display.copyWith(
