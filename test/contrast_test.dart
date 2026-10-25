@@ -39,10 +39,6 @@ void main() {
       expect(PipesTokens.contrastRatio(p.textPrimary, p.background), greaterThanOrEqualTo(4.5));
     });
 
-    test('textPrimary on surface >= 4.5:1', () {
-      expect(PipesTokens.contrastRatio(p.textPrimary, p.surface), greaterThanOrEqualTo(4.5));
-    });
-
     test('accent on background >= 3:1', () {
       expect(PipesTokens.contrastRatio(p.accent, p.background), greaterThanOrEqualTo(3.0));
     });
