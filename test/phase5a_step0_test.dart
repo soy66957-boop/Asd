@@ -14,7 +14,6 @@ import 'package:pipes/ui/features/level_select/views/level_select_view.dart';
 import 'package:pipes/ui/features/settings/views/settings_view.dart';
 import 'package:pipes/ui/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pipes/data/repositories/progress_repository.dart';
 import 'package:pipes/data/services/hive_service.dart';
 import 'package:pipes/data/services/settings_service.dart';
 import 'package:pipes/domain/models/user_progress.dart';
@@ -57,32 +56,20 @@ class PixelProbe {
 }
 
 class _MockHiveService extends HiveService {
-  @override
   Future<void> init() async {}
-  @override
   Future<UserProgress> getProgress() async => UserProgress();
-  @override
   Future<void> saveProgress(UserProgress progress) async {}
-  @override
   Future<void> clearProgress() async {}
-  @override
   Future<void> saveInProgress(int level, List<List<int>> board, int moves, int seconds) async {}
-  @override
   Future<void> clearInProgress() async {}
-  @override
   Future<void> completeLevel(int level, int moves) async {}
-  @override
   Future<void> recordLevelResult(int level, int moves, int seconds) async {}
-  @override
   Future<void> addRandomLevelMoves(int moves) async {}
 }
 
 class _MockSettingsService extends SettingsService {
-  @override
   Future<void> init() async {}
-  @override
   AppSettings getSettings() => AppSettings();
-  @override
   Future<void> saveSettings(AppSettings settings) async {}
 }
 
@@ -400,7 +387,7 @@ void main() {
 
   group('Step 5b: Pixel-probe tests for G1 (level grid clipping) and G2 (toggle thumb clipping)', () {
     testWidgets('G2: toggle ON - thumb right edge pixels are thumb color (not clipped)', (tester) async {
-      const probeKey = Key('g2_probe');
+      final probeKey = GlobalKey();
       
       // Build a toggle in ON state inside a RepaintBoundary
       await tester.pumpWidget(
@@ -499,7 +486,7 @@ void main() {
     });
 
     testWidgets('G1: first level grid row not clipped at top', (tester) async {
-      const probeKey = Key('g1_probe');
+      final probeKey = GlobalKey();
       
       // Build the real LevelSelectView inside a RepaintBoundary
       await tester.pumpWidget(
@@ -547,8 +534,6 @@ void main() {
         // The sample should be the tile's hairline/border color or fill color, NOT the screen background
         final tokens = PipesTokens.createDefault();
         final backgroundColor = tokens.currentPalette.background;
-        final lockedBorderColor = tokens.components.levelTile.lockedBorder;
-        final surfaceColor = tokens.currentPalette.surface;
 
         final isBackground = (sampleColor.r - backgroundColor.r).abs() <= 5 &&
             (sampleColor.g - backgroundColor.g).abs() <= 5 &&
