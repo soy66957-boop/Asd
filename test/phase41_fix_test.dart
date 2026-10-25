@@ -627,12 +627,24 @@ group('D4: Accent consistency across all 9 palettes', () {
   // =========================================================================
 
   group('E1: Menu inventory - Real HomeView', () {
+    // Test at 390x844 LOGICAL pixels (standard phone). Set physical size with devicePixelRatio=1.0
+    // to achieve exact logical dimensions.
     const testWidth = 390.0;
     const testHeight = 844.0;
 
+    void setTestViewport(WidgetTester tester) {
+      tester.binding.window.physicalSizeTestValue = Size(testWidth, testHeight);
+      tester.binding.window.devicePixelRatioTestValue = 1.0;
+    }
+
+    void clearTestViewport(WidgetTester tester) {
+      tester.binding.window.clearPhysicalSizeTestValue();
+      tester.binding.window.clearDevicePixelRatioTestValue();
+    }
+
     testWidgets('Menu has Play, Levels, Random, How to Play, Settings in correct vertical order', (tester) async {
-      tester.binding.window.physicalSizeTestValue = const Size(testWidth, testHeight);
-      addTearDown(() => tester.binding.window.clearPhysicalSizeTestValue());
+      setTestViewport(tester);
+      addTearDown(() => clearTestViewport(tester));
 
       await tester.pumpWidget(createTestApp(const HomeView()));
       await tester.pumpAndSettle();
@@ -670,8 +682,8 @@ group('D4: Accent consistency across all 9 palettes', () {
     });
 
     testWidgets('Quick Play picker (Quick Play, Beginner, Easy, Medium, Hard, Expert, Cancel) NOT rendered inline until Random tapped', (tester) async {
-      tester.binding.window.physicalSizeTestValue = const Size(testWidth, testHeight);
-      addTearDown(() => tester.binding.window.clearPhysicalSizeTestValue());
+      setTestViewport(tester);
+      addTearDown(() => clearTestViewport(tester));
 
       await tester.pumpWidget(createTestApp(const HomeView()));
       await tester.pumpAndSettle();
@@ -687,8 +699,8 @@ group('D4: Accent consistency across all 9 palettes', () {
     });
 
     testWidgets('After tapping Random, picker appears as modal (route above menu), Cancel closes it', (tester) async {
-      tester.binding.window.physicalSizeTestValue = const Size(testWidth, testHeight);
-      addTearDown(() => tester.binding.window.clearPhysicalSizeTestValue());
+      setTestViewport(tester);
+      addTearDown(() => clearTestViewport(tester));
 
       await tester.pumpWidget(createTestApp(const HomeView()));
       await tester.pumpAndSettle();
@@ -716,8 +728,8 @@ group('D4: Accent consistency across all 9 palettes', () {
     });
 
     testWidgets('Menu body does not scroll at 390x844 (no Scrollable on menu body)', (tester) async {
-      tester.binding.window.physicalSizeTestValue = const Size(testWidth, testHeight);
-      addTearDown(() => tester.binding.window.clearPhysicalSizeTestValue());
+      setTestViewport(tester);
+      addTearDown(() => clearTestViewport(tester));
 
       await tester.pumpWidget(createTestApp(const HomeView()));
       await tester.pumpAndSettle();
@@ -756,20 +768,20 @@ group('D4: Accent consistency across all 9 palettes', () {
       await tester.pumpWidget(createTestApp(const SettingsView()));
       await tester.pumpAndSettle();
 
-      final toggleFinder = find.byType(PipesToggle);
-      final toggleBox = tester.renderObject<RenderBox>(toggleFinder);
+      // Find the track by key
+      final trackFinder = find.byKey(const Key('pipes_toggle_track'));
+      expect(trackFinder, findsOneWidget);
+      final trackBox = tester.renderObject<RenderBox>(trackFinder);
 
-      // The PipesToggle should render with track ~52x32
-      // We check the overall widget size which should be close to track size
       expect(
-        (toggleBox.size.width - 52).abs(),
+        (trackBox.size.width - 52).abs(),
         lessThanOrEqualTo(2.0),
-        reason: 'Toggle track width (${toggleBox.size.width}) should be 52dp ± 2dp',
+        reason: 'Toggle track width (${trackBox.size.width}) should be 52dp ± 2dp',
       );
       expect(
-        (toggleBox.size.height - 32).abs(),
+        (trackBox.size.height - 32).abs(),
         lessThanOrEqualTo(2.0),
-        reason: 'Toggle track height (${toggleBox.size.height}) should be 32dp ± 2dp',
+        reason: 'Toggle track height (${trackBox.size.height}) should be 32dp ± 2dp',
       );
     });
 
@@ -777,30 +789,38 @@ group('D4: Accent consistency across all 9 palettes', () {
       await tester.pumpWidget(createTestApp(const SettingsView()));
       await tester.pumpAndSettle();
 
-      final toggleFinder = find.byType(PipesToggle);
-      final toggleBox = tester.renderObject<RenderBox>(toggleFinder);
+      final trackFinder = find.byKey(const Key('pipes_toggle_track'));
+      final trackBox = tester.renderObject<RenderBox>(trackFinder);
       
-      // The toggle renders track and thumb via stacked containers in a fixed-size box
       // Track is 32dp tall, thumb is 24dp, so thumb Y is centered at (32-24)/2 = 4dp from top
       // This verifies the thumb fits within the track vertically
-      expect(toggleBox.size.height, equals(32.0), reason: 'Toggle overall height should be 32dp (track height)');
+      expect(trackBox.size.height, equals(32.0), reason: 'Track height should be 32dp');
     });
 
-    testWidgets('48dp hit area is NOT painted (invisible padding)', (tester) async {
+    testWidgets('48dp hit area is NOT painted (invisible padding - track is 52x32, hit area 48x48)', (tester) async {
       await tester.pumpWidget(createTestApp(const SettingsView()));
       await tester.pumpAndSettle();
 
+      // Widget (GestureDetector + hit area box) should be 48x48
       final toggleFinder = find.byType(PipesToggle);
       final toggleBox = tester.renderObject<RenderBox>(toggleFinder);
 
-      // The widget's painted area should be ~52x32, but hit area is 48x48
-      // This means the widget should be larger than painted track (due to hit padding)
-      // But we verify the painted track is NOT 48x48
       expect(
         toggleBox.size.width,
-        lessThan(48.0),
-        reason: 'Painted track width (${toggleBox.size.width}) should be < 48dp (hit area is invisible padding)',
+        equals(48.0),
+        reason: 'Widget hit area width should be 48dp',
       );
+      expect(
+        toggleBox.size.height,
+        equals(48.0),
+        reason: 'Widget hit area height should be 48dp',
+      );
+
+      // Track should be 52x32 (NOT 48x48) - painted shape is not grown by hit area
+      final trackFinder = find.byKey(const Key('pipes_toggle_track'));
+      final trackBox = tester.renderObject<RenderBox>(trackFinder);
+      expect(trackBox.size.width, equals(52.0), reason: 'Track width should be 52dp (not grown by hit area)');
+      expect(trackBox.size.height, equals(32.0), reason: 'Track height should be 32dp (not grown by hit area)');
     });
 
     testWidgets('Hints label left of toggle, same row center Y within 4px', (tester) async {
@@ -871,16 +891,14 @@ group('D4: Accent consistency across all 9 palettes', () {
     const screenWidth = 390.0;
 
     testWidgets('Level pill width <= text width + 32dp (16dp each side)', (tester) async {
+      // Render pill in Center without fixed-width parent to measure intrinsic width
       await tester.pumpWidget(
         createTestApp(
           Scaffold(
-            body: SizedBox(
-              width: screenWidth,
-              child: Center(
-                child: PipesPill(
-                  text: 'Level 123',
-                  variant: PipesPillVariant.standard,
-                ),
+            body: Center(
+              child: PipesPill(
+                text: 'Level 123',
+                variant: PipesPillVariant.standard,
               ),
             ),
           ),
@@ -909,17 +927,20 @@ group('D4: Accent consistency across all 9 palettes', () {
       );
     });
 
-    testWidgets('Level pill center is at screen center within 2px', (tester) async {
+    testWidgets('Level pill center is at screen center within 2px (in header at 390dp)', (tester) async {
+      // Test centering in actual header context at 390dp width
       await tester.pumpWidget(
         createTestApp(
           Scaffold(
             body: SizedBox(
               width: screenWidth,
-              child: Center(
-                child: PipesPill(
+              child: PipesHeader(
+                leading: const SizedBox.shrink(),
+                center: PipesPill(
                   text: 'Level 1',
                   variant: PipesPillVariant.standard,
                 ),
+                trailing: const SizedBox.shrink(),
               ),
             ),
           ),
@@ -944,13 +965,10 @@ group('D4: Accent consistency across all 9 palettes', () {
       await tester.pumpWidget(
         createTestApp(
           Scaffold(
-            body: SizedBox(
-              width: screenWidth,
-              child: Center(
-                child: PipesPill(
-                  text: 'Level 9999',
-                  variant: PipesPillVariant.standard,
-                ),
+            body: Center(
+              child: PipesPill(
+                text: 'Level 9999',
+                variant: PipesPillVariant.standard,
               ),
             ),
           ),
