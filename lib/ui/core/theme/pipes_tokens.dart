@@ -336,9 +336,13 @@ class PipeTokens {
     required this.tubeWidthRatio,
     required this.coreRatio,
     required this.highlightAlpha,
+    required this.highlightColor,
+    required this.shimmerColor,
+    required this.shimmerAlpha,
     required this.glowAlphas,
     required this.glowWidthRatios,
     required this.shimmerPeriod,
+    required this.sourcePulsePeriod,
     required this.fillDuration,
     required this.fillStagger,
     required this.springStiffness,
@@ -350,9 +354,13 @@ class PipeTokens {
   final double tubeWidthRatio;
   final double coreRatio;
   final double highlightAlpha;
+  final Color highlightColor;
+  final Color shimmerColor;
+  final double shimmerAlpha;
   final List<double> glowAlphas;
   final List<double> glowWidthRatios;
   final Duration shimmerPeriod;
+  final Duration sourcePulsePeriod;
   final Duration fillDuration;
   final Duration fillStagger;
   final double springStiffness;
@@ -364,9 +372,13 @@ class PipeTokens {
         tubeWidthRatio: 0.26,
         coreRatio: 0.5,
         highlightAlpha: 0.12,
+        highlightColor: Colors.white,
+        shimmerColor: Colors.white,
+        shimmerAlpha: 0.35,
         glowAlphas: [0.06, 0.10, 0.16],
         glowWidthRatios: [1.9, 1.5, 1.2],
         shimmerPeriod: const Duration(milliseconds: 2400),
+        sourcePulsePeriod: const Duration(milliseconds: 2000),
         fillDuration: const Duration(milliseconds: 220), // state token
         fillStagger: const Duration(milliseconds: 60),
         springStiffness: 420,

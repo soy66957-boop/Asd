@@ -69,11 +69,14 @@ class PipePainter extends CustomPainter {
   final bool disableAnimations;
 
   // Shared tickers for shimmer and source pulse
-  static final _ShimmerTicker _shimmerTicker = _ShimmerTicker();
-  static final _SourcePulseTicker _sourcePulseTicker = _SourcePulseTicker();
+  static final _ShimmerTicker _shimmerTicker = _ShimmerTicker._();
+  static final _SourcePulseTicker _sourcePulseTicker = _SourcePulseTicker._();
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Initialize tickers with tokens on first paint
+    _shimmerTicker._init(tokens);
+    _sourcePulseTicker._init(tokens);
     final n = board.length;
     final double tubeWidth = tileSize * tokens.tubeWidthRatio;
     final double coreWidth = tubeWidth * tokens.coreRatio;
@@ -123,9 +126,9 @@ class PipePainter extends CustomPainter {
           ..strokeJoin = StrokeJoin.round;
         canvas.drawPath(geometry.tubePath, tubePaint);
 
-        // Layer 2: Highlight (thin white stroke offset top-left)
+        // Layer 2: Highlight (thin highlight stroke offset top-left)
         final highlightPaint = Paint()
-          ..color = Colors.white.withValues(alpha: highlightAlpha)
+          ..color = tokens.highlightColor.withValues(alpha: tokens.highlightAlpha)
           ..style = PaintingStyle.stroke
           ..strokeWidth = tubeWidth * 0.15
           ..strokeCap = StrokeCap.round
@@ -167,7 +170,7 @@ class PipePainter extends CustomPainter {
         // Layer 5: Shimmer (bright segment traveling along water)
         if (visuallyConnected && anim.fillProgress > 0 && !disableAnimations) {
           final shimmerPaint = Paint()
-            ..color = Colors.white.withValues(alpha: 0.35)
+            ..color = tokens.shimmerColor.withValues(alpha: tokens.shimmerAlpha)
             ..style = PaintingStyle.stroke
             ..strokeWidth = coreWidth * 1.2
             ..strokeCap = StrokeCap.round
@@ -276,26 +279,42 @@ class PipePainter extends CustomPainter {
 
 /// Shared ticker for shimmer animation across all tiles.
 class _ShimmerTicker {
-  _ShimmerTicker() {
+  _ShimmerTicker._();
+
+  PipeTokens? _tokens;
+  AnimationController? _controller;
+
+  void _init(PipeTokens tokens) {
+    if (_controller != null) return;
+    _tokens = tokens;
     _controller = AnimationController.unbounded(vsync: _VSync());
-    _controller.repeat(period: const Duration(milliseconds: 2400));
+    _controller!.repeat(period: tokens.shimmerPeriod);
   }
 
-  late final AnimationController _controller;
-
-  double get phase => _controller.value;
+  double get phase {
+    if (_controller == null) return 0.0;
+    return _controller!.value;
+  }
 }
 
 /// Shared ticker for source pulse animation.
 class _SourcePulseTicker {
-  _SourcePulseTicker() {
+  _SourcePulseTicker._();
+
+  PipeTokens? _tokens;
+  AnimationController? _controller;
+
+  void _init(PipeTokens tokens) {
+    if (_controller != null) return;
+    _tokens = tokens;
     _controller = AnimationController.unbounded(vsync: _VSync());
-    _controller.repeat(period: const Duration(milliseconds: 2000));
+    _controller!.repeat(period: tokens.sourcePulsePeriod);
   }
 
-  late final AnimationController _controller;
-
-  double get pulse => (math.sin(_controller.value * 2 * math.pi) + 1) / 2; // 0..1
+  double get pulse {
+    if (_controller == null) return 0.0;
+    return (math.sin(_controller!.value * 2 * math.pi) + 1) / 2; // 0..1
+  }
 }
 
 /// Minimal vsync for unbounded controllers.
