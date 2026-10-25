@@ -21,6 +21,7 @@ import 'package:pipes/ui/features/settings/views/settings_view.dart'
 import 'package:pipes/ui/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/data/repositories/progress_repository.dart';
+import 'package:pipes/domain/models/user_progress.dart';
 import 'package:pipes/domain/use_cases/level_generator.dart';
 
 class _TestProgressRepository extends ProgressRepository {
