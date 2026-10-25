@@ -343,14 +343,14 @@ void main() {
       final firstSwatchBox = tester.renderObject<RenderBox>(swatchFinder.first);
       final swatchSize = firstSwatchBox.size.width; // Should be 44dp from tokens
 
-      // The viewport should be the parent Row's viewport or the ListView
-      // Check the scrollable viewport
-      final scrollableFinder = find.byType(Scrollable).last;
+      // Find the horizontal Scrollable (the inner ListView for swatches)
+      // It's the one with horizontal scroll direction
+      final scrollableFinder = find.byType(Scrollable).at(0); // First scrollable is the horizontal one
       expect(scrollableFinder, findsOneWidget);
       final scrollableBox = tester.renderObject<RenderBox>(scrollableFinder);
       
       final viewportHeight = scrollableBox.size.height;
-      final requiredHeight = swatchSize + 2 * 24.0; // swatch size + 48dp padding
+      final requiredHeight = swatchSize + 2 * 24.0; // swatch size + 48dp padding = 44 + 48 = 92
 
       expect(
         viewportHeight,

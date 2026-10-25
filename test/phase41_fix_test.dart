@@ -801,18 +801,18 @@ group('D4: Accent consistency across all 9 palettes', () {
       expect(trackBox.size.height, equals(32.0), reason: 'Track height should be 32dp');
     });
 
-    testWidgets('48dp hit area is NOT painted (invisible padding - track is 52x32, hit area 48x48)', (tester) async {
+    testWidgets('56x48dp hit area is NOT painted (invisible padding - track is 52x32, hit area 56x48)', (tester) async {
       await tester.pumpWidget(createTestApp(const SettingsView()));
       await tester.pumpAndSettle();
 
-      // Widget (GestureDetector + hit area box) should be 48x48
+      // Widget (GestureDetector + hit area box) should be 56x48
       final toggleFinder = find.byType(PipesToggle);
       final toggleBox = tester.renderObject<RenderBox>(toggleFinder);
 
       expect(
         toggleBox.size.width,
-        equals(48.0),
-        reason: 'Widget hit area width should be 48dp',
+        equals(56.0),
+        reason: 'Widget hit area width should be 56dp',
       );
       expect(
         toggleBox.size.height,
@@ -820,7 +820,7 @@ group('D4: Accent consistency across all 9 palettes', () {
         reason: 'Widget hit area height should be 48dp',
       );
 
-      // Track should be 52x32 (NOT 48x48) - painted shape is not grown by hit area
+      // Track should be 52x32 (NOT 56x48) - painted shape is not grown by hit area
       final trackFinder = find.byKey(const Key('pipes_toggle_track'));
       final trackBox = tester.renderObject<RenderBox>(trackFinder);
       expect(trackBox.size.width, equals(52.0), reason: 'Track width should be 52dp (not grown by hit area)');
