@@ -6,7 +6,7 @@ import 'package:pipes/ui/core/icons/pipes_icons.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/core/widgets/pipes_button.dart';
 import 'package:pipes/ui/core/widgets/pipes_header.dart';
-import 'package:pipes/ui/core/widgets/pipes_pill.dart';
+import 'package:pipes/ui/core/widgets/pipes_level_tile.dart';
 import 'package:pipes/ui/core/widgets/pipes_tap.dart';
 
 void main() {
@@ -242,8 +242,9 @@ void main() {
             body: SizedBox(
               width: screenWidth,
               child: Center(
-                child: PipesPill(
-                  text: 'Level 1',
+                child: PipesLevelTile(
+                  levelNumber: 1,
+                  state: PipesLevelTileState.current,
                   onTap: () {},
                 ),
               ),
@@ -252,7 +253,7 @@ void main() {
         ),
       );
 
-      final pillFinder = find.byType(PipesPill);
+      final pillFinder = find.byType(PipesLevelTile);
       expect(pillFinder, findsOneWidget);
 
       final pillBox = tester.renderObject<RenderBox>(pillFinder);
