@@ -20,11 +20,31 @@ import 'package:pipes/ui/features/settings/views/settings_view.dart'
     show SettingsView;
 import 'package:pipes/ui/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pipes/data/repositories/progress_repository.dart';
+import 'package:pipes/domain/use_cases/level_generator.dart';
 
-class _TestingHomeViewModel extends StateNotifier<HomeViewModelState> {
-  _TestingHomeViewModel() : super(const HomeViewModelState());
+class _TestProgressRepository extends ProgressRepository {
   @override
-  void dispose() {}
+  Future<UserProgress> getProgress() async => UserProgress();
+  @override
+  Future<void> resetProgress() async {}
+  @override
+  Future<void> saveProgress(UserProgress progress) async {}
+  @override
+  void addListener(VoidCallback listener) {}
+  @override
+  void removeListener(VoidCallback listener) {}
+}
+
+class _TestLevelGenerator extends LevelGenerator {}
+
+class _TestingHomeViewModel extends HomeViewModel {
+  _TestingHomeViewModel() : super(
+    progressRepository: _TestProgressRepository(),
+    levelGenerator: _TestLevelGenerator(),
+  );
+  @override
+  Future<void> loadProgress() async {}
 }
 
 Widget createTestApp(Widget child, {String? initialRoute}) {
