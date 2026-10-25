@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/ui/core/theme/pipes_tokens.dart';
 import 'package:pipes/ui/core/widgets/pipes_button.dart';
-import 'package:pipes/ui/core/widgets/pipes_header.dart'
+import 'package:pipes/ui/core/widgets/pipes_header.dart';
 import 'package:pipes/ui/core/widgets/pipes_pill.dart';
 import 'package:pipes/ui/features/game/views/game_view.dart';
 import 'package:pipes/ui/features/how_to_play/views/how_to_play_view.dart';
