@@ -21,27 +21,26 @@ import 'package:pipes/ui/features/settings/views/settings_view.dart'
 import 'package:pipes/ui/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pipes/data/repositories/progress_repository.dart';
+import 'package:pipes/data/services/hive_service.dart';
 import 'package:pipes/domain/models/user_progress.dart';
 import 'package:pipes/domain/use_cases/level_generator.dart';
 
-class _TestProgressRepository extends ProgressRepository {
+class _MockHiveService extends HiveService {
+  @override
+  Future<void> init() async {}
   @override
   Future<UserProgress> getProgress() async => UserProgress();
   @override
-  Future<void> resetProgress() async {}
-  @override
   Future<void> saveProgress(UserProgress progress) async {}
   @override
-  void addListener(VoidCallback listener) {}
-  @override
-  void removeListener(VoidCallback listener) {}
+  Future<void> clearProgress() async {}
 }
 
 class _TestLevelGenerator extends LevelGenerator {}
 
 class _TestingHomeViewModel extends HomeViewModel {
   _TestingHomeViewModel() : super(
-    progressRepository: _TestProgressRepository(),
+    progressRepository: ProgressRepository(hiveService: _MockHiveService()),
     levelGenerator: _TestLevelGenerator(),
   );
   @override
