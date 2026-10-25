@@ -331,6 +331,52 @@ class HeaderComponentTokens {
 }
 
 @immutable
+class PipeTokens {
+  const PipeTokens({
+    required this.tubeWidthRatio,
+    required this.coreRatio,
+    required this.highlightAlpha,
+    required this.glowAlphas,
+    required this.glowWidthRatios,
+    required this.shimmerPeriod,
+    required this.fillDuration,
+    required this.fillStagger,
+    required this.springStiffness,
+    required this.springDamping,
+    required this.winWaveStep,
+    required this.winPulseScale,
+  });
+
+  final double tubeWidthRatio;
+  final double coreRatio;
+  final double highlightAlpha;
+  final List<double> glowAlphas;
+  final List<double> glowWidthRatios;
+  final Duration shimmerPeriod;
+  final Duration fillDuration;
+  final Duration fillStagger;
+  final double springStiffness;
+  final double springDamping;
+  final Duration winWaveStep;
+  final double winPulseScale;
+
+  static PipeTokens fromPalette(PaletteTokens palette) => PipeTokens(
+        tubeWidthRatio: 0.26,
+        coreRatio: 0.5,
+        highlightAlpha: 0.12,
+        glowAlphas: [0.06, 0.10, 0.16],
+        glowWidthRatios: [1.9, 1.5, 1.2],
+        shimmerPeriod: const Duration(milliseconds: 2400),
+        fillDuration: const Duration(milliseconds: 220), // state token
+        fillStagger: const Duration(milliseconds: 60),
+        springStiffness: 420,
+        springDamping: 28,
+        winWaveStep: const Duration(milliseconds: 45),
+        winPulseScale: 1.06,
+      );
+}
+
+@immutable
 class ComponentTokens {
   const ComponentTokens({
     required this.button,
@@ -341,6 +387,7 @@ class ComponentTokens {
     required this.swatch,
     required this.levelTile,
     required this.header,
+    required this.pipe,
   });
 
   factory ComponentTokens.fromPalette(PaletteTokens palette) => ComponentTokens(
@@ -455,6 +502,7 @@ class ComponentTokens {
           height: 56.0,
           slotWidth: 56.0,
         ),
+        pipe: PipeTokens.fromPalette(palette),
       );
 
   final ButtonComponentTokens button;
@@ -465,6 +513,7 @@ class ComponentTokens {
   final SwatchComponentTokens swatch;
   final LevelTileComponentTokens levelTile;
   final HeaderComponentTokens header;
+  final PipeTokens pipe;
 }
 
 // ============================================================================
@@ -917,4 +966,6 @@ extension TokensContext on BuildContext {
   PipesTokens get tokens => Theme.of(this).extension<PipesTokens>() ?? PipesTokens.createDefault();
 
   PaletteTokens get palette => tokens.currentPalette;
+
+  PipeTokens get pipeTokens => tokens.components.pipe;
 }

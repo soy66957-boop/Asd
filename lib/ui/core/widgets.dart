@@ -9,3 +9,4 @@ export 'widgets/pipes_toggle.dart';
 export 'widgets/pipes_swatch.dart';
 export 'widgets/pipes_header.dart';
 export 'widgets/pipes_level_tile.dart';
+export '../pipes.dart';
