@@ -170,7 +170,7 @@ class _QuickPlayDialog extends StatelessWidget {
     return Dialog(
       backgroundColor: palette.surface,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(tokens.components.sheet.radius),
+        borderRadius: BorderRadius.circular(tokens.radius.lg),
       ),
       child: Padding(
         padding: EdgeInsets.all(tokens.spacing.xl),
