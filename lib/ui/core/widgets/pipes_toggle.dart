@@ -138,6 +138,7 @@ class _PipesToggleState extends ConsumerState<PipesToggle>
                   : null,
             ),
             child: Stack(
+              clipBehavior: Clip.none,
               children: [
                 // Glow ring behind thumb
                 Positioned(

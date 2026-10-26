@@ -55,6 +55,7 @@ class _LevelSelectViewState extends ConsumerState<LevelSelectView> {
             ),
             Expanded(
               child: GridView.builder(
+                clipBehavior: Clip.none,
                 padding: EdgeInsets.fromLTRB(
                   tokens.spacing.xl,
                   tokens.spacing.xl + 8, // Extra 8dp to clear header

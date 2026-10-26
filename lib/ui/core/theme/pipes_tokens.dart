@@ -468,7 +468,7 @@ class ComponentTokens {
           radius: 9999.0,
         ),
         toggle: ToggleComponentTokens(
-          trackWidth: 52.0,
+          trackWidth: 48.0,
           trackHeight: 32.0,
           thumbSize: 24.0,
           offTrackColor: palette.glassBorder,

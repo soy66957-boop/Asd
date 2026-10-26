@@ -768,7 +768,7 @@ group('D4: Accent consistency across all 9 palettes', () {
       );
     });
 
-    testWidgets('PipesToggle visible track is 52x32 dp (within 2dp)', (tester) async {
+    testWidgets('PipesToggle visible track is 48x32 dp (within 2dp)', (tester) async {
       await tester.pumpWidget(createTestApp(const SettingsView()));
       await tester.pumpAndSettle();
 
@@ -778,9 +778,9 @@ group('D4: Accent consistency across all 9 palettes', () {
       final trackBox = tester.renderObject<RenderBox>(trackFinder);
 
       expect(
-        (trackBox.size.width - 52).abs(),
+        (trackBox.size.width - 48).abs(),
         lessThanOrEqualTo(2.0),
-        reason: 'Toggle track width (${trackBox.size.width}) should be 52dp ± 2dp',
+        reason: 'Toggle track width (${trackBox.size.width}) should be 48dp ± 2dp',
       );
       expect(
         (trackBox.size.height - 32).abs(),
@@ -801,7 +801,7 @@ group('D4: Accent consistency across all 9 palettes', () {
       expect(trackBox.size.height, equals(32.0), reason: 'Track height should be 32dp');
     });
 
-    testWidgets('56x48dp hit area is NOT painted (invisible padding - track is 52x32, hit area 56x48)', (tester) async {
+    testWidgets('56x48dp hit area is NOT painted (invisible padding - track is 48x32, hit area 56x48)', (tester) async {
       await tester.pumpWidget(createTestApp(const SettingsView()));
       await tester.pumpAndSettle();
 
@@ -820,10 +820,10 @@ group('D4: Accent consistency across all 9 palettes', () {
         reason: 'Widget hit area height should be 48dp',
       );
 
-      // Track should be 52x32 (NOT 56x48) - painted shape is not grown by hit area
+      // Track should be 48x32 (NOT 56x48) - painted shape is not grown by hit area
       final trackFinder = find.byKey(const Key('pipes_toggle_track'));
       final trackBox = tester.renderObject<RenderBox>(trackFinder);
-      expect(trackBox.size.width, equals(52.0), reason: 'Track width should be 52dp (not grown by hit area)');
+      expect(trackBox.size.width, equals(48.0), reason: 'Track width should be 48dp (not grown by hit area)');
       expect(trackBox.size.height, equals(32.0), reason: 'Track height should be 32dp (not grown by hit area)');
     });
 
